@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "api-dotnet", "api-dotnet", "{63619B0A-1656-1D74-FE7C-8394D7436D49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KaizenekaApi", "api-dotnet\KaizenekaApi\KaizenekaApi.csproj", "{3A722777-A4F0-36A6-6E5D-6053900C3B42}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3A722777-A4F0-36A6-6E5D-6053900C3B42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A722777-A4F0-36A6-6E5D-6053900C3B42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A722777-A4F0-36A6-6E5D-6053900C3B42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A722777-A4F0-36A6-6E5D-6053900C3B42}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3A722777-A4F0-36A6-6E5D-6053900C3B42} = {63619B0A-1656-1D74-FE7C-8394D7436D49}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7D074CB7-0450-4367-A68D-34B0E8BBD982}
+	EndGlobalSection
+EndGlobal

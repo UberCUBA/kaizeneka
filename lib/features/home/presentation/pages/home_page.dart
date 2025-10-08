@@ -250,10 +250,12 @@ class _HomePageState extends State<HomePage> {
                   ElevatedButton(
                     onPressed: () async {
                       await missionProvider.completeCurrentMission();
-                      // Sincronizar puntos con Supabase
+                      setState(() {}); // Forzar reconstrucción para mostrar la nueva misión
+                      // Sincronizar con Supabase
                       final authProvider = Provider.of<AuthProvider>(context, listen: false);
                       if (authProvider.isAuthenticated) {
                         await authProvider.updateUserPoints(missionProvider.user.puntos);
+                        await authProvider.updateUserDiasCompletados(missionProvider.user.diasCompletados);
                       }
                       _showFeedback(context, mission);
                     },

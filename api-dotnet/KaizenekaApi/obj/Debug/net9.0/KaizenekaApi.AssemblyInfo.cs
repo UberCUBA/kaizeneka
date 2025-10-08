@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("KaizenekaApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+72dacf42d3db9ba51772d32a622bf8a979a51959")]
 [assembly: System.Reflection.AssemblyProductAttribute("KaizenekaApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("KaizenekaApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

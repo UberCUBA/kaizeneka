@@ -149,6 +149,19 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  Future<void> updateUserDiasCompletados(int diasCompletados) async {
+    if (_user == null || _userProfile == null) return;
+
+    try {
+      await SupabaseService.updateUserDiasCompletados(_user!.id, diasCompletados);
+      _userProfile = _userProfile!.copyWith(diasCompletados: diasCompletados);
+      await _syncUserProfileToLocal();
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error updating user dias completados: $e');
+    }
+  }
+
   Future<void> updateUserLocation(double lat, double lng) async {
     if (_user == null || _userProfile == null) return;
 

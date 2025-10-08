@@ -130,6 +130,17 @@ class SupabaseService {
         .eq('id', userId);
   }
 
+  // Actualizar días completados del usuario
+  static Future<void> updateUserDiasCompletados(String userId, int diasCompletados) async {
+    await client
+        .from('users')
+        .update({
+          'dias_completados': diasCompletados,
+          'updated_at': DateTime.now().toIso8601String(),
+        })
+        .eq('id', userId);
+  }
+
   // Actualizar ubicación del usuario
   static Future<void> updateUserLocation(String userId, double lat, double lng) async {
     await client

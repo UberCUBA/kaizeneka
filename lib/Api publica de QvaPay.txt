@@ -1,0 +1,3991 @@
+QvaPay API
+API endpoints para el flujo de trabajo con la APP de QvaPay.
+
+Para todas las operaciones con este conjunto de APIs será necesario registrar una cuenta en QvaPay.com asi como verificar el email con el cual se registró.
+
+A partir de ese momento se comunicará con el proveedor mediante el Bearer Token obtenido en el proceso de login.
+
+Para interactuar con los endpoints de QvaPay puede enviar sus solicitudes a https://api.qvapay.com
+
+Si quieres formar parte del grupo de soporte para desarrolladores en Telegram, visite el siguiente link: https://t.me/+5oiHSysDWuM5YWYx
+
+App
+Development Apps CRUD
+
+GET
+Apps Index
+https://api.qvapay.com/app
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+Example Request
+Apps Index
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/app");
+var content = new StringContent("", null, "text/plain");
+request.Content = content;
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+200 OK
+Example Response
+Body
+Headers (10)
+View More
+json
+{
+  "result": "OK",
+  "apps": [
+    {
+      "uuid": "175e5c5c-8488-4009-ba7d-815bb4015cc6",
+      "name": "UptimeRobot",
+      "url": "https://uptimerobot.com/",
+      "logo": "https://media.qvapay.com/apps/MbZEETvR4kkAP8PfkbKPWsHINTyuqc6fthwWh1CF.png",
+      "description": "Uptime Status for Robot",
+      "callback": "https://uptimerobot.com/dashboard.php",
+      "success_url": "",
+      "cancel_url": "",
+      "active": true,
+      "enabled": true,
+      "allowed_payment_auth": false,
+      "card": false,
+      "created_at": "2021-04-04T17:25:55.000Z",
+      "updated_at": "2021-04-04T17:25:55.000Z"
+    }
+  ]
+}
+GET
+Apps by UUID
+https://api.qvapay.com/app/175e5c5c-8488-4009-ba7d-815bb4015cc6
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+Example Request
+Apps Index
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/app/175e5c5c-8488-4009-ba7d-815bb4015cc6");
+var content = new StringContent("", null, "text/plain");
+request.Content = content;
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+200 OK
+Example Response
+Body
+Headers (10)
+View More
+json
+{
+  "result": "OK",
+  "app": {
+    "uuid": "175e5c5c-8488-4009-ba7d-815bb4015cc6",
+    "name": "UptimeRobot",
+    "url": "https://uptimerobot.com/",
+    "logo": "https://media.qvapay.com/apps/MbZEETvR4kkAP8PfkbKPWsHINTyuqc6fthwWh1CF.png",
+    "description": "Uptime Status for Robot",
+    "callback": "https://uptimerobot.com/dashboard.php",
+    "success_url": "",
+    "cancel_url": "",
+    "active": true,
+    "enabled": true,
+    "allowed_payment_auth": false,
+    "card": false,
+    "created_at": "2021-04-04T17:25:55.000Z",
+    "updated_at": "2021-04-04T17:25:55.000Z"
+  }
+}
+DELETE
+Delete App by UUID
+https://api.qvapay.com/app/2c0110a4-623b-4312-b350-a535e98a58e2
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+Example Request
+Apps Index
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/app/175e5c5c-8488-4009-ba7d-815bb4015cc6");
+var content = new StringContent("", null, "text/plain");
+request.Content = content;
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+200 OK
+Example Response
+Body
+Headers (10)
+View More
+json
+{
+  "result": "OK",
+  "app": {
+    "uuid": "175e5c5c-8488-4009-ba7d-815bb4015cc6",
+    "name": "UptimeRobot",
+    "url": "https://uptimerobot.com/",
+    "logo": "https://media.qvapay.com/apps/MbZEETvR4kkAP8PfkbKPWsHINTyuqc6fthwWh1CF.png",
+    "description": "Uptime Status for Robot",
+    "callback": "https://uptimerobot.com/dashboard.php",
+    "success_url": "",
+    "cancel_url": "",
+    "active": true,
+    "enabled": true,
+    "allowed_payment_auth": false,
+    "card": false,
+    "created_at": "2021-04-04T17:25:55.000Z",
+    "updated_at": "2021-04-04T17:25:55.000Z"
+  }
+}
+POST
+Create Dev App
+https://api.qvapay.com/app/create
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+Body
+formdata
+name
+Test App
+
+url
+https://testapp.com
+
+logo
+desc
+La test App para conectar pagos con QvaPay
+
+callback
+https://testapp.com/callback
+
+success_url
+https://testapp.com/success
+
+cancel_url
+https://testapp.com/error
+
+Example Request
+Create APP
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Post, "https://api.qvapay.com/app/create");
+var content = new MultipartFormDataContent();
+content.Add(new StringContent("Test App"), "name");
+content.Add(new StringContent("https://testapp.com"), "url");
+content.Add(new StreamContent(File.OpenRead("/Users/erichgarciacruz/Documents/461_1x_shots_so.jpg")), "logo", "/Users/erichgarciacruz/Documents/461_1x_shots_so.jpg");
+content.Add(new StringContent("La test App para conectar pagos con QvaPay"), "desc");
+content.Add(new StringContent("https://testapp.com/callback"), "callback");
+content.Add(new StringContent("https://testapp.com/success"), "success_url");
+content.Add(new StringContent("https://testapp.com/error"), "cancel_url");
+request.Content = content;
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+200 OK
+Example Response
+Body
+Headers (10)
+json
+{
+  "result": "OK",
+  "app": {
+    "uuid": "2c0110a4-623b-4312-b350-a535e98a58e1",
+    "secret": "80584f2cb0adb72353b4d683cf91b9a0809946672d2151f2c8",
+    "name": "Test App",
+    "url": "https://testapp.com",
+    "desc": "La test App para conectar pagos con QvaPay",
+    "logo": "apps/a96a9e71-3d67-4a42-adc2-02a5d069fa23/1743391765433.jpeg"
+  }
+}
+Coins
+GET
+Coin Data By ID
+https://api.qvapay.com/coins/1
+HEADERS
+Accept
+application/json
+
+Example Request
+Current Coin Data
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/coins/1");
+request.Headers.Add("Accept", "application/json");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+200 OK
+Example Response
+Body
+Headers (12)
+View More
+json
+{
+  "id": 1,
+  "coins_categories_id": 1,
+  "name": "BitCoin",
+  "logo": "btc",
+  "tick": "BTC",
+  "fee_in": "0.00",
+  "fee_out": "7.50",
+  "min_in": "30.00",
+  "min_out": "20.00",
+  "max_in": 1000,
+  "max_out": 1000,
+  "working_data": "[{\"name\": \"Wallet\", \"type\": \"text\"}]",
+  "enabled_in": 1,
+  "enabled_out": 1,
+  "enabled_p2p": 1,
+  "price": "21698.968770779000000000",
+  "coin_category": {
+    "id": 1,
+    "name": "Criptomonedas",
+    "logo": "crypto"
+  }
+}
+P2P
+Chat
+GET
+Get P2P Chat
+https://api.qvapay.com/p2p/d81d74b9-e253-462d-a266-c85386698b94/chat
+Accede a una oferta P2P específica, mientras esté en estado status=open y/o ya sea un peer de esa oferta.
+
+AUTHORIZATION
+Bearer Token
+Token
+HEADERS
+Accept
+application/json
+
+Example Request
+Get P2P Chat
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/p2p/d81d74b9-e253-462d-a266-c85386698b94/chat");
+request.Headers.Add("Accept", "application/json");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+Example Response
+Body
+Headers (0)
+No response body
+This request doesn't return any response body
+POST
+Send Message
+https://api.qvapay.com/p2p/d81d74b9-e253-462d-a266-c85386698b94/chat
+AUTHORIZATION
+Bearer Token
+Token
+HEADERS
+Accept
+application/json
+
+Body
+raw (json)
+json
+{
+    "message": "ya manito, te libero pronto, probando..."
+}
+Example Request
+Send Message
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Post, "https://api.qvapay.com/p2p/d81d74b9-e253-462d-a266-c85386698b94/chat");
+request.Headers.Add("Accept", "application/json");
+var content = new StringContent("{\n    \"message\": \"ya manito, te libero pronto, probando...\"\n}", null, "text/plain");
+request.Content = content;
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+Example Response
+Body
+Headers (0)
+No response body
+This request doesn't return any response body
+GET
+P2P Hello World
+https://api.qvapay.com/p2p
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+Example Request
+P2P Hello World
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/p2p");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+200 OK
+Example Response
+Body
+Headers (10)
+json
+{
+  "message": "Welcome to QvaPay P2P API"
+}
+GET
+P2P Averages
+https://api.qvapay.com/p2p/average
+Get the average trade exchange in the P2P for the last week
+
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+Example Request
+P2P Averages
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/p2p/average");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+Example Response
+Body
+Headers (0)
+No response body
+This request doesn't return any response body
+GET
+Get Completed Trading Pairs Average
+https://api.qvapay.com/p2p/completed_pairs_average?coin=BANK_MLC
+Show all completed P2P pairs in realtime.
+
+Params:
+
+BANK_CUP, BANK_MLC, BANK, USDT, ...
+
+See more in enabled currencies.
+
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+PARAMS
+coin
+BANK_MLC
+
+Example Request
+Get Completed Trading Pairs Average
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/p2p/completed_pairs_average?coin=BANK_CUP");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+200 OK
+Example Response
+Body
+Headers (10)
+View More
+json
+{
+  "average": 392.40818576803605,
+  "average_buy": 395.685442499371,
+  "average_sell": 398.3642714657489,
+  "median_buy": 395,
+  "median_sell": 400,
+  "offers": [
+    420,
+    400,
+    400,
+    395.9484346224678,
+    380.15340364333656,
+    420,
+    396,
+    395.87491683300067,
+    395.9484346224678,
+    395.89442815249265,
+    395.9484346224678,
+    410,
+    396.03960396039605,
+    405,
+    410,
+    400,
+    409.1816367265469,
+    400,
+    420,
+    390,
+    420,
+    380.2281368821293,
+    0.6221484861053505,
+    400,
+    415,
+    402.5,
+    400,
+    420,
+    395.83333333333337,
+    400,
+    400,
+    395,
+    400,
+    380.01495140792423,
+    400,
+    410,
+    398,
+    410,
+    400,
+    400,
+    390,
+    404.99124343257444,
+    405,
+    395.855472901169,
+    395,
+    409.6742349457058,
+    405,
+    398,
+    404.81400437636756,
+    397.90575916230364,
+    398,
+    400,
+    400,
+    398,
+    390,
+    441.1764705882353,
+    389.63730569948183,
+    400,
+    396,
+    392,
+    410,
+    405,
+    399,
+    380.0623052959501,
+    405.0355774493706,
+    400,
+    415,
+    400,
+    400,
+    404.81400437636756,
+    1.4200511218403862,
+    389.82133188955066,
+    410,
+    399.1596638655462,
+    395,
+    410,
+    395.05428226779253,
+    400,
+    405.01094624179035,
+    404.99124343257444,
+    400,
+    400,
+    394.9511400651466,
+    395.06802721088434,
+    405,
+    405,
+    405,
+    400,
+    394.97607655502395,
+    404.95391705069125,
+    401,
+    395,
+    400,
+    396,
+    400,
+    410,
+    410.75268817204295,
+    380.01495140792423,
+    405,
+    404.87220447284346,
+    398,
+    400,
+    405,
+    398,
+    390,
+    395,
+    380.0623052959501,
+    400,
+    395.99833263859944,
+    394.8362720403022,
+    400,
+    396,
+    405.01542442034037,
+    405,
+    399,
+    402.0408163265306,
+    360.04784688995215,
+    360.01628664495115,
+    360.04784688995215,
+    395.1504265828469,
+    386.6666666666667,
+    389.6103896103896,
+    402.3529411764706,
+    396.0709759188847,
+    405.0355774493706,
+    389.9325626204239,
+    398,
+    400,
+    360.0199401794616,
+    360.04784688995215,
+    359.96810207336523,
+    360.04784688995215,
+    395,
+    395,
+    400,
+    400,
+    395,
+    390,
+    395,
+    405,
+    384.01660612350804,
+    395,
+    410,
+    410,
+    394.95733126454616,
+    400,
+    400.8333333333333,
+    394.949494949495,
+    395,
+    394.9891067538126,
+    390,
+    394.9832775919732,
+    395,
+    415.00000000000006,
+    380.0623052959501,
+    359.99775205125326,
+    360,
+    387.4172185430464,
+    380.01495140792423,
+    404.81400437636756,
+    420,
+    420,
+    397.989107666527,
+    400,
+    390.8814589665654,
+    396.03960396039605,
+    415,
+    396.01667438628994,
+    390,
+    400,
+    410,
+    380.0623052959501,
+    400,
+    396.03960396039605,
+    410,
+    396.012563157176,
+    394.1666666666667,
+    400,
+    410,
+    395.99833263859944,
+    400.8333333333333,
+    400,
+    410.00000000000006,
+    400,
+    400,
+    400,
+    394,
+    388.34951456310677,
+    400,
+    405,
+    410,
+    395,
+    387.6288659793815,
+    420,
+    396.22641509433964,
+    390,
+    400,
+    410,
+    400,
+    398.73417721518985,
+    390,
+    400,
+    395,
+    0.01,
+    401.875,
+    395,
+    417.5,
+    410,
+    390,
+    395.92760180995475,
+    395,
+    396.03960396039605
+  ]
+}
+GET
+Get Total Public Open Ops
+https://api.qvapay.com/p2p/get_total_operations
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+Example Request
+Get Total Public Open Ops
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/p2p/get_total_operations");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+200 OK
+Example Response
+Body
+Headers (10)
+json
+{
+  "buy": 199,
+  "sell": 143
+}
+GET
+Get Offers
+https://api.qvapay.com/p2p/index
+Consulta las ultimas operaciones disponibles en el P2P.
+
+Se pueden pasar todos los parametros de filtrado y seleccion disponibles:
+
+type ['buy', 'sell']
+
+min
+
+max
+
+coin
+
+my (para motrar solo tus propias ofertas)
+
+vip (para mostrar las ofertas VIP)
+
+A tener en cuenta que este endpoint es púbico con información limitada segun el tipo de usuario.
+
+Guest: Anuncios con 8 minutos de atraso.
+Usuario nonKYC con 5 minutos de atraso.
+Usuario KYC con 2 minutos de atraso.
+Usuario GOLD en tiempo real.
+Usuario VIP en tiempo real.
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+HEADERS
+Accept
+application/json
+
+Example Request
+Get Offers
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/p2p/index");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+200 OK
+Example Response
+Body
+Headers (12)
+View More
+json
+{
+  "current_page": 1,
+  "data": [
+    {
+      "uuid": "1d8ad0fa-d7ad-43d9-8d67-4669321a45f6",
+      "user_id": 184594,
+      "type": "sell",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "100.00",
+      "receive": "16000.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T18:33:08.000000Z",
+      "updated_at": "2023-04-14T20:02:04.000000Z"
+    },
+    {
+      "uuid": "24958dbe-8dca-4692-8b4d-817c4f005a1b",
+      "user_id": 1,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "940.00",
+      "receive": "940.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T18:32:47.000000Z",
+      "updated_at": "2023-02-16T18:32:47.000000Z"
+    },
+    {
+      "uuid": "52977ca9-5e00-4a6f-a2a0-0b41db64e485",
+      "user_id": 1,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "1000.00",
+      "receive": "1000.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T18:32:18.000000Z",
+      "updated_at": "2023-02-16T18:32:18.000000Z"
+    },
+    {
+      "uuid": "3e8ab87a-80a7-4467-a3b6-ee09062cbdff",
+      "user_id": 1,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "1000.00",
+      "receive": "1000.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T18:31:47.000000Z",
+      "updated_at": "2023-02-16T18:31:47.000000Z"
+    },
+    {
+      "uuid": "85ac348e-e537-4271-8511-6bc3133b4c35",
+      "user_id": 187465,
+      "type": "sell",
+      "coin": "TRX",
+      "peer_id": 0,
+      "amount": "5.00",
+      "receive": "72.166582330105",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T18:06:12.000000Z",
+      "updated_at": "2023-02-16T18:06:12.000000Z"
+    },
+    {
+      "uuid": "41ff24ae-04ed-487f-9ff0-fc9043b452a0",
+      "user_id": 183925,
+      "type": "buy",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "90.00",
+      "receive": "14490.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T18:04:43.000000Z",
+      "updated_at": "2023-02-16T18:04:43.000000Z"
+    },
+    {
+      "uuid": "4909f58b-4011-4eb1-8e12-395c1b1d06be",
+      "user_id": 29069,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "100.00",
+      "receive": "99.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T18:02:01.000000Z",
+      "updated_at": "2023-02-16T18:02:01.000000Z"
+    },
+    {
+      "uuid": "26d80e4b-d27c-49d5-951b-f25d87586325",
+      "user_id": 53675,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "100.00",
+      "receive": "100.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T17:56:20.000000Z",
+      "updated_at": "2023-02-16T17:56:20.000000Z"
+    },
+    {
+      "uuid": "573b6b5a-b8f6-4972-9f7e-be6a84e4558f",
+      "user_id": 53675,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "100.00",
+      "receive": "99.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T17:46:07.000000Z",
+      "updated_at": "2023-02-16T17:46:07.000000Z"
+    },
+    {
+      "uuid": "da9b9ed6-d970-456d-b874-b0f2e88268e7",
+      "user_id": 25688,
+      "type": "sell",
+      "coin": "USDT",
+      "peer_id": 0,
+      "amount": "400.00",
+      "receive": "400.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T17:40:35.000000Z",
+      "updated_at": "2023-02-16T17:40:35.000000Z"
+    },
+    {
+      "uuid": "42e95773-f406-4a84-b533-3200df026cf7",
+      "user_id": 184969,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "6.00",
+      "receive": "6.300000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T17:39:32.000000Z",
+      "updated_at": "2023-02-16T17:39:32.000000Z"
+    },
+    {
+      "uuid": "1bc3386e-32cc-4a99-ad74-8502c742aaea",
+      "user_id": 533,
+      "type": "sell",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "13.00",
+      "receive": "2145.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T16:58:51.000000Z",
+      "updated_at": "2023-02-16T16:58:51.000000Z"
+    },
+    {
+      "uuid": "09320f7a-7822-4dc0-bb06-f07b21d182a4",
+      "user_id": 533,
+      "type": "sell",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "15.00",
+      "receive": "2475.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T16:50:56.000000Z",
+      "updated_at": "2023-02-16T16:50:56.000000Z"
+    },
+    {
+      "uuid": "601ed82b-4644-4659-bff4-af54dc2377b9",
+      "user_id": 1078,
+      "type": "sell",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "2.00",
+      "receive": "330.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T16:47:52.000000Z",
+      "updated_at": "2023-02-16T16:47:52.000000Z"
+    },
+    {
+      "uuid": "22b008b8-b6d7-4156-916a-9b015f4788b7",
+      "user_id": 9908,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "20.00",
+      "receive": "20.500000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T16:15:36.000000Z",
+      "updated_at": "2023-02-16T16:15:36.000000Z"
+    },
+    {
+      "uuid": "f6e82282-48b8-408c-91f1-8de76048319c",
+      "user_id": 184969,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "5.00",
+      "receive": "5.200000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T16:12:52.000000Z",
+      "updated_at": "2023-02-16T16:12:52.000000Z"
+    },
+    {
+      "uuid": "e833285e-fc9e-4b94-a138-279854767c4a",
+      "user_id": 5912,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "100.00",
+      "receive": "102.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T15:53:23.000000Z",
+      "updated_at": "2023-02-16T16:07:33.000000Z"
+    },
+    {
+      "uuid": "78e799be-7ead-4a0f-8ce4-8acaa8b5717c",
+      "user_id": 3822,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "100.00",
+      "receive": "100.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T15:45:19.000000Z",
+      "updated_at": "2023-02-16T15:45:19.000000Z"
+    },
+    {
+      "uuid": "97d9803c-1b10-4f52-aef5-0d437000d9ce",
+      "user_id": 762,
+      "type": "buy",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "50.00",
+      "receive": "8000.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T15:29:10.000000Z",
+      "updated_at": "2023-02-16T15:29:10.000000Z"
+    },
+    {
+      "uuid": "fd711c9b-423f-46c6-ab99-dba08cfaa87f",
+      "user_id": 184969,
+      "type": "sell",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "1.00",
+      "receive": "170.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T14:53:01.000000Z",
+      "updated_at": "2023-02-16T14:53:01.000000Z"
+    },
+    {
+      "uuid": "fc83b73f-b00a-4c51-bd41-bff372dfdb12",
+      "user_id": 5444,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "20.00",
+      "receive": "20.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T14:33:31.000000Z",
+      "updated_at": "2023-02-16T14:33:31.000000Z"
+    },
+    {
+      "uuid": "e11e351b-f16a-4d09-9db3-1620f1e304d9",
+      "user_id": 5444,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "50.00",
+      "receive": "50.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T14:32:01.000000Z",
+      "updated_at": "2023-02-16T14:32:01.000000Z"
+    },
+    {
+      "uuid": "5b17f700-34c8-4ce3-a8f1-d013cff851ed",
+      "user_id": 5444,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "100.00",
+      "receive": "100.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T14:31:16.000000Z",
+      "updated_at": "2023-02-16T14:31:16.000000Z"
+    },
+    {
+      "uuid": "81716d05-be4f-4b52-bde9-f445196b669a",
+      "user_id": 5444,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "150.00",
+      "receive": "150.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T14:30:38.000000Z",
+      "updated_at": "2023-02-16T14:30:38.000000Z"
+    },
+    {
+      "uuid": "7ff5c855-972f-4df0-af09-ded7fc24eb52",
+      "user_id": 5444,
+      "type": "buy",
+      "coin": "ETECSA",
+      "peer_id": 0,
+      "amount": "5.00",
+      "receive": "1000.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T14:28:08.000000Z",
+      "updated_at": "2023-02-16T14:28:08.000000Z"
+    },
+    {
+      "uuid": "a932eb2f-ae31-4650-9a9a-649bd3cdbe00",
+      "user_id": 3049,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "100.00",
+      "receive": "100.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T13:11:14.000000Z",
+      "updated_at": "2023-02-16T13:11:14.000000Z"
+    },
+    {
+      "uuid": "cbe05f28-67ca-40e7-8570-c2eac9e6ec25",
+      "user_id": 184969,
+      "type": "sell",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "2.00",
+      "receive": "330.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T12:16:07.000000Z",
+      "updated_at": "2023-02-16T12:16:07.000000Z"
+    },
+    {
+      "uuid": "44cb1dc4-0981-46eb-90de-d207af2ed01b",
+      "user_id": 184969,
+      "type": "buy",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "50.00",
+      "receive": "7950.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T12:15:00.000000Z",
+      "updated_at": "2023-02-16T12:15:00.000000Z"
+    },
+    {
+      "uuid": "1a7ee635-8fed-4ec9-90d4-bac18ec3a554",
+      "user_id": 183862,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "10.00",
+      "receive": "10.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T12:02:53.000000Z",
+      "updated_at": "2023-02-16T12:02:53.000000Z"
+    },
+    {
+      "uuid": "08f16dda-8371-4e68-8a94-35153e75b99d",
+      "user_id": 9908,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "20.00",
+      "receive": "20.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T11:37:18.000000Z",
+      "updated_at": "2023-02-16T11:37:18.000000Z"
+    },
+    {
+      "uuid": "ccf68eb4-9485-4465-922f-77e7ccdcb780",
+      "user_id": 21561,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "20.00",
+      "receive": "19.900000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T11:35:45.000000Z",
+      "updated_at": "2023-02-16T11:35:45.000000Z"
+    },
+    {
+      "uuid": "84cb180c-2270-43e0-85a6-9804f341007c",
+      "user_id": 183925,
+      "type": "buy",
+      "coin": "ETECSA",
+      "peer_id": 0,
+      "amount": "20.00",
+      "receive": "4400.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T10:46:28.000000Z",
+      "updated_at": "2023-02-16T10:46:28.000000Z"
+    },
+    {
+      "uuid": "96201fce-eab0-4964-a07f-22bbf3edd316",
+      "user_id": 183925,
+      "type": "buy",
+      "coin": "ETECSA",
+      "peer_id": 0,
+      "amount": "15.00",
+      "receive": "3300.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T10:45:46.000000Z",
+      "updated_at": "2023-02-16T10:45:46.000000Z"
+    },
+    {
+      "uuid": "50017f37-a9c4-4541-84dc-5d5483fc5127",
+      "user_id": 183925,
+      "type": "buy",
+      "coin": "ETECSA",
+      "peer_id": 0,
+      "amount": "5.00",
+      "receive": "1100.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T10:44:38.000000Z",
+      "updated_at": "2023-02-16T10:44:38.000000Z"
+    },
+    {
+      "uuid": "54bdc336-4f15-4b36-9f90-2b310ab93bc8",
+      "user_id": 2242,
+      "type": "buy",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "30.00",
+      "receive": "4740.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T10:41:23.000000Z",
+      "updated_at": "2023-02-16T10:41:23.000000Z"
+    },
+    {
+      "uuid": "af993170-67ed-40a2-a2b8-a40fffa2f1f8",
+      "user_id": 2242,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "100.00",
+      "receive": "100.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T10:40:45.000000Z",
+      "updated_at": "2023-02-16T10:40:45.000000Z"
+    },
+    {
+      "uuid": "6b7419fb-fbef-43ed-aae6-8f3c18497026",
+      "user_id": 23869,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "50.00",
+      "receive": "50.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T06:54:55.000000Z",
+      "updated_at": "2023-02-16T06:54:55.000000Z"
+    },
+    {
+      "uuid": "ab525ae8-ebe3-4d6f-b8c0-d9d645b107d9",
+      "user_id": 183049,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "275.00",
+      "receive": "275.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T04:02:33.000000Z",
+      "updated_at": "2023-02-16T04:02:33.000000Z"
+    },
+    {
+      "uuid": "a9f9b165-3b53-443b-a3b1-f4c1581861a3",
+      "user_id": 55699,
+      "type": "buy",
+      "coin": "ETECSA",
+      "peer_id": 0,
+      "amount": "19.00",
+      "receive": "3875.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T03:24:35.000000Z",
+      "updated_at": "2023-02-16T03:24:35.000000Z"
+    },
+    {
+      "uuid": "a0c35a90-2e5e-46cb-aaa3-eceaf7fd63b9",
+      "user_id": 55699,
+      "type": "buy",
+      "coin": "ETECSA",
+      "peer_id": 0,
+      "amount": "10.00",
+      "receive": "1920.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T03:23:31.000000Z",
+      "updated_at": "2023-02-16T03:23:31.000000Z"
+    },
+    {
+      "uuid": "af66ef84-031b-40b5-a501-896549c9907f",
+      "user_id": 5533,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "8.50",
+      "receive": "8.850000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-15T21:31:39.000000Z",
+      "updated_at": "2023-02-15T21:31:39.000000Z"
+    },
+    {
+      "uuid": "daea060d-c33e-4104-99cc-0e069a2cc0d1",
+      "user_id": 16674,
+      "type": "sell",
+      "coin": "RevoluPay",
+      "peer_id": 0,
+      "amount": "32.00",
+      "receive": "30.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-15T19:46:45.000000Z",
+      "updated_at": "2023-02-15T19:46:45.000000Z"
+    },
+    {
+      "uuid": "5083ec79-dc6b-4d88-9d4c-36eaeed9c08d",
+      "user_id": 187595,
+      "type": "sell",
+      "coin": "TRX",
+      "peer_id": 0,
+      "amount": "11.00",
+      "receive": "164.776981652180",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-14T21:34:28.000000Z",
+      "updated_at": "2023-02-14T21:34:28.000000Z"
+    },
+    {
+      "uuid": "fd18f1a6-ec76-4312-bbfe-6f48d7abea7b",
+      "user_id": 184007,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "17.50",
+      "receive": "20.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-13T09:28:08.000000Z",
+      "updated_at": "2023-02-13T09:28:08.000000Z"
+    },
+    {
+      "uuid": "0014e830-a3e2-404e-a422-91ddfd28eac4",
+      "user_id": 52529,
+      "type": "sell",
+      "coin": "USDT",
+      "peer_id": 0,
+      "amount": "2.00",
+      "receive": "2.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-11T20:34:35.000000Z",
+      "updated_at": "2023-02-16T07:09:24.000000Z"
+    },
+    {
+      "uuid": "d356b2e5-8cb7-4d85-8da1-1b768f9ba5b1",
+      "user_id": 1085,
+      "type": "sell",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "1.20",
+      "receive": "600.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-11T13:16:54.000000Z",
+      "updated_at": "2023-02-11T13:16:54.000000Z"
+    },
+    {
+      "uuid": "58add267-2149-428c-94f4-cd540ff13254",
+      "user_id": 5816,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "5.00",
+      "receive": "6.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-09T00:42:42.000000Z",
+      "updated_at": "2023-02-09T00:42:42.000000Z"
+    },
+    {
+      "uuid": "558cb193-115d-46cd-905a-feae4817a2c6",
+      "user_id": 181168,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "19.00",
+      "receive": "20.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-08T00:42:04.000000Z",
+      "updated_at": "2023-02-16T02:03:34.000000Z"
+    },
+    {
+      "uuid": "48f710dc-1640-41ae-82b8-96d25acf2705",
+      "user_id": 52030,
+      "type": "sell",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "1.20",
+      "receive": "600.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-06T12:46:01.000000Z",
+      "updated_at": "2023-02-15T20:53:57.000000Z"
+    },
+    {
+      "uuid": "2c0fedbd-06a0-44ef-b139-59c283969a9c",
+      "user_id": 43658,
+      "type": "sell",
+      "coin": "QVAPAY",
+      "peer_id": 0,
+      "amount": "7.00",
+      "receive": "70.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2022-07-12T05:54:11.000000Z",
+      "updated_at": "2023-02-16T13:35:28.000000Z"
+    }
+  ],
+  "first_page_url": "https://qvapay.test/api/p2p/index?page=1",
+  "from": 1,
+  "last_page": 1,
+  "last_page_url": "https://qvapay.test/api/p2p/index?page=1",
+  "links": [
+    {
+      "url": null,
+      "label": "&laquo; Anterior",
+      "active": false
+    },
+    {
+      "url": "https://qvapay.test/api/p2p/index?page=1",
+      "label": "1",
+      "active": true
+    },
+    {
+      "url": null,
+      "label": "Siguiente &raquo;",
+      "active": false
+    }
+  ],
+  "next_page_url": null,
+  "path": "https://qvapay.test/api/p2p/index",
+  "per_page": 50,
+  "prev_page_url": null,
+  "to": 50,
+  "total": 50
+}
+GET
+Get My Offers
+https://api.qvapay.com/p2p/index?my=true
+Consulta las ultimas operaciones disponibles en el P2P.
+
+Se pueden pasar todos los parametros de filtrado y seleccion disponibles:
+
+type ['buy', 'sell']
+
+min
+
+max
+
+coin
+
+my (para motrar solo tus propias ofertas)
+
+vip (para mostrar las ofertas VIP)
+
+A tener en cuenta que este endpoint es púbico con información limitada segun el tipo de usuario.
+
+Guest: Anuncios con 8 minutos de atraso.
+Usuario nonKYC con 5 minutos de atraso.
+Usuario KYC con 2 minutos de atraso.
+Usuario GOLD en tiempo real.
+Usuario VIP en tiempo real.
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+HEADERS
+Accept
+application/json
+
+PARAMS
+my
+true
+
+Example Request
+Get Offers
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/p2p/index");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+200 OK
+Example Response
+Body
+Headers (12)
+View More
+json
+{
+  "current_page": 1,
+  "data": [
+    {
+      "uuid": "1d8ad0fa-d7ad-43d9-8d67-4669321a45f6",
+      "user_id": 184594,
+      "type": "sell",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "100.00",
+      "receive": "16000.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T18:33:08.000000Z",
+      "updated_at": "2023-04-14T20:02:04.000000Z"
+    },
+    {
+      "uuid": "24958dbe-8dca-4692-8b4d-817c4f005a1b",
+      "user_id": 1,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "940.00",
+      "receive": "940.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T18:32:47.000000Z",
+      "updated_at": "2023-02-16T18:32:47.000000Z"
+    },
+    {
+      "uuid": "52977ca9-5e00-4a6f-a2a0-0b41db64e485",
+      "user_id": 1,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "1000.00",
+      "receive": "1000.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T18:32:18.000000Z",
+      "updated_at": "2023-02-16T18:32:18.000000Z"
+    },
+    {
+      "uuid": "3e8ab87a-80a7-4467-a3b6-ee09062cbdff",
+      "user_id": 1,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "1000.00",
+      "receive": "1000.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T18:31:47.000000Z",
+      "updated_at": "2023-02-16T18:31:47.000000Z"
+    },
+    {
+      "uuid": "85ac348e-e537-4271-8511-6bc3133b4c35",
+      "user_id": 187465,
+      "type": "sell",
+      "coin": "TRX",
+      "peer_id": 0,
+      "amount": "5.00",
+      "receive": "72.166582330105",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T18:06:12.000000Z",
+      "updated_at": "2023-02-16T18:06:12.000000Z"
+    },
+    {
+      "uuid": "41ff24ae-04ed-487f-9ff0-fc9043b452a0",
+      "user_id": 183925,
+      "type": "buy",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "90.00",
+      "receive": "14490.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T18:04:43.000000Z",
+      "updated_at": "2023-02-16T18:04:43.000000Z"
+    },
+    {
+      "uuid": "4909f58b-4011-4eb1-8e12-395c1b1d06be",
+      "user_id": 29069,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "100.00",
+      "receive": "99.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T18:02:01.000000Z",
+      "updated_at": "2023-02-16T18:02:01.000000Z"
+    },
+    {
+      "uuid": "26d80e4b-d27c-49d5-951b-f25d87586325",
+      "user_id": 53675,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "100.00",
+      "receive": "100.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T17:56:20.000000Z",
+      "updated_at": "2023-02-16T17:56:20.000000Z"
+    },
+    {
+      "uuid": "573b6b5a-b8f6-4972-9f7e-be6a84e4558f",
+      "user_id": 53675,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "100.00",
+      "receive": "99.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T17:46:07.000000Z",
+      "updated_at": "2023-02-16T17:46:07.000000Z"
+    },
+    {
+      "uuid": "da9b9ed6-d970-456d-b874-b0f2e88268e7",
+      "user_id": 25688,
+      "type": "sell",
+      "coin": "USDT",
+      "peer_id": 0,
+      "amount": "400.00",
+      "receive": "400.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T17:40:35.000000Z",
+      "updated_at": "2023-02-16T17:40:35.000000Z"
+    },
+    {
+      "uuid": "42e95773-f406-4a84-b533-3200df026cf7",
+      "user_id": 184969,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "6.00",
+      "receive": "6.300000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T17:39:32.000000Z",
+      "updated_at": "2023-02-16T17:39:32.000000Z"
+    },
+    {
+      "uuid": "1bc3386e-32cc-4a99-ad74-8502c742aaea",
+      "user_id": 533,
+      "type": "sell",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "13.00",
+      "receive": "2145.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T16:58:51.000000Z",
+      "updated_at": "2023-02-16T16:58:51.000000Z"
+    },
+    {
+      "uuid": "09320f7a-7822-4dc0-bb06-f07b21d182a4",
+      "user_id": 533,
+      "type": "sell",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "15.00",
+      "receive": "2475.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T16:50:56.000000Z",
+      "updated_at": "2023-02-16T16:50:56.000000Z"
+    },
+    {
+      "uuid": "601ed82b-4644-4659-bff4-af54dc2377b9",
+      "user_id": 1078,
+      "type": "sell",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "2.00",
+      "receive": "330.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T16:47:52.000000Z",
+      "updated_at": "2023-02-16T16:47:52.000000Z"
+    },
+    {
+      "uuid": "22b008b8-b6d7-4156-916a-9b015f4788b7",
+      "user_id": 9908,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "20.00",
+      "receive": "20.500000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T16:15:36.000000Z",
+      "updated_at": "2023-02-16T16:15:36.000000Z"
+    },
+    {
+      "uuid": "f6e82282-48b8-408c-91f1-8de76048319c",
+      "user_id": 184969,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "5.00",
+      "receive": "5.200000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T16:12:52.000000Z",
+      "updated_at": "2023-02-16T16:12:52.000000Z"
+    },
+    {
+      "uuid": "e833285e-fc9e-4b94-a138-279854767c4a",
+      "user_id": 5912,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "100.00",
+      "receive": "102.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T15:53:23.000000Z",
+      "updated_at": "2023-02-16T16:07:33.000000Z"
+    },
+    {
+      "uuid": "78e799be-7ead-4a0f-8ce4-8acaa8b5717c",
+      "user_id": 3822,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "100.00",
+      "receive": "100.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T15:45:19.000000Z",
+      "updated_at": "2023-02-16T15:45:19.000000Z"
+    },
+    {
+      "uuid": "97d9803c-1b10-4f52-aef5-0d437000d9ce",
+      "user_id": 762,
+      "type": "buy",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "50.00",
+      "receive": "8000.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T15:29:10.000000Z",
+      "updated_at": "2023-02-16T15:29:10.000000Z"
+    },
+    {
+      "uuid": "fd711c9b-423f-46c6-ab99-dba08cfaa87f",
+      "user_id": 184969,
+      "type": "sell",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "1.00",
+      "receive": "170.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T14:53:01.000000Z",
+      "updated_at": "2023-02-16T14:53:01.000000Z"
+    },
+    {
+      "uuid": "fc83b73f-b00a-4c51-bd41-bff372dfdb12",
+      "user_id": 5444,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "20.00",
+      "receive": "20.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T14:33:31.000000Z",
+      "updated_at": "2023-02-16T14:33:31.000000Z"
+    },
+    {
+      "uuid": "e11e351b-f16a-4d09-9db3-1620f1e304d9",
+      "user_id": 5444,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "50.00",
+      "receive": "50.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T14:32:01.000000Z",
+      "updated_at": "2023-02-16T14:32:01.000000Z"
+    },
+    {
+      "uuid": "5b17f700-34c8-4ce3-a8f1-d013cff851ed",
+      "user_id": 5444,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "100.00",
+      "receive": "100.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T14:31:16.000000Z",
+      "updated_at": "2023-02-16T14:31:16.000000Z"
+    },
+    {
+      "uuid": "81716d05-be4f-4b52-bde9-f445196b669a",
+      "user_id": 5444,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "150.00",
+      "receive": "150.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T14:30:38.000000Z",
+      "updated_at": "2023-02-16T14:30:38.000000Z"
+    },
+    {
+      "uuid": "7ff5c855-972f-4df0-af09-ded7fc24eb52",
+      "user_id": 5444,
+      "type": "buy",
+      "coin": "ETECSA",
+      "peer_id": 0,
+      "amount": "5.00",
+      "receive": "1000.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T14:28:08.000000Z",
+      "updated_at": "2023-02-16T14:28:08.000000Z"
+    },
+    {
+      "uuid": "a932eb2f-ae31-4650-9a9a-649bd3cdbe00",
+      "user_id": 3049,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "100.00",
+      "receive": "100.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T13:11:14.000000Z",
+      "updated_at": "2023-02-16T13:11:14.000000Z"
+    },
+    {
+      "uuid": "cbe05f28-67ca-40e7-8570-c2eac9e6ec25",
+      "user_id": 184969,
+      "type": "sell",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "2.00",
+      "receive": "330.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T12:16:07.000000Z",
+      "updated_at": "2023-02-16T12:16:07.000000Z"
+    },
+    {
+      "uuid": "44cb1dc4-0981-46eb-90de-d207af2ed01b",
+      "user_id": 184969,
+      "type": "buy",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "50.00",
+      "receive": "7950.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T12:15:00.000000Z",
+      "updated_at": "2023-02-16T12:15:00.000000Z"
+    },
+    {
+      "uuid": "1a7ee635-8fed-4ec9-90d4-bac18ec3a554",
+      "user_id": 183862,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "10.00",
+      "receive": "10.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T12:02:53.000000Z",
+      "updated_at": "2023-02-16T12:02:53.000000Z"
+    },
+    {
+      "uuid": "08f16dda-8371-4e68-8a94-35153e75b99d",
+      "user_id": 9908,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "20.00",
+      "receive": "20.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T11:37:18.000000Z",
+      "updated_at": "2023-02-16T11:37:18.000000Z"
+    },
+    {
+      "uuid": "ccf68eb4-9485-4465-922f-77e7ccdcb780",
+      "user_id": 21561,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "20.00",
+      "receive": "19.900000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T11:35:45.000000Z",
+      "updated_at": "2023-02-16T11:35:45.000000Z"
+    },
+    {
+      "uuid": "84cb180c-2270-43e0-85a6-9804f341007c",
+      "user_id": 183925,
+      "type": "buy",
+      "coin": "ETECSA",
+      "peer_id": 0,
+      "amount": "20.00",
+      "receive": "4400.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T10:46:28.000000Z",
+      "updated_at": "2023-02-16T10:46:28.000000Z"
+    },
+    {
+      "uuid": "96201fce-eab0-4964-a07f-22bbf3edd316",
+      "user_id": 183925,
+      "type": "buy",
+      "coin": "ETECSA",
+      "peer_id": 0,
+      "amount": "15.00",
+      "receive": "3300.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T10:45:46.000000Z",
+      "updated_at": "2023-02-16T10:45:46.000000Z"
+    },
+    {
+      "uuid": "50017f37-a9c4-4541-84dc-5d5483fc5127",
+      "user_id": 183925,
+      "type": "buy",
+      "coin": "ETECSA",
+      "peer_id": 0,
+      "amount": "5.00",
+      "receive": "1100.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T10:44:38.000000Z",
+      "updated_at": "2023-02-16T10:44:38.000000Z"
+    },
+    {
+      "uuid": "54bdc336-4f15-4b36-9f90-2b310ab93bc8",
+      "user_id": 2242,
+      "type": "buy",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "30.00",
+      "receive": "4740.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T10:41:23.000000Z",
+      "updated_at": "2023-02-16T10:41:23.000000Z"
+    },
+    {
+      "uuid": "af993170-67ed-40a2-a2b8-a40fffa2f1f8",
+      "user_id": 2242,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "100.00",
+      "receive": "100.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T10:40:45.000000Z",
+      "updated_at": "2023-02-16T10:40:45.000000Z"
+    },
+    {
+      "uuid": "6b7419fb-fbef-43ed-aae6-8f3c18497026",
+      "user_id": 23869,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "50.00",
+      "receive": "50.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T06:54:55.000000Z",
+      "updated_at": "2023-02-16T06:54:55.000000Z"
+    },
+    {
+      "uuid": "ab525ae8-ebe3-4d6f-b8c0-d9d645b107d9",
+      "user_id": 183049,
+      "type": "buy",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "275.00",
+      "receive": "275.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T04:02:33.000000Z",
+      "updated_at": "2023-02-16T04:02:33.000000Z"
+    },
+    {
+      "uuid": "a9f9b165-3b53-443b-a3b1-f4c1581861a3",
+      "user_id": 55699,
+      "type": "buy",
+      "coin": "ETECSA",
+      "peer_id": 0,
+      "amount": "19.00",
+      "receive": "3875.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T03:24:35.000000Z",
+      "updated_at": "2023-02-16T03:24:35.000000Z"
+    },
+    {
+      "uuid": "a0c35a90-2e5e-46cb-aaa3-eceaf7fd63b9",
+      "user_id": 55699,
+      "type": "buy",
+      "coin": "ETECSA",
+      "peer_id": 0,
+      "amount": "10.00",
+      "receive": "1920.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-16T03:23:31.000000Z",
+      "updated_at": "2023-02-16T03:23:31.000000Z"
+    },
+    {
+      "uuid": "af66ef84-031b-40b5-a501-896549c9907f",
+      "user_id": 5533,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "8.50",
+      "receive": "8.850000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-15T21:31:39.000000Z",
+      "updated_at": "2023-02-15T21:31:39.000000Z"
+    },
+    {
+      "uuid": "daea060d-c33e-4104-99cc-0e069a2cc0d1",
+      "user_id": 16674,
+      "type": "sell",
+      "coin": "RevoluPay",
+      "peer_id": 0,
+      "amount": "32.00",
+      "receive": "30.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-15T19:46:45.000000Z",
+      "updated_at": "2023-02-15T19:46:45.000000Z"
+    },
+    {
+      "uuid": "5083ec79-dc6b-4d88-9d4c-36eaeed9c08d",
+      "user_id": 187595,
+      "type": "sell",
+      "coin": "TRX",
+      "peer_id": 0,
+      "amount": "11.00",
+      "receive": "164.776981652180",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-14T21:34:28.000000Z",
+      "updated_at": "2023-02-14T21:34:28.000000Z"
+    },
+    {
+      "uuid": "fd18f1a6-ec76-4312-bbfe-6f48d7abea7b",
+      "user_id": 184007,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "17.50",
+      "receive": "20.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-13T09:28:08.000000Z",
+      "updated_at": "2023-02-13T09:28:08.000000Z"
+    },
+    {
+      "uuid": "0014e830-a3e2-404e-a422-91ddfd28eac4",
+      "user_id": 52529,
+      "type": "sell",
+      "coin": "USDT",
+      "peer_id": 0,
+      "amount": "2.00",
+      "receive": "2.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-11T20:34:35.000000Z",
+      "updated_at": "2023-02-16T07:09:24.000000Z"
+    },
+    {
+      "uuid": "d356b2e5-8cb7-4d85-8da1-1b768f9ba5b1",
+      "user_id": 1085,
+      "type": "sell",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "1.20",
+      "receive": "600.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-11T13:16:54.000000Z",
+      "updated_at": "2023-02-11T13:16:54.000000Z"
+    },
+    {
+      "uuid": "58add267-2149-428c-94f4-cd540ff13254",
+      "user_id": 5816,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "5.00",
+      "receive": "6.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-09T00:42:42.000000Z",
+      "updated_at": "2023-02-09T00:42:42.000000Z"
+    },
+    {
+      "uuid": "558cb193-115d-46cd-905a-feae4817a2c6",
+      "user_id": 181168,
+      "type": "sell",
+      "coin": "BANK_MLC",
+      "peer_id": 0,
+      "amount": "19.00",
+      "receive": "20.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-08T00:42:04.000000Z",
+      "updated_at": "2023-02-16T02:03:34.000000Z"
+    },
+    {
+      "uuid": "48f710dc-1640-41ae-82b8-96d25acf2705",
+      "user_id": 52030,
+      "type": "sell",
+      "coin": "BANK_CUP",
+      "peer_id": 0,
+      "amount": "1.20",
+      "receive": "600.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2023-02-06T12:46:01.000000Z",
+      "updated_at": "2023-02-15T20:53:57.000000Z"
+    },
+    {
+      "uuid": "2c0fedbd-06a0-44ef-b139-59c283969a9c",
+      "user_id": 43658,
+      "type": "sell",
+      "coin": "QVAPAY",
+      "peer_id": 0,
+      "amount": "7.00",
+      "receive": "70.000000000000",
+      "only_kyc": 0,
+      "private": 0,
+      "status": "open",
+      "created_at": "2022-07-12T05:54:11.000000Z",
+      "updated_at": "2023-02-16T13:35:28.000000Z"
+    }
+  ],
+  "first_page_url": "https://qvapay.test/api/p2p/index?page=1",
+  "from": 1,
+  "last_page": 1,
+  "last_page_url": "https://qvapay.test/api/p2p/index?page=1",
+  "links": [
+    {
+      "url": null,
+      "label": "&laquo; Anterior",
+      "active": false
+    },
+    {
+      "url": "https://qvapay.test/api/p2p/index?page=1",
+      "label": "1",
+      "active": true
+    },
+    {
+      "url": null,
+      "label": "Siguiente &raquo;",
+      "active": false
+    }
+  ],
+  "next_page_url": null,
+  "path": "https://qvapay.test/api/p2p/index",
+  "per_page": 50,
+  "prev_page_url": null,
+  "to": 50,
+  "total": 50
+}
+POST
+Create a P2P Offer
+https://api.qvapay.com/p2p/create
+This API endpoint allows you to create a peer-to-peer transaction. It sends an HTTP POST request to the specified URL: https://api.qvapay.com/p2p/create.
+
+The response received from the last execution of this request had a status code of 201. The response body included the following information:
+
+View More
+Plain Text
+{
+    "msg": "",
+    "p2p": {
+        "uuid": "",
+        "type": "",
+        "coin": "",
+        "amount": 0,
+        "receive": 0,
+        "only_vip": 0,
+        "only_kyc": 0,
+        "private": 0,
+        "status": "",
+        "updated_at": "",
+        "created_at": ""
+    }
+}
+The uuid field represents the unique identifier of the transaction. The type field indicates the type of the transaction. The coin field specifies the type of cryptocurrency involved in the transaction. The amount field represents the amount of cryptocurrency being sent. The receive field indicates the amount of cryptocurrency being received. The only_vip, only_kyc, and private fields are boolean values that determine certain restrictions on the transaction. The status field represents the current status of the transaction. The updated_at and created_at fields indicate the timestamps of when the transaction was last updated and created, respectively.
+
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+HEADERS
+Accept
+application/json
+
+Body
+raw (json)
+View More
+json
+{
+    "type": "sell",
+    "coin": 108,
+    "amount": 70,
+    "receive": 70,
+    "details": [
+        {
+            "name": "Nombre y Apellidos",
+            "value": "Wilson Soto"
+        },
+        {
+            "name": "Nro de tarjeta",
+            "value": "9760039001179455"
+        },
+        {
+            "name": "Nro de celular",
+            "value": "52497111"
+        }
+    ],
+    "only_kyc": 1,
+    "private": 0,
+    "promote_offer": 0,
+    "only_vip": 1,
+    "message": "Probando Probando",
+    "webhook": "https://eoqjcwzqs1pph8c.m.pipedream.net"
+}
+Example Request
+BUY BANK P2P Offer
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Post, "https://api.qvapay.com/p2p/create");
+request.Headers.Add("Accept", "application/json");
+var content = new StringContent("{\n    \"type\": \"buy\",\n    \"coin\": 33,\n    \"amount\": 10,\n    \"receive\": 11,\n    \"details\": \"[{\\\"name\\\": \\\"Nombre y Apellidos\\\", \\\"type\\\": \\\"text\\\", \\\"value\\\": \\\"Nombre y apellidos\\\"}, {\\\"name\\\": \\\"Nombre del Banco\\\", \\\"type\\\": \\\"text\\\", \\\"value\\\": \\\"Nombre del Banco\\\"}, {\\\"name\\\": \\\"Nro de Cuenta\\\", \\\"type\\\": \\\"text\\\", \\\"value\\\": \\\"Bro de cuenta\\\"}, {\\\"name\\\": \\\"Nro de Ruta o ACH\\\", \\\"type\\\": \\\"text\\\", \\\"value\\\": \\\"Ruta ACH\\\"}, {\\\"name\\\": \\\"Nro de telefono\\\", \\\"type\\\": \\\"text\\\", \\\"value\\\": \\\"123412124\\\"}]\",\n    \"only_kyc\": 1,\n    \"private\": 1,\n    \"promote_offer\": 1\n}", null, "text/plain");
+request.Content = content;
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+201 Created
+Example Response
+Body
+Headers (10)
+View More
+json
+{
+  "msg": "Succesfull created",
+  "p2p": {
+    "uuid": "242e1b62-0e96-4c9f-ae2a-1b22b6e84baa",
+    "user_id": 54011,
+    "type": "buy",
+    "coin": "BANK",
+    "amount": 10,
+    "receive": 11,
+    "only_kyc": 1,
+    "private": 1,
+    "status": "open",
+    "updated_at": "2023-10-05T05:20:34.000000Z",
+    "created_at": "2023-10-05T05:20:34.000000Z"
+  }
+}
+POST
+Apply to a P2P Offer
+https://api.qvapay.com/p2p/6af058b8-c15c-4891-bb51-e0eb1e7a7aa9/apply
+AUTHORIZATION
+Bearer Token
+Token
+<token>
+
+HEADERS
+Accept
+application/json
+
+Example Request
+Apply to a P2P Offer
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Post, "https://api.qvapay.com/p2p/6af058b8-c15c-4891-bb51-e0eb1e7a7aa9/apply");
+request.Headers.Add("Accept", "application/json");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+201 Created
+Example Response
+Body
+Headers (10)
+View More
+json
+{
+  "msg": "Succesfull applied",
+  "p2p": {
+    "id": 20850,
+    "uuid": "6af058b8-c15c-4891-bb51-e0eb1e7a7aa9",
+    "user_id": 3822,
+    "type": "buy",
+    "coin": "ETECSA",
+    "peer_id": 0,
+    "amount": "10.00",
+    "receive": "2200.000000000000",
+    "only_kyc": 0,
+    "status": "open",
+    "created_at": "2023-02-16T16:46:32.000000Z",
+    "updated_at": "2023-02-16T16:46:32.000000Z"
+  }
+}
+POST
+Rate a P2P Offer
+https://api.qvapay.com/p2p/2651fd07-0cc1-430b-9110-fe64abc3861b/rate
+AUTHORIZATION
+Bearer Token
+Token
+HEADERS
+Accept
+application/json
+
+Body
+raw (json)
+json
+{
+    "rating": 4.9,
+    "comment": "Comment"
+}
+Example Request
+Apply to a P2P Offer
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Post, "https://api.qvapay.com/p2p/6af058b8-c15c-4891-bb51-e0eb1e7a7aa9/apply");
+request.Headers.Add("Accept", "application/json");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+201 Created
+Example Response
+Body
+Headers (10)
+View More
+json
+{
+  "msg": "Succesfull applied",
+  "p2p": {
+    "id": 20850,
+    "uuid": "6af058b8-c15c-4891-bb51-e0eb1e7a7aa9",
+    "user_id": 3822,
+    "type": "buy",
+    "coin": "ETECSA",
+    "peer_id": 0,
+    "amount": "10.00",
+    "receive": "2200.000000000000",
+    "only_kyc": 0,
+    "status": "open",
+    "created_at": "2023-02-16T16:46:32.000000Z",
+    "updated_at": "2023-02-16T16:46:32.000000Z"
+  }
+}
+POST
+Cancel a P2P Offer
+https://api.qvapay.com/p2p/7b2f32a0-73c9-4b7e-a04c-f957a5b8769f/cancel
+AUTHORIZATION
+Bearer Token
+Token
+<token>
+
+HEADERS
+Accept
+application/json
+
+Example Request
+Cancel a P2P Offer
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Post, "https://api.qvapay.com/p2p/7b2f32a0-73c9-4b7e-a04c-f957a5b8769f/cancel");
+request.Headers.Add("Accept", "application/json");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+Example Response
+Body
+Headers (0)
+No response body
+This request doesn't return any response body
+POST
+Confirm Received
+https://api.qvapay.com/p2p/d81d74b9-e253-462d-a266-c85386698b94/received
+AUTHORIZATION
+Bearer Token
+Token
+HEADERS
+Accept
+application/json
+
+Example Request
+Confirm Received
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Post, "https://api.qvapay.com/p2p/d81d74b9-e253-462d-a266-c85386698b94/received");
+request.Headers.Add("Accept", "application/json");
+var content = new StringContent("", null, "text/plain");
+request.Content = content;
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+Example Response
+Body
+Headers (0)
+No response body
+This request doesn't return any response body
+User
+Obtener los datos principales del usuario autenticado.
+
+Payment Methods
+GET
+List Saved Payment Methods
+https://api.qvapay.com/user/payment-methods
+AUTHORIZATION
+Bearer Token
+Token
+Example Request
+List Saved Payment Methods
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/user/payment-methods");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+Example Response
+Body
+Headers (0)
+No response body
+This request doesn't return any response body
+Contacts
+GET
+Me Data Extended
+https://api.qvapay.com/user/extended
+Get extended user data like Ranking, Completed p2p operations and badges.
+
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+HEADERS
+Accept
+application/json
+
+Example Request
+Me Data Extended
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/user/extended");
+request.Headers.Add("Accept", "application/json");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+200 OK
+Example Response
+Body
+Headers (12)
+View More
+json
+{
+  "uuid": "a96a9e71-3d67-4a42-adc2-02a5d069fa24",
+  "username": "",
+  "name": "",
+  "lastname": "",
+  "email": "",
+  "two_factor_reset_code": null,
+  "bio": "",
+  "address": "",
+  "image": "profiles/eF5LI9xRrjUtzYEfGM6P9lFqKTCpB3FKGIhzxuiM.jpg",
+  "cover": "covers/CRNY1Gv5485f8BGqCNWP0l8FJ1E8o3aYFu5y0PU2.jpg",
+  "balance": "100",
+  "pending_balance": "0",
+  "satoshis": 2202,
+  "createdAt": "2021-01-12T01:21:50.000Z",
+  "updatedAt": "2025-08-16T19:29:21.000Z",
+  "phone": "",
+  "phone_verified": true,
+  "telegram": "",
+  "twitter": "",
+  "kyc": true,
+  "vip": true,
+  "golden_check": false,
+  "pin": 0,
+  "p2p_enabled": true,
+  "last_seen": "2025-08-16T19:29:21.000Z",
+  "telegram_id": "",
+  "telegram_chat_id": null,
+  "trustscore": 100,
+  "role": "",
+  "withdraws": [],
+  "KYC": {
+    "country": "CU",
+    "birthday": "1986-10-01T00:00:00.000Z",
+    "document_url": "",
+    "selfie_url": "",
+    "result": "passed",
+    "created_at": null,
+    "updated_at": "2025-03-17T17:08:05.000Z"
+  }
+}
+GET
+Me KYC Status
+https://api.qvapay.com/user/kyc
+Obtener el la entidad Me con los datos públicos y listado de últimas transacciones.
+
+(La entidad Me está sujeta a constantes cambios para adicionar información relevante al usuario consultado)
+
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+HEADERS
+Accept
+application/json
+
+Example Request
+Me KYC Status
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/user/kyc");
+request.Headers.Add("Accept", "application/json");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+Example Response
+Body
+Headers (0)
+No response body
+This request doesn't return any response body
+POST
+Me KYC Upload
+https://api.qvapay.com/user/kyc
+Obtener el la entidad Me con los datos públicos y listado de últimas transacciones.
+
+(La entidad Me está sujeta a constantes cambios para adicionar información relevante al usuario consultado)
+
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+HEADERS
+Accept
+application/json
+
+Body
+formdata
+picture_type
+document
+
+image
+Example Request
+Me KYC Upload
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Post, "https://api.qvapay.com/user/kyc");
+request.Headers.Add("Accept", "application/json");
+var content = new MultipartFormDataContent();
+content.Add(new StringContent("document"), "picture_type");
+content.Add(new StreamContent(File.OpenRead("/Users/erich/ead.png")), "image", "/Users/erich/ead.png");
+request.Content = content;
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+Example Response
+Body
+Headers (0)
+No response body
+This request doesn't return any response body
+PUT
+Me Data Update
+https://api.qvapay.com/user/update
+Actualizar los datos de la entidad User Las propiedades del objeto User están definidas (se van colocando más paulatinamente) en la ruta:
+
+GET /me
+
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+HEADERS
+Accept
+application/json
+
+Body
+raw (json)
+json
+{
+    "name": "Erich",
+    "lastname": "Garcia",
+    "bio": "Viva la libertad con Bitcoin",
+    "address": "1300 Jefferson St",
+    "country": "US",
+    "telegram": "@erichgarciacruz",
+    "twitter": "@erichgarciacruz"
+}
+Example Request
+me
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Put, "https://api.qvapay.com/me");
+request.Headers.Add("Accept", "application/json");
+var content = new StringContent("{\n    \"name\": \"Pedro Perez1\",\n    \"lastname\": \"st\",\n    \"bio\": \"svwb erberberb\",\n    \"logo\": \"\",\n    \"kyc\": 1,\n    \"username\": \"wpiuwe\",\n    \"email\": \"egc31@gmail.com\",\n    \"password\": \"CffasdKB73iTtzNJN\"\n}", null, "text/plain");
+request.Content = content;
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+201 Created
+Example Response
+Body
+Headers (12)
+json
+{
+  "uuid": "db1bd958-0ae2-4483-8a64-fb9cbe2eb228",
+  "username": "wpiuwe",
+  "name": "Pedro Perez1",
+  "lastname": "st",
+  "bio": "svwb erberberb",
+  "logo": "",
+  "balance": "0.00",
+  "kyc": 0
+}
+PUT
+Me Data Update Username
+https://api.qvapay.com/user/update/username
+Actualizar el nombre de usuario de su cuenta para reemplazarlo por otro no registrado.
+
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+HEADERS
+Accept
+application/json
+
+Body
+raw (json)
+json
+{
+    "username": "erich"
+}
+Example Request
+Me Data Update Username
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Put, "https://api.qvapay.com/user/update/username");
+request.Headers.Add("Accept", "application/json");
+var content = new StringContent("{\n    \"username\": \"erich\"\n}", null, "text/plain");
+request.Content = content;
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+Example Response
+Body
+Headers (0)
+No response body
+This request doesn't return any response body
+POST
+Me Avatar Update
+https://api.qvapay.com/user/avatar
+Actualizar los datos de la entidad User Las propiedades del objeto User están definidas (se van colocando más paulatinamente) en la ruta:
+
+GET /me
+
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+HEADERS
+Accept
+application/json
+
+Body
+formdata
+avatar
+Example Request
+Me Avatar Update
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Post, "https://api.qvapay.com/user/avatar");
+request.Headers.Add("Accept", "application/json");
+var content = new MultipartFormDataContent();
+content.Add(new StreamContent(File.OpenRead("/Users/erich/F4BT1M6WwAAGOEQ.jpeg")), "avatar", "/Users/erich/F4BT1M6WwAAGOEQ.jpeg");
+request.Content = content;
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+Example Response
+Body
+Headers (0)
+No response body
+This request doesn't return any response body
+POST
+User Search
+https://api.qvapay.com/user/search
+User Search
+This endpoint allows you to search for users based on a specific query.
+
+Request Body
+query (string) - The query to search for.
+Response
+Upon a successful search, the response will include an array of user objects with the following properties:
+
+uuid (string) - The unique identifier of the user.
+
+name (string) - The first name of the user.
+
+lastname (string) - The last name of the user.
+
+username (string) - The username of the user.
+
+kyc (boolean) - Indicates if the user has completed KYC (Know Your Customer) verification.
+
+golden_check (boolean) - Indicates if the user has a golden check status.
+
+image (string) - URL of the user's profile image.
+
+cover (string) - URL of the user's cover image.
+
+Example
+View More
+json
+[
+    {
+        "uuid": "",
+        "name": "",
+        "lastname": "",
+        "username": "",
+        "kyc": true,
+        "golden_check": true,
+        "image": "",
+        "cover": ""
+    }
+]
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+Body
+raw (json)
+json
+{
+    "query": "erich"
+}
+Example Request
+User Search
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Post, "https://api.qvapay.com/user/search");
+var content = new StringContent("{\n    \"query\": \"erich\"\n}", null, "text/plain");
+request.Content = content;
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+Example Response
+Body
+Headers (0)
+No response body
+This request doesn't return any response body
+GET
+User Referrals
+https://api.qvapay.com/user/referrals
+Obtener el la entidad Me con los datos públicos y listado de últimas transacciones.
+
+(La entidad Me está sujeta a constantes cambios para adicionar información relevante al usuario consultado)
+
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+HEADERS
+Accept
+application/json
+
+Example Request
+User Referrals
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/user/referrals");
+request.Headers.Add("Accept", "application/json");
+var content = new StringContent("", null, "text/plain");
+request.Content = content;
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+Example Response
+Body
+Headers (0)
+No response body
+This request doesn't return any response body
+GET
+User Gold Status
+https://api.qvapay.com/user/gold
+Obtener el la entidad Me con los datos públicos y listado de últimas transacciones.
+
+(La entidad Me está sujeta a constantes cambios para adicionar información relevante al usuario consultado)
+
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+HEADERS
+Accept
+application/json
+
+Example Request
+User Gold Status
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/user/gold");
+request.Headers.Add("Accept", "application/json");
+var content = new StringContent("", null, "text/plain");
+request.Content = content;
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+Example Response
+Body
+Headers (0)
+No response body
+This request doesn't return any response body
+GET
+Latest Users Sent Transaction
+https://api.qvapay.com/transaction/latestusers
+Obtener las últimas 30 transacciones del usuario autenticado. Se puede filtrar el resultado mediante los parámetros:
+
+start: date_time
+end: date_time
+status: [paid, pending, cancelled]
+remote_id: string
+description: string
+
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+HEADERS
+Accept
+application/json
+
+Example Request
+User Transactions
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/transactions");
+request.Headers.Add("Accept", "application/json");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+200 OK
+Example Response
+Body
+Headers (14)
+View More
+json
+[
+  {
+    "uuid": "2f76f05e-2cda-4042-9e97-3777745d740e",
+    "app_id": 0,
+    "amount": "-1",
+    "description": "Pollo por pescado",
+    "remote_id": "QVAPAY_APP",
+    "status": "paid",
+    "created_at": "2021-09-06T03:00:47.000000Z",
+    "updated_at": "2021-09-06T03:01:05.000000Z",
+    "logo": "apps/qvapay.jpg",
+    "app": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "paid_by": {
+      "uuid": "18da6b91-b13e-4ffa-a932-bac1a8b113c3",
+      "username": "natashatenorioraga",
+      "name": "Natasha Tenorio",
+      "lastname": "",
+      "bio": "",
+      "logo": "",
+      "kyc": 0
+    },
+    "app_owner": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "owner": {
+      "uuid": "796a9e01-3d67-4a42-9dc2-02a5d069fa23",
+      "username": "erichgarciacruz1",
+      "name": "Erich",
+      "lastname": "Garcia Cruz",
+      "bio": "Bitcoin lover",
+      "logo": "profiles/zV93I93mbWrZo0fKgwGcpWFWDn41UYfAgj7wNCbf.jpg",
+      "kyc": 1
+    },
+    "wallet": null,
+    "servicebuy": null
+  },
+  {
+    "uuid": "df6bb2b0-7086-4baf-8ad7-7ab084a7fb2d",
+    "app_id": 0,
+    "amount": "-100.5",
+    "description": "Pollo por pescado",
+    "remote_id": "QVAPAY_APP",
+    "status": "paid",
+    "created_at": "2021-09-06T02:28:19.000000Z",
+    "updated_at": "2021-09-06T02:57:32.000000Z",
+    "logo": "apps/qvapay.jpg",
+    "app": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "paid_by": {
+      "uuid": "18da6b91-b13e-4ffa-a932-bac1a8b113c3",
+      "username": "natashatenorioraga",
+      "name": "Natasha Tenorio",
+      "lastname": "",
+      "bio": "",
+      "logo": "",
+      "kyc": 0
+    },
+    "app_owner": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "owner": {
+      "uuid": "796a9e01-3d67-4a42-9dc2-02a5d069fa23",
+      "username": "erichgarciacruz1",
+      "name": "Erich",
+      "lastname": "Garcia Cruz",
+      "bio": "Bitcoin lover",
+      "logo": "profiles/zV93I93mbWrZo0fKgwGcpWFWDn41UYfAgj7wNCbf.jpg",
+      "kyc": 1
+    },
+    "wallet": null,
+    "servicebuy": null
+  },
+  {
+    "uuid": "bca7b064-adbb-4b62-b3a4-3073b3e75781",
+    "app_id": 0,
+    "amount": "10.00",
+    "description": "AUTO_RECARGA",
+    "remote_id": "2",
+    "status": "paid",
+    "created_at": "2021-08-28T21:13:38.000000Z",
+    "updated_at": "2021-08-28T21:41:41.000000Z",
+    "logo": "apps/qvapay.jpg",
+    "app": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "paid_by": {
+      "username": "QvaPay",
+      "name": "QvaPay",
+      "logo": "apps/qvapay.jpg"
+    },
+    "app_owner": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "owner": {
+      "uuid": "18da6b91-b13e-4ffa-a932-bac1a8b113c3",
+      "username": "natashatenorioraga",
+      "name": "Natasha Tenorio",
+      "lastname": "",
+      "bio": "",
+      "logo": "",
+      "kyc": 0
+    },
+    "wallet": {
+      "transaction_id": 3567,
+      "invoice_id": "",
+      "wallet_type": "BUSDBSC",
+      "wallet": "0x1292b79a8211fee6a7f0b7202ab7159962990c2a",
+      "value": "10.09934086",
+      "received": "10.09934086",
+      "txid": "0x6ee9ad39589306d84539f0b5e601b4d40286b14ee373423b7945257a1b2bd75f",
+      "status": "paid",
+      "created_at": "2021-08-28T21:13:41.000000Z",
+      "updated_at": "2021-08-28T21:41:40.000000Z"
+    },
+    "servicebuy": null
+  },
+  {
+    "uuid": "48297689-edb9-40bd-8ce0-38eee9523f9f",
+    "app_id": 0,
+    "amount": "-20.8",
+    "description": "Mobile TOP_UP",
+    "remote_id": "35415355149081",
+    "status": "paid",
+    "created_at": "2021-08-05T00:32:45.000000Z",
+    "updated_at": "2021-08-05T00:32:56.000000Z",
+    "logo": "services/JF7YQRqeCtzX3c3vVkDR8d20kgzEKfSGjmnXoWl9.png",
+    "app": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "paid_by": {
+      "uuid": "18da6b91-b13e-4ffa-a932-bac1a8b113c3",
+      "username": "natashatenorioraga",
+      "name": "Natasha Tenorio",
+      "lastname": "",
+      "bio": "",
+      "logo": "",
+      "kyc": 0
+    },
+    "app_owner": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "owner": {
+      "uuid": "796a9e01-3d67-4a42-9dc2-02a5d069fa23",
+      "username": "erichgarciacruz1",
+      "name": "Erich",
+      "lastname": "Garcia Cruz",
+      "bio": "Bitcoin lover",
+      "logo": "profiles/zV93I93mbWrZo0fKgwGcpWFWDn41UYfAgj7wNCbf.jpg",
+      "kyc": 1
+    },
+    "wallet": null,
+    "servicebuy": {
+      "service_id": 14,
+      "service_data": "{\"phone\":\"5355149081\",\"confirmationCode\":3541}",
+      "status": "paid",
+      "amount": "20.80",
+      "transaction_id": 3541,
+      "created_at": "2021-08-05T00:32:56.000000Z",
+      "updated_at": "2021-08-05T00:32:56.000000Z",
+      "service": {
+        "uuid": "fc93b94a-196f-4edf-9643-b443d6194a0d",
+        "name": "Tarjeta App Store",
+        "lead": "$ 10",
+        "price": "10.50",
+        "logo": "services/JF7YQRqeCtzX3c3vVkDR8d20kgzEKfSGjmnXoWl9.png",
+        "sublogo": "services/CAtfDQF6vCSfaAclUVh0H4fokf44EO8v3dlammbB.png",
+        "desc": "Para todo lo relacionado con Apple: productos, accesorios, aplicaciones, juegos, música, películas, programas de televisión, iCloud y más."
+      }
+    }
+  },
+  {
+    "uuid": "c67af7d0-a699-4e50-82d5-cfeaa9ed2b7d",
+    "app_id": 0,
+    "amount": "-20.8",
+    "description": "Mobile TOP_UP",
+    "remote_id": "35395355149081",
+    "status": "paid",
+    "created_at": "2021-08-05T00:30:48.000000Z",
+    "updated_at": "2021-08-05T00:31:02.000000Z",
+    "logo": "services/JF7YQRqeCtzX3c3vVkDR8d20kgzEKfSGjmnXoWl9.png",
+    "app": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "paid_by": {
+      "uuid": "18da6b91-b13e-4ffa-a932-bac1a8b113c3",
+      "username": "natashatenorioraga",
+      "name": "Natasha Tenorio",
+      "lastname": "",
+      "bio": "",
+      "logo": "",
+      "kyc": 0
+    },
+    "app_owner": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "owner": {
+      "uuid": "796a9e01-3d67-4a42-9dc2-02a5d069fa23",
+      "username": "erichgarciacruz1",
+      "name": "Erich",
+      "lastname": "Garcia Cruz",
+      "bio": "Bitcoin lover",
+      "logo": "profiles/zV93I93mbWrZo0fKgwGcpWFWDn41UYfAgj7wNCbf.jpg",
+      "kyc": 1
+    },
+    "wallet": null,
+    "servicebuy": {
+      "service_id": 14,
+      "service_data": "{\"phone\":\"5355149081\",\"confirmationCode\":3539}",
+      "status": "paid",
+      "amount": "20.80",
+      "transaction_id": 3539,
+      "created_at": "2021-08-05T00:31:02.000000Z",
+      "updated_at": "2021-08-05T00:31:02.000000Z",
+      "service": {
+        "uuid": "fc93b94a-196f-4edf-9643-b443d6194a0d",
+        "name": "Tarjeta App Store",
+        "lead": "$ 10",
+        "price": "10.50",
+        "logo": "services/JF7YQRqeCtzX3c3vVkDR8d20kgzEKfSGjmnXoWl9.png",
+        "sublogo": "services/CAtfDQF6vCSfaAclUVh0H4fokf44EO8v3dlammbB.png",
+        "desc": "Para todo lo relacionado con Apple: productos, accesorios, aplicaciones, juegos, música, películas, programas de televisión, iCloud y más."
+      }
+    }
+  },
+  {
+    "uuid": "a904924f-1fb7-4f8f-b83f-b6d160d862b6",
+    "app_id": 0,
+    "amount": "0.05",
+    "description": "REFERAL erichgarciacruz",
+    "remote_id": "3446",
+    "status": "paid",
+    "created_at": "2021-04-11T02:57:30.000000Z",
+    "updated_at": "2021-04-11T02:57:33.000000Z",
+    "logo": "apps/qvapay.jpg",
+    "app": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "paid_by": {
+      "username": "QvaPay",
+      "name": "QvaPay",
+      "logo": "apps/qvapay.jpg"
+    },
+    "app_owner": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "owner": {
+      "uuid": "18da6b91-b13e-4ffa-a932-bac1a8b113c3",
+      "username": "natashatenorioraga",
+      "name": "Natasha Tenorio",
+      "lastname": "",
+      "bio": "",
+      "logo": "",
+      "kyc": 0
+    },
+    "wallet": null,
+    "servicebuy": null
+  },
+  {
+    "uuid": "a1073148-880e-4dff-91fc-3c10f7dcc4bb",
+    "app_id": 0,
+    "amount": "1.00",
+    "description": "qwdqwd",
+    "remote_id": "",
+    "status": "paid",
+    "created_at": "2021-03-17T03:48:04.000000Z",
+    "updated_at": "2021-03-17T03:48:22.000000Z",
+    "logo": "profiles/zV93I93mbWrZo0fKgwGcpWFWDn41UYfAgj7wNCbf.jpg",
+    "app": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "paid_by": {
+      "uuid": "796a9e01-3d67-4a42-9dc2-02a5d069fa23",
+      "username": "erichgarciacruz1",
+      "name": "Erich",
+      "lastname": "Garcia Cruz",
+      "bio": "Bitcoin lover",
+      "logo": "profiles/zV93I93mbWrZo0fKgwGcpWFWDn41UYfAgj7wNCbf.jpg",
+      "kyc": 1
+    },
+    "app_owner": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "owner": {
+      "uuid": "18da6b91-b13e-4ffa-a932-bac1a8b113c3",
+      "username": "natashatenorioraga",
+      "name": "Natasha Tenorio",
+      "lastname": "",
+      "bio": "",
+      "logo": "",
+      "kyc": 0
+    },
+    "wallet": null,
+    "servicebuy": null
+  }
+]
+GET
+Latest Users Sent Transaction Copy
+https://api.qvapay.com/transaction/latestusers
+Obtener las últimas 30 transacciones del usuario autenticado. Se puede filtrar el resultado mediante los parámetros:
+
+start: date_time
+end: date_time
+status: [paid, pending, cancelled]
+remote_id: string
+description: string
+
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+HEADERS
+Accept
+application/json
+
+Example Request
+User Transactions
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/transactions");
+request.Headers.Add("Accept", "application/json");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+200 OK
+Example Response
+Body
+Headers (14)
+View More
+json
+[
+  {
+    "uuid": "2f76f05e-2cda-4042-9e97-3777745d740e",
+    "app_id": 0,
+    "amount": "-1",
+    "description": "Pollo por pescado",
+    "remote_id": "QVAPAY_APP",
+    "status": "paid",
+    "created_at": "2021-09-06T03:00:47.000000Z",
+    "updated_at": "2021-09-06T03:01:05.000000Z",
+    "logo": "apps/qvapay.jpg",
+    "app": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "paid_by": {
+      "uuid": "18da6b91-b13e-4ffa-a932-bac1a8b113c3",
+      "username": "natashatenorioraga",
+      "name": "Natasha Tenorio",
+      "lastname": "",
+      "bio": "",
+      "logo": "",
+      "kyc": 0
+    },
+    "app_owner": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "owner": {
+      "uuid": "796a9e01-3d67-4a42-9dc2-02a5d069fa23",
+      "username": "erichgarciacruz1",
+      "name": "Erich",
+      "lastname": "Garcia Cruz",
+      "bio": "Bitcoin lover",
+      "logo": "profiles/zV93I93mbWrZo0fKgwGcpWFWDn41UYfAgj7wNCbf.jpg",
+      "kyc": 1
+    },
+    "wallet": null,
+    "servicebuy": null
+  },
+  {
+    "uuid": "df6bb2b0-7086-4baf-8ad7-7ab084a7fb2d",
+    "app_id": 0,
+    "amount": "-100.5",
+    "description": "Pollo por pescado",
+    "remote_id": "QVAPAY_APP",
+    "status": "paid",
+    "created_at": "2021-09-06T02:28:19.000000Z",
+    "updated_at": "2021-09-06T02:57:32.000000Z",
+    "logo": "apps/qvapay.jpg",
+    "app": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "paid_by": {
+      "uuid": "18da6b91-b13e-4ffa-a932-bac1a8b113c3",
+      "username": "natashatenorioraga",
+      "name": "Natasha Tenorio",
+      "lastname": "",
+      "bio": "",
+      "logo": "",
+      "kyc": 0
+    },
+    "app_owner": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "owner": {
+      "uuid": "796a9e01-3d67-4a42-9dc2-02a5d069fa23",
+      "username": "erichgarciacruz1",
+      "name": "Erich",
+      "lastname": "Garcia Cruz",
+      "bio": "Bitcoin lover",
+      "logo": "profiles/zV93I93mbWrZo0fKgwGcpWFWDn41UYfAgj7wNCbf.jpg",
+      "kyc": 1
+    },
+    "wallet": null,
+    "servicebuy": null
+  },
+  {
+    "uuid": "bca7b064-adbb-4b62-b3a4-3073b3e75781",
+    "app_id": 0,
+    "amount": "10.00",
+    "description": "AUTO_RECARGA",
+    "remote_id": "2",
+    "status": "paid",
+    "created_at": "2021-08-28T21:13:38.000000Z",
+    "updated_at": "2021-08-28T21:41:41.000000Z",
+    "logo": "apps/qvapay.jpg",
+    "app": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "paid_by": {
+      "username": "QvaPay",
+      "name": "QvaPay",
+      "logo": "apps/qvapay.jpg"
+    },
+    "app_owner": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "owner": {
+      "uuid": "18da6b91-b13e-4ffa-a932-bac1a8b113c3",
+      "username": "natashatenorioraga",
+      "name": "Natasha Tenorio",
+      "lastname": "",
+      "bio": "",
+      "logo": "",
+      "kyc": 0
+    },
+    "wallet": {
+      "transaction_id": 3567,
+      "invoice_id": "",
+      "wallet_type": "BUSDBSC",
+      "wallet": "0x1292b79a8211fee6a7f0b7202ab7159962990c2a",
+      "value": "10.09934086",
+      "received": "10.09934086",
+      "txid": "0x6ee9ad39589306d84539f0b5e601b4d40286b14ee373423b7945257a1b2bd75f",
+      "status": "paid",
+      "created_at": "2021-08-28T21:13:41.000000Z",
+      "updated_at": "2021-08-28T21:41:40.000000Z"
+    },
+    "servicebuy": null
+  },
+  {
+    "uuid": "48297689-edb9-40bd-8ce0-38eee9523f9f",
+    "app_id": 0,
+    "amount": "-20.8",
+    "description": "Mobile TOP_UP",
+    "remote_id": "35415355149081",
+    "status": "paid",
+    "created_at": "2021-08-05T00:32:45.000000Z",
+    "updated_at": "2021-08-05T00:32:56.000000Z",
+    "logo": "services/JF7YQRqeCtzX3c3vVkDR8d20kgzEKfSGjmnXoWl9.png",
+    "app": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "paid_by": {
+      "uuid": "18da6b91-b13e-4ffa-a932-bac1a8b113c3",
+      "username": "natashatenorioraga",
+      "name": "Natasha Tenorio",
+      "lastname": "",
+      "bio": "",
+      "logo": "",
+      "kyc": 0
+    },
+    "app_owner": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "owner": {
+      "uuid": "796a9e01-3d67-4a42-9dc2-02a5d069fa23",
+      "username": "erichgarciacruz1",
+      "name": "Erich",
+      "lastname": "Garcia Cruz",
+      "bio": "Bitcoin lover",
+      "logo": "profiles/zV93I93mbWrZo0fKgwGcpWFWDn41UYfAgj7wNCbf.jpg",
+      "kyc": 1
+    },
+    "wallet": null,
+    "servicebuy": {
+      "service_id": 14,
+      "service_data": "{\"phone\":\"5355149081\",\"confirmationCode\":3541}",
+      "status": "paid",
+      "amount": "20.80",
+      "transaction_id": 3541,
+      "created_at": "2021-08-05T00:32:56.000000Z",
+      "updated_at": "2021-08-05T00:32:56.000000Z",
+      "service": {
+        "uuid": "fc93b94a-196f-4edf-9643-b443d6194a0d",
+        "name": "Tarjeta App Store",
+        "lead": "$ 10",
+        "price": "10.50",
+        "logo": "services/JF7YQRqeCtzX3c3vVkDR8d20kgzEKfSGjmnXoWl9.png",
+        "sublogo": "services/CAtfDQF6vCSfaAclUVh0H4fokf44EO8v3dlammbB.png",
+        "desc": "Para todo lo relacionado con Apple: productos, accesorios, aplicaciones, juegos, música, películas, programas de televisión, iCloud y más."
+      }
+    }
+  },
+  {
+    "uuid": "c67af7d0-a699-4e50-82d5-cfeaa9ed2b7d",
+    "app_id": 0,
+    "amount": "-20.8",
+    "description": "Mobile TOP_UP",
+    "remote_id": "35395355149081",
+    "status": "paid",
+    "created_at": "2021-08-05T00:30:48.000000Z",
+    "updated_at": "2021-08-05T00:31:02.000000Z",
+    "logo": "services/JF7YQRqeCtzX3c3vVkDR8d20kgzEKfSGjmnXoWl9.png",
+    "app": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "paid_by": {
+      "uuid": "18da6b91-b13e-4ffa-a932-bac1a8b113c3",
+      "username": "natashatenorioraga",
+      "name": "Natasha Tenorio",
+      "lastname": "",
+      "bio": "",
+      "logo": "",
+      "kyc": 0
+    },
+    "app_owner": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "owner": {
+      "uuid": "796a9e01-3d67-4a42-9dc2-02a5d069fa23",
+      "username": "erichgarciacruz1",
+      "name": "Erich",
+      "lastname": "Garcia Cruz",
+      "bio": "Bitcoin lover",
+      "logo": "profiles/zV93I93mbWrZo0fKgwGcpWFWDn41UYfAgj7wNCbf.jpg",
+      "kyc": 1
+    },
+    "wallet": null,
+    "servicebuy": {
+      "service_id": 14,
+      "service_data": "{\"phone\":\"5355149081\",\"confirmationCode\":3539}",
+      "status": "paid",
+      "amount": "20.80",
+      "transaction_id": 3539,
+      "created_at": "2021-08-05T00:31:02.000000Z",
+      "updated_at": "2021-08-05T00:31:02.000000Z",
+      "service": {
+        "uuid": "fc93b94a-196f-4edf-9643-b443d6194a0d",
+        "name": "Tarjeta App Store",
+        "lead": "$ 10",
+        "price": "10.50",
+        "logo": "services/JF7YQRqeCtzX3c3vVkDR8d20kgzEKfSGjmnXoWl9.png",
+        "sublogo": "services/CAtfDQF6vCSfaAclUVh0H4fokf44EO8v3dlammbB.png",
+        "desc": "Para todo lo relacionado con Apple: productos, accesorios, aplicaciones, juegos, música, películas, programas de televisión, iCloud y más."
+      }
+    }
+  },
+  {
+    "uuid": "a904924f-1fb7-4f8f-b83f-b6d160d862b6",
+    "app_id": 0,
+    "amount": "0.05",
+    "description": "REFERAL erichgarciacruz",
+    "remote_id": "3446",
+    "status": "paid",
+    "created_at": "2021-04-11T02:57:30.000000Z",
+    "updated_at": "2021-04-11T02:57:33.000000Z",
+    "logo": "apps/qvapay.jpg",
+    "app": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "paid_by": {
+      "username": "QvaPay",
+      "name": "QvaPay",
+      "logo": "apps/qvapay.jpg"
+    },
+    "app_owner": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "owner": {
+      "uuid": "18da6b91-b13e-4ffa-a932-bac1a8b113c3",
+      "username": "natashatenorioraga",
+      "name": "Natasha Tenorio",
+      "lastname": "",
+      "bio": "",
+      "logo": "",
+      "kyc": 0
+    },
+    "wallet": null,
+    "servicebuy": null
+  },
+  {
+    "uuid": "a1073148-880e-4dff-91fc-3c10f7dcc4bb",
+    "app_id": 0,
+    "amount": "1.00",
+    "description": "qwdqwd",
+    "remote_id": "",
+    "status": "paid",
+    "created_at": "2021-03-17T03:48:04.000000Z",
+    "updated_at": "2021-03-17T03:48:22.000000Z",
+    "logo": "profiles/zV93I93mbWrZo0fKgwGcpWFWDn41UYfAgj7wNCbf.jpg",
+    "app": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "paid_by": {
+      "uuid": "796a9e01-3d67-4a42-9dc2-02a5d069fa23",
+      "username": "erichgarciacruz1",
+      "name": "Erich",
+      "lastname": "Garcia Cruz",
+      "bio": "Bitcoin lover",
+      "logo": "profiles/zV93I93mbWrZo0fKgwGcpWFWDn41UYfAgj7wNCbf.jpg",
+      "kyc": 1
+    },
+    "app_owner": {
+      "logo": "apps/qvapay.jpg",
+      "url": "https://qvapay.com",
+      "name": "QvaPay"
+    },
+    "owner": {
+      "uuid": "18da6b91-b13e-4ffa-a932-bac1a8b113c3",
+      "username": "natashatenorioraga",
+      "name": "Natasha Tenorio",
+      "lastname": "",
+      "bio": "",
+      "logo": "",
+      "kyc": 0
+    },
+    "wallet": null,
+    "servicebuy": null
+  }
+]
+GET
+Transaction Details
+https://api.qvapay.com/transaction/b882cec9-fe84-4e35-b2b6-52bcff7e315a
+Obtener las últimas 30 transacciones del usuario autenticado. Se puede filtrar el resultado mediante los parámetros:
+
+start: date_time
+end: date_time
+status: [paid, pending, cancelled]
+remote_id: string
+description: string
+
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+HEADERS
+Accept
+application/json
+
+Example Request
+Transaction Details
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/transaction/b882cec9-fe84-4e35-b2b6-52bcff7e315a");
+request.Headers.Add("Accept", "application/json");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+Example Response
+Body
+Headers (0)
+No response body
+This request doesn't return any response body
+GET
+Withdraw Show
+https://api.qvapay.com/withdraw/10790
+Obtener ls detalles del estado de una extracción en específico pertenecientes al usuario autenticado.
+
+AUTHORIZATION
+Bearer Token
+Token
+<token>
+
+HEADERS
+Accept
+application/json
+
+Example Request
+withdraws/id
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/withdraws/10790");
+request.Headers.Add("Accept", "application/json");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+200 OK
+Example Response
+Body
+Headers (12)
+View More
+json
+{
+  "id": 10790,
+  "user_id": 54011,
+  "transaction_id": 221632,
+  "amount": "30.00",
+  "receive": "28.50",
+  "payment_method": "BANK_MLC",
+  "details": "[{\"Nombre y Apellidos\":\"Bruno Yosem\",\"Nro de tarjeta\":\"9225 9598 0000 0000\",\"Nro de celular\":\"50000000\"}]",
+  "status": "pending",
+  "tx_id": null,
+  "created_at": "2022-11-28T17:16:38.000000Z",
+  "updated_at": "2022-11-28T17:16:38.000000Z",
+  "transaction": {
+    "uuid": "30b8b187-c9bb-420b-8ca1-f92a3bf2bc29",
+    "app_id": 0,
+    "amount": "30.00",
+    "description": "WITHDRAW",
+    "remote_id": "54011",
+    "status": "paid",
+    "created_at": "2022-11-28T17:15:35.000000Z",
+    "updated_at": "2022-11-28T17:15:35.000000Z"
+  },
+  "coin": {
+    "id": 32,
+    "coins_categories_id": 2,
+    "name": "Banco MLC",
+    "logo": "bankmlc",
+    "tick": "BANK_MLC",
+    "fee_in": "0.00",
+    "fee_out": "5.00",
+    "min_in": "10.00",
+    "min_out": "20.00",
+    "price": "1.000000000000000000"
+  }
+}
+POST
+Transfer balance
+https://api.qvapay.com/transaction/transfer
+Transferir balance entre usuarios.
+
+Puede utilizar el campo "to" con el uuid del usuario de destino, el email o el teléfono.
+
+AUTHORIZATION
+Bearer Token
+Token
+28431|$2b$10$acTyU8l/wQifhVWRC2u.p.C5gJF2a9efDfk4yZK6Yf1sjSbrkQTU.
+
+HEADERS
+Content-Type
+application/json
+
+Accept
+application/json
+
+Body
+raw (json)
+json
+{
+    "amount": "0.2",
+    "description": "Asd",
+    "to": "ecruz@bachecubano.com",
+    "pin": "1010"
+}
+Example Request
+Transfer to another user using uuid
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Post, "https://api.qvapay.com/transactions/transfer");
+request.Headers.Add("Accept", "application/json");
+var content = new StringContent("{\n    \"to\": \"796a9e71-3d67-4a42-9dc2-02a5d069fa23\",\n    \"amount\": 1,\n    \"description\": \"TESTING\"\n}", null, "application/json");
+request.Content = content;
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+201 Created
+Example Response
+Body
+Headers (10)
+json
+{
+  "uuid": "7e48853f-949c-4271-9b4a-1213ee83ac11",
+  "app_id": 0,
+  "amount": 1,
+  "description": "TESTING",
+  "remote_id": 54011,
+  "status": "paid",
+  "updated_at": "2022-12-23T19:41:52.000000Z",
+  "created_at": "2022-12-23T19:41:52.000000Z"
+}
+POST
+Pay a Transaction Online
+https://api.qvapay.com/transaction/pay
+Proceder al pago de determinada transacción "pending".
+Se requiere el uuid de la transacción a pagar así como el PIN del usuario que está pagando la misma. El PIN por defecto es 0000, es altamente recomendable configurar un PIN de forma secreta en el panel de usuario.
+
+AUTHORIZATION
+Bearer Token
+Token
+<token>
+
+HEADERS
+Accept
+application/json
+
+Body
+raw (json)
+json
+{
+    "uuid": "710296b7-0d5d-4e86-ab1b-9d79080dd042",
+    "pin": "0000"
+}
+Example Request
+Paid Transaction
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Post, "https://api.qvapay.com/transactions/pay");
+request.Headers.Add("Accept", "application/json");
+var content = new StringContent("{\n    \"uuid\": \"4cc0e747-e329-443d-99c0-5cff3394fb7b\",\n    \"pin\": \"0000\"\n}", null, "text/plain");
+request.Content = content;
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+200 OK
+Example Response
+Body
+Headers (14)
+View More
+json
+{
+  "uuid": "4cc0e747-e329-443d-99c0-5cff3394fb7b",
+  "app_id": 0,
+  "amount": "11.56",
+  "description": "QvaPay TShirt",
+  "remote_id": "QVAPAY_APP",
+  "status": "paid",
+  "created_at": "2021-10-17T17:04:47.000000Z",
+  "updated_at": "2021-10-17T17:06:01.000000Z",
+  "owner": {
+    "uuid": "9770d4f0-8166-41ae-914e-26d5dc287c32",
+    "username": "egc3",
+    "name": "Pedro Perez",
+    "lastname": "",
+    "bio": "",
+    "logo": "",
+    "kyc": 0
+  }
+}
+Merchants
+Conjunto de APIs para desarrolladores con APP_ID y APP_SECRET para conectar con cuentas de Empresa.
+
+GET
+Product by UUID
+https://api.qvapay.com/store/0f3c9429-db89-4493-931c-fa959c9652cf
+AUTHORIZATION
+Bearer Token
+Token
+<token>
+
+Example Request
+service/uuid
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/services/e286449c-5bf4-4fbc-9a85-95bb5b54c73e");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+200 OK
+Example Response
+Body
+Headers (14)
+View More
+json
+{
+  "uuid": "e286449c-5bf4-4fbc-9a85-95bb5b54c73e",
+  "name": "Saldo móvil ETECSA",
+  "lead": "$ 250 CUP",
+  "price": "7.50",
+  "desc": "Compre paquetes de saldo móvil ETECSA para luego realizar llamadas, enviar SMS, comprar planes de datos tanto 3G como 4G en Cuba.",
+  "service_photo_url": "https://media.qvapay.com/services/zwumOdPAnfUEc57NeOXvRHucetKVGvdCZ9MpkhnM.png"
+}
+GET
+My Purchased Products
+https://api.qvapay.com/store/my
+AUTHORIZATION
+Bearer Token
+Token
+<token>
+
+Example Request
+My Purchased Products
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/store/my");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+200 OK
+Example Response
+Body
+Headers (12)
+View More
+json
+{
+  "current_page": 1,
+  "data": [
+    {
+      "id": 6003,
+      "service_id": 2,
+      "service_data": "{\"name\":\"Pedro\"}",
+      "notes": "",
+      "status": "pending",
+      "amount": "5.00",
+      "transaction_id": 767745,
+      "notified": "no",
+      "created_at": "2023-07-18T04:07:58.000000Z",
+      "updated_at": "2023-07-18T04:07:58.000000Z"
+    }
+  ],
+  "first_page_url": "https://qvapay.test/api/store/my?page=1",
+  "from": 1,
+  "last_page": 1,
+  "last_page_url": "https://qvapay.test/api/store/my?page=1",
+  "links": [
+    {
+      "url": null,
+      "label": "&laquo; Anterior",
+      "active": false
+    },
+    {
+      "url": "https://qvapay.test/api/store/my?page=1",
+      "label": "1",
+      "active": true
+    },
+    {
+      "url": null,
+      "label": "Siguiente &raquo;",
+      "active": false
+    }
+  ],
+  "next_page_url": null,
+  "path": "https://qvapay.test/api/store/my",
+  "per_page": 30,
+  "prev_page_url": null,
+  "to": 1,
+  "total": 1
+}
+GET
+My Purchased Products Show
+https://api.qvapay.com/store/my/6003
+AUTHORIZATION
+Bearer Token
+Token
+<token>
+
+Example Request
+My Purchased Products Copy
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/store/my/6003");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+200 OK
+Example Response
+Body
+Headers (12)
+View More
+json
+{
+  "id": 6003,
+  "service_id": 2,
+  "service_data": "{\"name\":\"Pedro\"}",
+  "notes": "",
+  "status": "pending",
+  "amount": "5.00",
+  "transaction_id": 767745,
+  "notified": "no",
+  "created_at": "2023-07-18T04:07:58.000000Z",
+  "updated_at": "2023-07-18T04:07:58.000000Z"
+}
+POST
+Buy Product by UUID
+https://api.qvapay.com/store/buy
+AUTHORIZATION
+Bearer Token
+Token
+<token>
+
+Body
+raw (json)
+json
+{
+    "uuid": "3f7a89d3-6c53-46a6-b810-1aeed1d838af",
+    "amount": 5,
+    "value": 5.7
+}
+Example Request
+service/uuid
+View More
+csharp
+var client = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://api.qvapay.com/services/e286449c-5bf4-4fbc-9a85-95bb5b54c73e");
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+200 OK
+Example Response
+Body
+Headers (14)

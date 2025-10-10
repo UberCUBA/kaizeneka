@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import 'donation_page.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -159,6 +160,19 @@ class _SettingsPageState extends State<SettingsPage> {
               // TODO: Implementar envío de feedback
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Función próximamente')),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.favorite, color: Colors.red),
+            title: const Text('Donar a Desarrolladores', style: TextStyle(color: Colors.white)),
+            subtitle: const Text('Apoya el desarrollo de NK+', style: TextStyle(color: Colors.grey)),
+            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const DonationPage(),
+                ),
               );
             },
           ),

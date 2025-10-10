@@ -87,7 +87,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
                     child: Transform.scale(
                       scale: _logoScale.value,
                       child: const Text(
-                        'KAIZEN',
+                        'NK+',
                         style: TextStyle(
                           fontSize: 64,
                           fontWeight: FontWeight.bold,

@@ -30,3 +30,4 @@ c:\Users\UBER\source\repos_flutter\kaizeneka\api-dotnet\KaizenekaApi\obj\Debug\n
 c:\Users\UBER\source\repos_flutter\kaizeneka\api-dotnet\KaizenekaApi\obj\Debug\net9.0\KaizenekaApi.pdb
 c:\Users\UBER\source\repos_flutter\kaizeneka\api-dotnet\KaizenekaApi\obj\Debug\net9.0\KaizenekaApi.genruntimeconfig.cache
 c:\Users\UBER\source\repos_flutter\kaizeneka\api-dotnet\KaizenekaApi\obj\Debug\net9.0\ref\KaizenekaApi.dll
+c:\Users\UBER\source\repos_flutter\kaizeneka\api-dotnet\KaizenekaApi\obj\Debug\net9.0\KaizenekaApi.sourcelink.json

@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text('Kaizenekas(+)', style: TextStyle(color: Colors.white)),
+        title: const Text('NK(+)', style: TextStyle(color: Colors.white)),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       drawer: Drawer(
@@ -183,8 +183,15 @@ class _HomePageState extends State<HomePage> {
                 Navigator.of(context).pushNamed('/biblioteca');
               },
             ),
-            
-            
+
+            ListTile(
+              leading: const Icon(Icons.shopping_bag, color: Color(0xFF00FF7F)),
+              title: const Text('Shop NK', style: TextStyle(color: Colors.white)),
+              onTap: () {
+                Navigator.of(context).pushNamed('/shop');
+              },
+            ),
+
             ListTile(
               leading: const Icon(Icons.map, color: Color(0xFF00FF7F)),
               title: const Text('Mapa Kaizeneka', style: TextStyle(color: Colors.white)),

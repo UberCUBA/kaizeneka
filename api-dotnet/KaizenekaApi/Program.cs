@@ -3,6 +3,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<KaizenekaApi.Services.IQvaPayService, KaizenekaApi.Services.QvaPayService>(); // Temporalmente comentado para debug
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -22,7 +24,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAll");
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Comentado para usar solo HTTP
 app.MapControllers();
 
 var summaries = new[]

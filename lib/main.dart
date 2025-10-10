@@ -32,6 +32,10 @@ import 'features/auth/presentation/providers/auth_provider.dart';
 import 'features/auth/presentation/pages/login_page.dart';
 import 'features/profile/presentation/pages/profile_page.dart';
 import 'features/settings/presentation/pages/settings_page.dart';
+import 'features/shop/data/repositories/item_repository_impl.dart';
+import 'features/shop/domain/usecases/get_items.dart';
+import 'features/shop/presentation/providers/shop_provider.dart';
+import 'features/shop/presentation/pages/shop_nk_page.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -62,6 +66,9 @@ void main() async {
   final rankingRepository = SupabaseRankingRepository();
   final getTopUsers = GetTopUsers(rankingRepository);
 
+  final itemRepository = ItemRepositoryImpl();
+  final getItems = GetItems(itemRepository);
+
   runApp(
     MultiProvider(
       providers: [
@@ -91,6 +98,9 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) => RankingProvider(getTopUsers),
         ),
+        ChangeNotifierProvider(
+          create: (_) => ShopProvider(getItems),
+        ),
       ],
       child: const KaizenekaApp(),
     ),
@@ -109,7 +119,7 @@ class KaizenekaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Kaizeneka+',
+      title: 'NK',
       theme: AppTheme.darkTheme,
       navigatorKey: navigatorKey,
       initialRoute: '/',
@@ -124,6 +134,7 @@ class KaizenekaApp extends StatelessWidget {
         '/postureo': (context) => const PostureoNkPage(),
         '/profile': (context) => const ProfilePage(),
         '/settings': (context) => const SettingsPage(),
+        '/shop': (context) => const ShopNkPage(),
       },
     );
   }

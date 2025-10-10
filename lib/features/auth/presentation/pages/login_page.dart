@@ -56,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
-                  'KAIZEN',
+                  'NK+',
                   style: TextStyle(
                     fontSize: 64,
                     fontWeight: FontWeight.bold,

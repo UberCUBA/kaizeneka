@@ -36,6 +36,10 @@ import 'features/shop/data/repositories/item_repository_impl.dart';
 import 'features/shop/domain/usecases/get_items.dart';
 import 'features/shop/presentation/providers/shop_provider.dart';
 import 'features/shop/presentation/pages/shop_nk_page.dart';
+import 'features/ia_nk/data/repositories/chat_repository_impl.dart';
+import 'features/ia_nk/domain/usecases/send_message.dart';
+import 'features/ia_nk/presentation/providers/chat_provider.dart';
+import 'features/ia_nk/presentation/pages/ia_nk_page.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -69,6 +73,9 @@ void main() async {
   final itemRepository = ItemRepositoryImpl();
   final getItems = GetItems(itemRepository);
 
+  final chatRepository = ChatRepositoryImpl();
+  final sendMessage = SendMessage(chatRepository);
+
   runApp(
     MultiProvider(
       providers: [
@@ -100,6 +107,9 @@ void main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => ShopProvider(getItems),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ChatProvider(sendMessage),
         ),
       ],
       child: const KaizenekaApp(),
@@ -135,6 +145,7 @@ class KaizenekaApp extends StatelessWidget {
         '/profile': (context) => const ProfilePage(),
         '/settings': (context) => const SettingsPage(),
         '/shop': (context) => const ShopNkPage(),
+        '/ia_nk': (context) => const IaNkPage(),
       },
     );
   }

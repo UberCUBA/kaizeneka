@@ -185,6 +185,14 @@ class _HomePageState extends State<HomePage> {
             ),
 
             ListTile(
+              leading: const Icon(Icons.smart_toy, color: Color(0xFF00FF7F)),
+              title: const Text('IA NK', style: TextStyle(color: Colors.white)),
+              onTap: () {
+                Navigator.of(context).pushNamed('/ia_nk');
+              },
+            ),
+
+            ListTile(
               leading: const Icon(Icons.shopping_bag, color: Color(0xFF00FF7F)),
               title: const Text('Shop NK', style: TextStyle(color: Colors.white)),
               onTap: () {

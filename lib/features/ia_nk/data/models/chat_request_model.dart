@@ -15,9 +15,23 @@ class ChatRequestModel {
   }
 }
 
+class FileAttachment {
+  final String name;
+  final String mimeType;
+  final List<int> bytes;
+
+  FileAttachment({
+    required this.name,
+    required this.mimeType,
+    required this.bytes,
+  });
+
+  int get sizeInMB => (bytes.length / (1024 * 1024)).round();
+}
+
 class ChatMessage {
   final String role;
-  final String content;
+  final dynamic content; // String or List for multimodal
 
   ChatMessage({
     required this.role,

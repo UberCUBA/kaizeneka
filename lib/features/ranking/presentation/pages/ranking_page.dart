@@ -43,6 +43,27 @@ class _RankingPageState extends State<RankingPage> {
   Widget build(BuildContext context) {
     final provider = Provider.of<RankingProvider>(context);
 
+    if (provider.errorMessage != null) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          title: const Text('Ranking de Usuarios', style: TextStyle(color: Colors.white)),
+          iconTheme: const IconThemeData(color: Colors.white),
+        ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              provider.errorMessage!,
+              style: const TextStyle(color: Colors.white, fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      );
+    }
+
     if (provider.isLoading) {
       return const Scaffold(
         backgroundColor: Colors.black,

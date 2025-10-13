@@ -1,10 +1,54 @@
+using Serilog;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using AutoMapper;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
-builder.Services.AddScoped<KaizenekaApi.Services.IQvaPayService, KaizenekaApi.Services.QvaPayService>(); // Temporalmente comentado para debug
+builder.Services.AddScoped<KaizenekaApi.Services.IQvaPayService, KaizenekaApi.Services.QvaPayService>();
+builder.Services.AddAutoMapper(typeof(Program));
+
+// Configure JWT Authentication
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var key = Encoding.ASCII.GetBytes(jwtSettings["Secret"] ?? "default-secret-key-for-development");
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"] ?? "KaizenekaApi",
+        ValidAudience = jwtSettings["Audience"] ?? "KaizenekaApi",
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+});
+
+builder.Services.AddAuthorization();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -21,9 +65,19 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Kaizeneka API v1");
+        c.OAuthClientId("swagger-ui");
+        c.OAuthAppName("Kaizeneka API - Swagger UI");
+    });
 }
 
+app.UseSerilogRequestLogging();
 app.UseCors("AllowAll");
+app.UseAuthentication();
+app.UseAuthorization();
 // app.UseHttpsRedirection(); // Comentado para usar solo HTTP
 app.MapControllers();
 

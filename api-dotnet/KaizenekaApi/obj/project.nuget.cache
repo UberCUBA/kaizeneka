@@ -1,11 +1,26 @@
 {
   "version": 2,
-  "dgSpecHash": "MECZZ83GWS4=",
-  "success": true,
+  "dgSpecHash": "ASXAVMOUqFY=",
+  "success": false,
   "projectFilePath": "C:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\KaizenekaApi.csproj",
-  "expectedPackageFiles": [
-    "C:\\Users\\UBER\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.9\\microsoft.aspnetcore.openapi.9.0.9.nupkg.sha512",
-    "C:\\Users\\UBER\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
-  ],
-  "logs": []
+  "expectedPackageFiles": [],
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Error",
+      "message": "No se pudo descargar el paquete \"Swashbuckle.AspNetCore.SwaggerUI.6.6.2\" de \"https://api.nuget.org/v3-flatcontainer/swashbuckle.aspnetcore.swaggerui/6.6.2/swashbuckle.aspnetcore.swaggerui.6.6.2.nupkg\".\r\nAn error occurred while sending the request.\r\n  The response ended prematurely. (ResponseEnded)",
+      "projectPath": "C:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\KaizenekaApi.csproj",
+      "filePath": "C:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\KaizenekaApi.csproj",
+      "targetGraphs": []
+    },
+    {
+      "code": "NU1301",
+      "level": "Error",
+      "message": "No se pudo recuperar información sobre \"Swashbuckle.AspNetCore.SwaggerUI\" del origen remoto \"https://api.nuget.org/v3-flatcontainer/swashbuckle.aspnetcore.swaggerui/index.json\".\r\n  An error occurred while sending the request.\r\n  The response ended prematurely. (ResponseEnded)",
+      "projectPath": "C:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\KaizenekaApi.csproj",
+      "filePath": "C:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\KaizenekaApi.csproj",
+      "libraryId": "Swashbuckle.AspNetCore.SwaggerUI",
+      "targetGraphs": []
+    }
+  ]
 }

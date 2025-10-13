@@ -1,77 +1,20 @@
 {
   "version": 3,
   "targets": {
-    "net9.0": {
-      "Microsoft.AspNetCore.OpenApi/9.0.9": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.OpenApi": "1.6.17"
-        },
-        "compile": {
-          "lib/net9.0/Microsoft.AspNetCore.OpenApi.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/net9.0/Microsoft.AspNetCore.OpenApi.dll": {
-            "related": ".xml"
-          }
-        },
-        "frameworkReferences": [
-          "Microsoft.AspNetCore.App"
-        ]
-      },
-      "Microsoft.OpenApi/1.6.17": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard2.0/Microsoft.OpenApi.dll": {
-            "related": ".pdb;.xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard2.0/Microsoft.OpenApi.dll": {
-            "related": ".pdb;.xml"
-          }
-        }
-      }
-    }
+    "net9.0": {}
   },
-  "libraries": {
-    "Microsoft.AspNetCore.OpenApi/9.0.9": {
-      "sha512": "3Sina0gS/CTYt9XG6DUFPdXOmJui7e551U0kO2bIiDk3vZ2sctxxenN+cE1a5CrUpjIVZfZr32neWYYRO+Piaw==",
-      "type": "package",
-      "path": "microsoft.aspnetcore.openapi/9.0.9",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "Icon.png",
-        "PACKAGE.md",
-        "THIRD-PARTY-NOTICES.TXT",
-        "lib/net9.0/Microsoft.AspNetCore.OpenApi.dll",
-        "lib/net9.0/Microsoft.AspNetCore.OpenApi.xml",
-        "microsoft.aspnetcore.openapi.9.0.9.nupkg.sha512",
-        "microsoft.aspnetcore.openapi.nuspec"
-      ]
-    },
-    "Microsoft.OpenApi/1.6.17": {
-      "sha512": "Le+kehlmrlQfuDFUt1zZ2dVwrhFQtKREdKBo+rexOwaCoYP0/qpgT9tLxCsZjsgR5Itk1UKPcbgO+FyaNid/bA==",
-      "type": "package",
-      "path": "microsoft.openapi/1.6.17",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "README.md",
-        "lib/netstandard2.0/Microsoft.OpenApi.dll",
-        "lib/netstandard2.0/Microsoft.OpenApi.pdb",
-        "lib/netstandard2.0/Microsoft.OpenApi.xml",
-        "microsoft.openapi.1.6.17.nupkg.sha512",
-        "microsoft.openapi.nuspec"
-      ]
-    }
-  },
+  "libraries": {},
   "projectFileDependencyGroups": {
     "net9.0": [
-      "Microsoft.AspNetCore.OpenApi >= 9.0.9"
+      "AutoMapper >= 13.0.1",
+      "AutoMapper.Extensions.Microsoft.DependencyInjection >= 13.0.1",
+      "Microsoft.AspNetCore.Authentication.JwtBearer >= 9.0.9",
+      "Microsoft.AspNetCore.OpenApi >= 9.0.9",
+      "Serilog.AspNetCore >= 8.0.1",
+      "Serilog.Sinks.Console >= 6.0.0",
+      "Serilog.Sinks.File >= 6.0.0",
+      "Swashbuckle.AspNetCore >= 6.6.2",
+      "System.IdentityModel.Tokens.Jwt >= 8.1.2"
     ]
   },
   "packageFolders": {
@@ -81,11 +24,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\KaizenekaApi.csproj",
+      "projectUniqueName": "C:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\KaizenekaApi.csproj",
       "projectName": "KaizenekaApi",
-      "projectPath": "c:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\KaizenekaApi.csproj",
+      "projectPath": "C:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\KaizenekaApi.csproj",
       "packagesPath": "C:\\Users\\UBER\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\obj\\",
+      "outputPath": "C:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -125,9 +68,41 @@
       "net9.0": {
         "targetAlias": "net9.0",
         "dependencies": {
+          "AutoMapper": {
+            "target": "Package",
+            "version": "[13.0.1, )"
+          },
+          "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+            "target": "Package",
+            "version": "[13.0.1, )"
+          },
+          "Microsoft.AspNetCore.Authentication.JwtBearer": {
+            "target": "Package",
+            "version": "[9.0.9, )"
+          },
           "Microsoft.AspNetCore.OpenApi": {
             "target": "Package",
             "version": "[9.0.9, )"
+          },
+          "Serilog.AspNetCore": {
+            "target": "Package",
+            "version": "[8.0.1, )"
+          },
+          "Serilog.Sinks.Console": {
+            "target": "Package",
+            "version": "[6.0.0, )"
+          },
+          "Serilog.Sinks.File": {
+            "target": "Package",
+            "version": "[6.0.0, )"
+          },
+          "Swashbuckle.AspNetCore": {
+            "target": "Package",
+            "version": "[6.6.2, )"
+          },
+          "System.IdentityModel.Tokens.Jwt": {
+            "target": "Package",
+            "version": "[8.1.2, )"
           }
         },
         "imports": [
@@ -152,5 +127,18 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Error",
+      "message": "No se pudo descargar el paquete \"Swashbuckle.AspNetCore.SwaggerUI.6.6.2\" de \"https://api.nuget.org/v3-flatcontainer/swashbuckle.aspnetcore.swaggerui/6.6.2/swashbuckle.aspnetcore.swaggerui.6.6.2.nupkg\".\r\nAn error occurred while sending the request.\r\n  The response ended prematurely. (ResponseEnded)"
+    },
+    {
+      "code": "NU1301",
+      "level": "Error",
+      "message": "No se pudo recuperar información sobre \"Swashbuckle.AspNetCore.SwaggerUI\" del origen remoto \"https://api.nuget.org/v3-flatcontainer/swashbuckle.aspnetcore.swaggerui/index.json\".\r\n  An error occurred while sending the request.\r\n  The response ended prematurely. (ResponseEnded)",
+      "libraryId": "Swashbuckle.AspNetCore.SwaggerUI"
+    }
+  ]
 }

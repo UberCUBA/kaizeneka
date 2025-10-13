@@ -10,7 +10,9 @@ import '../models/models_response_model.dart' as models_response;
 
 class ChatRepositoryImpl implements ChatRepository {
   static const String _baseUrl = 'https://openrouter.ai/api/v1';
-  static const String _apiKey = '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';
+  // API Key moved to environment variables for security
+  static const String _apiKey = String.fromEnvironment('OPENROUTER_API_KEY',
+      defaultValue: 'your-api-key-here');
   static const String _defaultModel = 'x-ai/grok-code-fast-1';
 
   @override

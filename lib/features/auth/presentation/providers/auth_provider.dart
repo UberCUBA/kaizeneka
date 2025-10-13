@@ -4,6 +4,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../../../../core/services/supabase_service.dart';
+import '../../../../core/services/auth_service.dart';
+import '../../../../core/services/api_service.dart';
 import '../../../../models/user_model.dart';
 import '../../../../models.dart';
 
@@ -11,32 +13,60 @@ class AuthProvider with ChangeNotifier {
   User? _user;
   UserModel? _userProfile;
   bool _isLoading = false;
+  String? _apiToken;
+
+  final AuthService _authService = AuthService();
+  final ApiService _apiService = ApiService();
 
   User? get user => _user;
   UserModel? get userProfile => _userProfile;
   bool get isLoading => _isLoading;
-  bool get isAuthenticated => _user != null;
+  bool get isAuthenticated => _user != null && _apiToken != null;
+  String? get apiToken => _apiToken;
 
   AuthProvider() {
     _initialize();
   }
 
-  void _initialize() {
+  void _initialize() async {
     _user = SupabaseService.getCurrentUser();
+    _apiToken = await _authService.getAccessToken();
     SupabaseService.authStateChanges.listen(_onAuthStateChanged);
     if (_user != null) {
       _loadUserProfile();
     }
   }
 
-  void _onAuthStateChanged(AuthState authState) {
+  void _onAuthStateChanged(AuthState authState) async {
     _user = authState.session?.user;
-    notifyListeners();
-
     if (_user != null) {
+      // Después de autenticarse con Supabase, hacer login en la API
+      await _loginToApi();
       _loadUserProfile();
     } else {
       _userProfile = null;
+      _apiToken = null;
+      await _authService.logout();
+    }
+    notifyListeners();
+  }
+
+  Future<void> _loginToApi() async {
+    if (_user == null) return;
+
+    try {
+      // Usar email como username para la API (puedes cambiar esto según necesites)
+      final username = _user!.email ?? _user!.id;
+      final password = 'default_password'; // En producción, genera una contraseña segura
+
+      final result = await _authService.login(username, password);
+      if (result?['success'] == true) {
+        _apiToken = result?['token'];
+      } else {
+        debugPrint('Error logging into API: ${result?['message']}');
+      }
+    } catch (e) {
+      debugPrint('Error in API login: $e');
     }
   }
 
@@ -127,6 +157,8 @@ class AuthProvider with ChangeNotifier {
 
     try {
       await SupabaseService.signOut();
+      await _authService.logout();
+      _apiToken = null;
       // Limpiar datos locales al cerrar sesión
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('usuario');

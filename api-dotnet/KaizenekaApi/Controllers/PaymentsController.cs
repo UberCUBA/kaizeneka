@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using KaizenekaApi.Models;
 using KaizenekaApi.Services;
 
 namespace KaizenekaApi.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class PaymentsController : ControllerBase
 {

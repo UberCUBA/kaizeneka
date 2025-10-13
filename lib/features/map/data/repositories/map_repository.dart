@@ -11,21 +11,17 @@ class SupabaseMapRepository implements MapRepository {
   @override
   Future<List<KaizenekaUser>> getNearbyUsers(LatLng userLocation) async {
     try {
-      // Obtener todos los usuarios con ubicación
+      // Obtener todos los usuarios con puntos > 0 y ubicación
       final response = await SupabaseService.client
           .from('users')
           .select('id, name, belt, points, lat, lng, updated_at, email, avatar_url')
+          .gt('points', 0)
           .not('lat', 'is', null)
           .not('lng', 'is', null);
 
       List<KaizenekaUser> allUsers = [];
       for (var userJson in response) {
-        // Filtrar usuarios en línea (actualizados en las últimas 24 horas)
-        final updatedAt = DateTime.parse(userJson['updated_at']);
-        final now = DateTime.now();
-        if (now.difference(updatedAt).inHours < 24) {
-          allUsers.add(KaizenekaUser.fromJson(userJson));
-        }
+        allUsers.add(KaizenekaUser.fromJson(userJson));
       }
 
       // Filtrar usuarios cercanos (dentro de 10 km)

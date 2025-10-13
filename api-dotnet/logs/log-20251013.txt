@@ -1,0 +1,103 @@
+2025-10-13 16:08:30.731 +00:00 [WRN] Storing keys in a directory '/root/.aspnet/DataProtection-Keys' that may not be persisted outside of the container. Protected data will be unavailable when container is destroyed. For more information go to https://aka.ms/aspnet/dataprotectionwarning
+2025-10-13 16:08:30.796 +00:00 [WRN] No XML encryptor configured. Key {d438bbae-aec8-41da-b3bb-3cde5418783f} may be persisted to storage in unencrypted form.
+2025-10-13 16:08:30.816 +00:00 [WRN] Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://+:80'.
+2025-10-13 16:15:04.921 +00:00 [INF] HTTP GET /weatherforecast responded 200 in 57.5764 ms
+2025-10-13 16:15:05.077 +00:00 [INF] HTTP GET /favicon.ico responded 404 in 3.6510 ms
+2025-10-13 16:16:09.752 +00:00 [INF] HTTP GET / responded 404 in 5.5921 ms
+2025-10-13 16:16:36.430 +00:00 [INF] HTTP GET /swagger responded 404 in 0.4332 ms
+2025-10-13 16:16:38.158 +00:00 [INF] HTTP GET /swagger responded 404 in 0.2182 ms
+2025-10-13 16:16:45.397 +00:00 [INF] HTTP GET / responded 404 in 0.1849 ms
+2025-10-13 16:16:57.445 +00:00 [INF] HTTP GET /weatherforecast responded 200 in 1.4822 ms
+2025-10-13 16:17:16.391 +00:00 [INF] HTTP GET /api/recursos responded 401 in 7.4530 ms
+2025-10-13 16:17:43.144 +00:00 [INF] HTTP GET /api/payments/ responded 404 in 0.3445 ms
+2025-10-13 16:17:50.869 +00:00 [INF] HTTP GET /api/recursos/ responded 401 in 7.6070 ms
+2025-10-13 16:18:41.515 +00:00 [INF] HTTP GET / responded 404 in 1.8499 ms
+2025-10-13 16:19:33.619 +00:00 [INF] HTTP GET /api/auth/login responded 405 in 1.1705 ms
+2025-10-13 16:19:51.193 +00:00 [INF] HTTP GET /api/auth/login responded 405 in 0.5257 ms
+2025-10-13 16:19:58.925 +00:00 [INF] HTTP GET /api/auth/login responded 405 in 42.9548 ms
+2025-10-13 16:20:17.449 +00:00 [INF] HTTP POST /api/auth/login responded 415 in 122.5129 ms
+2025-10-13 16:20:35.371 +00:00 [INF] HTTP POST /api/auth/login responded 415 in 3.7540 ms
+2025-10-13 16:21:29.323 +00:00 [INF] HTTP POST /api/auth/login responded 415 in 1.1771 ms
+2025-10-13 16:21:39.619 +00:00 [INF] HTTP POST /api/auth/login responded 415 in 0.9438 ms
+2025-10-13 16:21:55.235 +00:00 [INF] HTTP POST /api/auth/login responded 415 in 0.8425 ms
+2025-10-13 16:23:22.676 +00:00 [WRN] Storing keys in a directory '/root/.aspnet/DataProtection-Keys' that may not be persisted outside of the container. Protected data will be unavailable when container is destroyed. For more information go to https://aka.ms/aspnet/dataprotectionwarning
+2025-10-13 16:23:22.828 +00:00 [WRN] Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://+:80'.
+2025-10-13 16:24:10.403 +00:00 [INF] HTTP POST /api/auth/login responded 415 in 75.9868 ms
+2025-10-13 16:25:09.293 +00:00 [INF] HTTP POST /api/auth/login responded 200 in 51.3339 ms
+2025-10-13 16:25:18.951 +00:00 [INF] HTTP GET /api/payments/user-info responded 200 in 166.6769 ms
+2025-10-13 16:26:18.035 +00:00 [INF] HTTP POST /api/auth/login responded 415 in 1.4125 ms
+2025-10-13 16:27:19.033 +00:00 [INF] HTTP POST /api/auth/login responded 400 in 12.1934 ms
+2025-10-13 16:28:05.754 +00:00 [INF] HTTP POST /api/auth/login responded 415 in 0.8602 ms
+2025-10-13 16:30:04.286 +00:00 [INF] HTTP POST /api/auth/login responded 200 in 4.4878 ms
+2025-10-13 16:32:22.962 +00:00 [INF] HTTP GET /api/payments/user-info responded 200 in 6.6361 ms
+2025-10-13 17:12:30.850 +00:00 [WRN] Storing keys in a directory '/root/.aspnet/DataProtection-Keys' that may not be persisted outside of the container. Protected data will be unavailable when container is destroyed. For more information go to https://aka.ms/aspnet/dataprotectionwarning
+2025-10-13 17:12:30.916 +00:00 [WRN] No XML encryptor configured. Key {32f976e0-bb59-4227-b0cb-9114d519276d} may be persisted to storage in unencrypted form.
+2025-10-13 17:12:30.933 +00:00 [WRN] Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://+:80'.
+2025-10-13 17:13:11.290 +00:00 [INF] HTTP POST /api/auth/login responded 200 in 82.6669 ms
+2025-10-13 17:15:28.233 +00:00 [INF] HTTP POST /api/auth/login responded 200 in 8.7144 ms
+2025-10-13 17:15:56.163 +00:00 [INF] HTTP GET /api/payments/user-info responded 200 in 45.4507 ms
+2025-10-13 17:16:23.351 +00:00 [INF] HTTP GET /api/payment-methods responded 404 in 1.0115 ms
+2025-10-13 17:26:59.784 +00:00 [INF] HTTP POST /api/payments/create responded 401 in 127.0555 ms
+2025-10-13 18:16:16.076 +00:00 [INF] HTTP POST /api/payments/create responded 401 in 35.1685 ms
+2025-10-13 23:35:36.719 +00:00 [WRN] Storing keys in a directory '/root/.aspnet/DataProtection-Keys' that may not be persisted outside of the container. Protected data will be unavailable when container is destroyed. For more information go to https://aka.ms/aspnet/dataprotectionwarning
+2025-10-13 23:35:36.829 +00:00 [WRN] No XML encryptor configured. Key {51691f3b-d824-4812-a501-3882b1c8a8ba} may be persisted to storage in unencrypted form.
+2025-10-13 23:35:36.853 +00:00 [WRN] Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://+:80'.
+2025-10-13 23:37:20.471 +00:00 [INF] HTTP GET /swagger/v1/swagger.json responded 404 in 40.9904 ms
+2025-10-13 23:37:45.652 +00:00 [INF] HTTP GET /swagger/v1/swagger.json responded 404 in 4.2790 ms
+2025-10-13 23:37:59.129 +00:00 [INF] HTTP GET / responded 404 in 5.9599 ms
+2025-10-13 23:38:03.397 +00:00 [INF] HTTP GET / responded 404 in 0.3128 ms
+2025-10-13 23:38:04.148 +00:00 [INF] HTTP GET / responded 404 in 0.4735 ms
+2025-10-13 23:38:04.318 +00:00 [INF] HTTP GET / responded 404 in 0.4011 ms
+2025-10-13 23:38:04.497 +00:00 [INF] HTTP GET / responded 404 in 0.2697 ms
+2025-10-13 23:38:33.949 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.4743 ms
+2025-10-13 23:38:37.489 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.3639 ms
+2025-10-13 23:38:38.156 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.4852 ms
+2025-10-13 23:38:38.339 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.5855 ms
+2025-10-13 23:38:38.511 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.2047 ms
+2025-10-13 23:38:38.675 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.2336 ms
+2025-10-13 23:38:38.824 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.1729 ms
+2025-10-13 23:38:38.983 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.2230 ms
+2025-10-13 23:38:51.867 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.4405 ms
+2025-10-13 23:39:03.288 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.2786 ms
+2025-10-13 23:39:16.299 +00:00 [INF] HTTP GET /swagger/v1/swagger.json responded 404 in 0.1583 ms
+2025-10-13 23:39:22.353 +00:00 [INF] HTTP GET /swagger/v1/swagger.json responded 404 in 0.2554 ms
+2025-10-13 23:39:45.087 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.1101 ms
+2025-10-13 23:40:19.604 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.3653 ms
+2025-10-13 23:40:26.694 +00:00 [WRN] Storing keys in a directory '/root/.aspnet/DataProtection-Keys' that may not be persisted outside of the container. Protected data will be unavailable when container is destroyed. For more information go to https://aka.ms/aspnet/dataprotectionwarning
+2025-10-13 23:40:26.795 +00:00 [WRN] Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://+:80'.
+2025-10-13 23:40:28.880 +00:00 [INF] HTTP GET / responded 404 in 27.6068 ms
+2025-10-13 23:40:30.311 +00:00 [INF] HTTP GET / responded 404 in 3.7949 ms
+2025-10-13 23:40:30.824 +00:00 [INF] HTTP GET / responded 404 in 4.9886 ms
+2025-10-13 23:40:31.001 +00:00 [INF] HTTP GET / responded 404 in 0.2636 ms
+2025-10-13 23:40:31.167 +00:00 [INF] HTTP GET / responded 404 in 0.4525 ms
+2025-10-13 23:40:31.329 +00:00 [INF] HTTP GET / responded 404 in 0.3838 ms
+2025-10-13 23:42:09.692 +00:00 [WRN] Storing keys in a directory '/root/.aspnet/DataProtection-Keys' that may not be persisted outside of the container. Protected data will be unavailable when container is destroyed. For more information go to https://aka.ms/aspnet/dataprotectionwarning
+2025-10-13 23:42:09.793 +00:00 [WRN] Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://+:80'.
+2025-10-13 23:43:37.612 +00:00 [WRN] Storing keys in a directory '/root/.aspnet/DataProtection-Keys' that may not be persisted outside of the container. Protected data will be unavailable when container is destroyed. For more information go to https://aka.ms/aspnet/dataprotectionwarning
+2025-10-13 23:43:37.751 +00:00 [WRN] No XML encryptor configured. Key {233a1d65-66b9-45e5-becf-d4225e627dce} may be persisted to storage in unencrypted form.
+2025-10-13 23:43:37.780 +00:00 [WRN] Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://+:80'.
+2025-10-13 23:43:41.640 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 40.1004 ms
+2025-10-13 23:43:42.676 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 2.9213 ms
+2025-10-13 23:43:43.363 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 3.4702 ms
+2025-10-13 23:43:43.817 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.2546 ms
+2025-10-13 23:43:44.004 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.3155 ms
+2025-10-13 23:43:44.223 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.1534 ms
+2025-10-13 23:43:44.401 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.2319 ms
+2025-10-13 23:43:44.603 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.4703 ms
+2025-10-13 23:43:44.769 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.2702 ms
+2025-10-13 23:45:28.191 +00:00 [WRN] Storing keys in a directory '/root/.aspnet/DataProtection-Keys' that may not be persisted outside of the container. Protected data will be unavailable when container is destroyed. For more information go to https://aka.ms/aspnet/dataprotectionwarning
+2025-10-13 23:45:28.262 +00:00 [WRN] No XML encryptor configured. Key {6fe8bf01-4834-4a15-8635-36c6d8c94584} may be persisted to storage in unencrypted form.
+2025-10-13 23:45:28.279 +00:00 [WRN] Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://+:80'.
+2025-10-13 23:46:19.338 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 18.0222 ms
+2025-10-13 23:46:20.656 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 2.2775 ms
+2025-10-13 23:46:21.135 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 3.5534 ms
+2025-10-13 23:46:21.311 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.2068 ms
+2025-10-13 23:46:21.480 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.1935 ms
+2025-10-13 23:46:21.634 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.1939 ms
+2025-10-13 23:46:24.138 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.1290 ms
+2025-10-13 23:46:24.533 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.1548 ms
+2025-10-13 23:46:24.716 +00:00 [INF] HTTP GET /api/weatherforecast responded 404 in 0.1065 ms
+2025-10-13 23:51:12.854 +00:00 [INF] HTTP GET /favicon.ico responded 404 in 5.2507 ms
+2025-10-13 23:52:22.090 +00:00 [INF] HTTP POST /api/Auth/login responded 200 in 100.1142 ms
+2025-10-13 23:52:36.133 +00:00 [INF] HTTP GET /api/Payments/app-balance responded 400 in 1943.3313 ms
+2025-10-13 23:52:48.325 +00:00 [INF] HTTP GET /api/Payments/app-info responded 400 in 1779.3294 ms

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../../domain/repositories/chat_repository.dart';
 import '../../domain/entities/message.dart' as domain_message;

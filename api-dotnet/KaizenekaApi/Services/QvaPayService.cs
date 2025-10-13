@@ -11,6 +11,7 @@ public class QvaPayService : IQvaPayService
     private readonly string _baseUrl;
     private readonly string _bearerToken;
     private readonly string _appUuid;
+    private readonly string _appSecret;
     private readonly string _username;
     private readonly string _successUrl;
     private readonly string _cancelUrl;
@@ -22,11 +23,30 @@ public class QvaPayService : IQvaPayService
         _baseUrl = qvaPayConfig["BaseUrl"] ?? "https://api.qvapay.com/app";
         _bearerToken = qvaPayConfig["BearerToken"] ?? throw new ArgumentNullException("QvaPay BearerToken not configured");
         _appUuid = qvaPayConfig["AppUuid"] ?? throw new ArgumentNullException("QvaPay AppUuid not configured");
+        _appSecret = qvaPayConfig["AppSecret"] ?? throw new ArgumentNullException("QvaPay AppSecret not configured");
         _username = qvaPayConfig["Username"] ?? throw new ArgumentNullException("QvaPay Username not configured");
         _successUrl = qvaPayConfig["SuccessUrl"] ?? "kaizeneka://payment/success";
         _cancelUrl = qvaPayConfig["CancelUrl"] ?? "kaizeneka://payment/cancel";
 
         _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_bearerToken}");
+    }
+
+    public async Task<QvaPayAppInfo> GetAppInfoAsync()
+    {
+        var response = await _httpClient.GetAsync($"{_baseUrl}/v2/info");
+        response.EnsureSuccessStatusCode();
+
+        var content = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<QvaPayAppInfo>(content) ?? new QvaPayAppInfo();
+    }
+
+    public async Task<QvaPayBalanceResponse> GetAppBalanceAsync()
+    {
+        var response = await _httpClient.GetAsync($"{_baseUrl}/v2/balance");
+        response.EnsureSuccessStatusCode();
+
+        var content = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<QvaPayBalanceResponse>(content) ?? new QvaPayBalanceResponse();
     }
 
     public async Task<QvaPayCoinsResponse> GetCoinsAsync()
@@ -68,21 +88,17 @@ public class QvaPayService : IQvaPayService
 
     public async Task<string> CreatePaymentUrlAsync(decimal amount, string description, string orderId)
     {
-        Console.WriteLine($"[QVAPAY] Creating payment URL for amount: {amount}, description: {description}, orderId: {orderId}");
+        Console.WriteLine($"[QVAPAY] Creating invoice for amount: {amount}, description: {description}, orderId: {orderId}");
+
+        System.Diagnostics.Debugger.Break(); // Punto de interrupción al inicio del método
 
         try
         {
-            var request = new QvaPayP2PCreateRequest
+            var request = new
             {
-                Amount = amount,
-                Receive = amount,
-                Details = new List<QvaPayDetail>
-                {
-                    new QvaPayDetail { Name = "Producto", Value = description },
-                    new QvaPayDetail { Name = "Orden ID", Value = orderId },
-                    new QvaPayDetail { Name = "Tienda", Value = "Kaizeneka Shop" }
-                },
-                Message = $"Pago por: {description} - Orden #{orderId}"
+                amount = amount,
+                description = description,
+                remote_id = orderId
             };
 
             var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
@@ -90,48 +106,54 @@ public class QvaPayService : IQvaPayService
                 WriteIndented = true
             });
 
-            Console.WriteLine($"[QVAPAY] Request JSON: {jsonRequest}");
+            Console.WriteLine($"[QVAPAY] Invoice request JSON: {jsonRequest}");
+
+            // Crear nueva instancia de HttpClient para este request específico
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("app-id", _appUuid);
+            client.DefaultRequestHeaders.Add("app-secret", _appSecret);
 
             var content = new StringContent(jsonRequest, System.Text.Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync($"{_baseUrl}/p2p/create", content);
+            var response = await client.PostAsync("https://api.qvapay.com/v2/create_invoice", content);
 
-            Console.WriteLine($"[QVAPAY] Response status: {response.StatusCode}");
+            Console.WriteLine($"[QVAPAY] Invoice response status: {response.StatusCode}");
 
             if (response.IsSuccessStatusCode)
             {
                 var responseContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"[QVAPAY] Response content: {responseContent}");
+                Console.WriteLine($"[QVAPAY] Invoice response content: {responseContent}");
 
-                var p2pResponse = JsonSerializer.Deserialize<QvaPayP2PCreateResponse>(responseContent);
+                var invoiceResponse = JsonSerializer.Deserialize<QvaPayInvoiceResponse>(responseContent);
 
-                if (p2pResponse?.P2p?.Uuid != null)
+                Console.WriteLine($"[QVAPAY] Deserialized invoice response - Url: '{invoiceResponse?.Url}', AppId: '{invoiceResponse?.AppId}'");
+
+                if (invoiceResponse?.Url != null && !string.IsNullOrEmpty(invoiceResponse.Url))
                 {
-                    var finalUrl = $"https://qvapay.com/p2p/{p2pResponse.P2p.Uuid}";
-                    Console.WriteLine($"[QVAPAY] Final URL: {finalUrl}");
-                    // Retornar URL directa a la oferta P2P creada
+                    var finalUrl = invoiceResponse.Url;
+                    Console.WriteLine($"[QVAPAY] Invoice URL: {finalUrl}");
                     return finalUrl;
                 }
                 else
                 {
-                    Console.WriteLine($"[QVAPAY] P2P response missing UUID: {responseContent}");
+                    Console.WriteLine($"[QVAPAY] Invoice response missing or empty URL: {responseContent}");
+                    Console.WriteLine($"[QVAPAY] Invoice response object: Url='{invoiceResponse?.Url}', IsNullOrEmpty={string.IsNullOrEmpty(invoiceResponse?.Url)}");
+                    throw new Exception($"Invoice response missing or empty URL. Response: {responseContent}");
                 }
             }
             else
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"[QVAPAY] Error creating P2P offer: {response.StatusCode} - {errorContent}");
+                Console.WriteLine($"[QVAPAY] Error creating invoice: {response.StatusCode} - {errorContent}");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[QVAPAY] Exception creating P2P offer: {ex.Message}");
+            Console.WriteLine($"[QVAPAY] Exception creating invoice: {ex.Message}");
             Console.WriteLine($"[QVAPAY] Stack trace: {ex.StackTrace}");
         }
 
-        // Fallback: redirigir al marketplace general filtrado por monto
-        var formattedAmount = amount.ToString(CultureInfo.InvariantCulture);
-        var fallbackUrl = $"https://qvapay.com/p2p?type=buy&min={formattedAmount}&max={formattedAmount}";
-        Console.WriteLine($"[QVAPAY] Using fallback URL: {fallbackUrl}");
-        return fallbackUrl;
+        // Fallback: retornar una URL de error o mensaje
+        Console.WriteLine($"[QVAPAY] Failed to create invoice, returning error URL");
+        throw new Exception("No se pudo crear la factura de pago");
     }
 }

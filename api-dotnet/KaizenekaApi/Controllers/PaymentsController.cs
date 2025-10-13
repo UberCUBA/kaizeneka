@@ -6,7 +6,6 @@ using KaizenekaApi.Services;
 namespace KaizenekaApi.Controllers;
 
 [ApiController]
-[Authorize]
 [Route("api/[controller]")]
 public class PaymentsController : ControllerBase
 {
@@ -23,6 +22,7 @@ public class PaymentsController : ControllerBase
     {
         try
         {
+            System.Diagnostics.Debugger.Break(); // Punto de interrupción al inicio del método
             // Crear orden de pago
             var order = new PaymentOrder
             {
@@ -36,6 +36,7 @@ public class PaymentsController : ControllerBase
 
             _orders.Add(order);
 
+            System.Diagnostics.Debugger.Break(); // Punto de interrupción antes de crear la URL de pago
             // Crear URL de pago con QvaPay
             var paymentUrl = await _qvaPayService.CreatePaymentUrlAsync(
                 order.Amount,
@@ -45,6 +46,11 @@ public class PaymentsController : ControllerBase
 
             Console.WriteLine($"[PAYMENT] Order created: {order.Id}, Amount: {order.Amount}, URL: {paymentUrl}");
 
+            if (string.IsNullOrEmpty(paymentUrl))
+            {
+                return BadRequest(new { error = "No se pudo generar la URL de pago" });
+            }
+
             return Ok(new
             {
                 orderId = order.Id,
@@ -52,6 +58,34 @@ public class PaymentsController : ControllerBase
                 amount = order.Amount,
                 currency = order.Currency
             });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    [HttpGet("app-info")]
+    public async Task<IActionResult> GetAppInfo()
+    {
+        try
+        {
+            var appInfo = await _qvaPayService.GetAppInfoAsync();
+            return Ok(appInfo);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    [HttpGet("app-balance")]
+    public async Task<IActionResult> GetAppBalance()
+    {
+        try
+        {
+            var balance = await _qvaPayService.GetAppBalanceAsync();
+            return Ok(balance);
         }
         catch (Exception ex)
         {

@@ -73,6 +73,18 @@ if (app.Environment.IsDevelopment())
         c.OAuthAppName("Kaizeneka API - Swagger UI");
     });
 }
+else
+{
+    // Enable Swagger in production for testing
+    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Kaizeneka API v1");
+        c.OAuthClientId("swagger-ui");
+        c.OAuthAppName("Kaizeneka API - Swagger UI");
+    });
+}
 
 app.UseSerilogRequestLogging();
 app.UseCors("AllowAll");

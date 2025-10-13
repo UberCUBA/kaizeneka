@@ -29,6 +29,26 @@ class PaymentService {
     }
   }
 
+  Future<Map<String, dynamic>> getAppInfo() async {
+    final response = await http.get(Uri.parse('$baseUrl/payments/app-info'));
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to get app info: ${response.body}');
+    }
+  }
+
+  Future<Map<String, dynamic>> getAppBalance() async {
+    final response = await http.get(Uri.parse('$baseUrl/payments/app-balance'));
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to get app balance: ${response.body}');
+    }
+  }
+
   Future<Map<String, dynamic>> getCoins() async {
     final response = await http.get(Uri.parse('$baseUrl/payments/coins'));
 

@@ -49,8 +49,13 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load environment variables
-  await dotenv.load(fileName: ".env");
+  // Load environment variables (only if file exists)
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    // File doesn't exist, continue without .env
+    debugPrint('No .env file found, using default values');
+  }
 
   // Inicializar Supabase
   await SupabaseService.initialize();

@@ -4,6 +4,8 @@ namespace KaizenekaApi.Services;
 
 public interface IQvaPayService
 {
+    Task<QvaPayAppInfo> GetAppInfoAsync();
+    Task<QvaPayBalanceResponse> GetAppBalanceAsync();
     Task<QvaPayCoinsResponse> GetCoinsAsync();
     Task<QvaPayP2PResponse> GetP2POffersAsync(string? coin = null, string? type = null);
     Task<decimal> GetAveragePriceAsync(string coin);

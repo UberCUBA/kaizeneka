@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/services/payment_service.dart';
 import '../providers/shop_provider.dart';
 import '../widgets/item_card.dart';
 import '../../domain/entities/item.dart';
+import 'payment_webview_page.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 
 class ShopNkPage extends StatefulWidget {
   const ShopNkPage({super.key});
@@ -39,11 +40,15 @@ class _ShopNkPageState extends State<ShopNkPage> {
 
     try {
       print('[PAYMENT] Starting payment process...');
-      // Obtener userId - por ahora usamos un ID de ejemplo
-      // TODO: Integrar con AuthProvider cuando esté disponible
-      final userId = 'user_123'; // Temporal hasta integrar AuthProvider
+
+      // Obtener userId del AuthProvider
+      final authProvider = context.read<AuthProvider>();
+      final userId = authProvider.user?.id ?? 'user_unknown';
+
+      print('[PAYMENT] User ID: $userId');
 
       // Crear pago en el backend
+      print('[PAYMENT] Calling createPayment...');
       final paymentResponse = await _paymentService.createPayment(
         itemId: item.id,
         itemName: item.name,
@@ -51,104 +56,32 @@ class _ShopNkPageState extends State<ShopNkPage> {
         userId: userId,
       );
 
-      // Abrir URL de pago
+      print('[PAYMENT] Payment response received: $paymentResponse');
+
+      // Verificar que tenemos la URL de pago
+      if (!paymentResponse.containsKey('paymentUrl')) {
+        throw 'Respuesta de pago inválida: falta paymentUrl';
+      }
+
       final paymentUrl = paymentResponse['paymentUrl'] as String;
+      print('[PAYMENT] Payment URL: $paymentUrl');
 
       if (paymentUrl.isEmpty || !paymentUrl.startsWith('http')) {
         throw 'URL de pago inválida: $paymentUrl';
       }
 
-      final uri = Uri.parse(paymentUrl);
-
-      // Mostrar mensaje de redirección
+      // Mostrar WebView para completar el pago
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Redirigiendo al marketplace de QvaPay...'),
-            backgroundColor: Color(0xFF00FF7F),
+        print('[PAYMENT] Opening WebView with URL: $paymentUrl');
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => PaymentWebViewPage(paymentUrl: paymentUrl),
           ),
         );
       }
 
-      // Pequeña pausa para que el usuario vea el mensaje
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      // Para Flutter Web, mostrar diálogo con la URL
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Completar Pago'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Serás redirigido al marketplace de QvaPay para completar tu pago.'),
-                  const SizedBox(height: 16),
-                  const Text('URL de pago:', style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  Text(paymentUrl, style: const TextStyle(fontSize: 12, color: Colors.blue)),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancelar'),
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    Navigator.of(context).pop();
-                    print('[PAYMENT] User clicked "Ir a Pagar"');
-                    print('[PAYMENT] Attempting to launch URL: $paymentUrl');
-
-                    try {
-                      print('[PAYMENT] Checking if can launch URL...');
-                      final canLaunch = await canLaunchUrl(uri);
-                      print('[PAYMENT] Can launch result: $canLaunch');
-
-                      if (canLaunch) {
-                        print('[PAYMENT] Launching with externalApplication...');
-                        await launchUrl(uri, mode: LaunchMode.externalApplication);
-                        print('[PAYMENT] URL launched successfully');
-                      } else {
-                        print('[PAYMENT] Cannot launch, showing fallback message');
-                        // Copiar al portapapeles como fallback
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Copia esta URL y ábrela en tu navegador:\n$paymentUrl'),
-                              duration: const Duration(seconds: 10),
-                              action: SnackBarAction(
-                                label: 'OK',
-                                onPressed: () {},
-                              ),
-                            ),
-                          );
-                        }
-                      }
-                    } catch (e) {
-                      print('[PAYMENT] Error launching URL: $e');
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Error al abrir URL: $e\n\nCopia manualmente: $paymentUrl'),
-                            backgroundColor: Colors.red,
-                            duration: const Duration(seconds: 10),
-                          ),
-                        );
-                      }
-                    }
-                  },
-                  child: const Text('Ir a Pagar'),
-                ),
-              ],
-            );
-          },
-        );
-      }
-
     } catch (e) {
+      print('[PAYMENT] Error in _buyItem: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

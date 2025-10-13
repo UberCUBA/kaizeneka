@@ -6,9 +6,9 @@ services:
       context: ./KaizenekaApi
       dockerfile: Dockerfile
     ports:
-      - "8080:80"
+      - "5102:80"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
     volumes:
       - ./logs:/app/logs

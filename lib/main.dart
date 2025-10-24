@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'core/services/supabase_service.dart';
-import 'core/theme/app_theme.dart';
+import 'core/theme/theme_provider.dart';
 import 'core/services/local_notification_service.dart';
 import 'features/splash/presentation/pages/splash_page.dart';
 import 'features/home/presentation/pages/home_page.dart';
@@ -57,6 +57,11 @@ void main() async {
     debugPrint('No .env file found, using default values');
   }
 
+  // Ensure dotenv is loaded before initializing ChatRepository
+  if (dotenv.env.isEmpty) {
+    debugPrint('Warning: .env file not loaded properly');
+  }
+
   // Inicializar Supabase
   await SupabaseService.initialize();
 
@@ -88,9 +93,15 @@ void main() async {
   final sendMessage = SendMessage(chatRepository);
   final getAvailableModels = GetAvailableModels(chatRepository);
 
+  // Inicializar ChatRepository después de crear los providers
+  await ChatRepositoryImpl.initialize();
+
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+          create: (_) => ThemeProvider(),
+        ),
         ChangeNotifierProvider(
           create: (_) => AuthProvider(),
         ),
@@ -140,25 +151,29 @@ class KaizenekaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'NK',
-      theme: AppTheme.darkTheme,
-      navigatorKey: navigatorKey,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const SplashPage(),
-        '/login': (context) => const LoginPage(),
-        '/home': (context) => const HomePage(),
-        '/all-missions': (context) => const AllMissionsPage(),
-        '/ranking': (context) => const RankingPage(),
-        '/map': (context) => const MapPage(),
-        '/biblioteca': (context) => const BibliotecaNkPage(),
-        '/postureo': (context) => const PostureoNkPage(),
-        '/profile': (context) => const ProfilePage(),
-        '/settings': (context) => const SettingsPage(),
-        '/shop': (context) => const ShopNkPage(),
-        '/ia_nk': (context) => const IaNkPage(),
-        '/ia_nk_history': (context) => const ChatHistoryPage(),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          title: 'NK',
+          theme: themeProvider.currentTheme,
+          navigatorKey: navigatorKey,
+          initialRoute: '/',
+          routes: {
+            '/': (context) => const SplashPage(),
+            '/login': (context) => const LoginPage(),
+            '/home': (context) => const HomePage(),
+            '/all-missions': (context) => const AllMissionsPage(),
+            '/ranking': (context) => const RankingPage(),
+            '/map': (context) => const MapPage(),
+            '/biblioteca': (context) => const BibliotecaNkPage(),
+            '/postureo': (context) => const PostureoNkPage(),
+            '/profile': (context) => const ProfilePage(),
+            '/settings': (context) => const SettingsPage(),
+            '/shop': (context) => const ShopNkPage(),
+            '/ia_nk': (context) => const IaNkPage(),
+            '/ia_nk_history': (context) => const ChatHistoryPage(),
+          },
+        );
       },
     );
   }

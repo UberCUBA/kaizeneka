@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../missions/presentation/providers/mission_provider.dart';
 import '../../../missions/domain/entities/mission.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../../core/theme/theme_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,6 +17,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final missionProvider = Provider.of<MissionProvider>(context);
     final authProvider = Provider.of<AuthProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context);
 
     if (missionProvider.isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -55,14 +57,14 @@ class _HomePageState extends State<HomePage> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: themeProvider.isDarkMode ? Colors.black : const Color(0xFFF8F9FA),
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const Text('NK(+)', style: TextStyle(color: Colors.white)),
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: themeProvider.isDarkMode ? Colors.black : Colors.white,
+        title: Text('NK(+)', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
+        iconTheme: IconThemeData(color: themeProvider.isDarkMode ? Colors.white : Colors.black54),
       ),
       drawer: Drawer(
-        backgroundColor: Colors.black,
+        backgroundColor: themeProvider.isDarkMode ? Colors.black : Colors.white,
         child: Padding(
           padding: EdgeInsets.only(top: 28),
           child: ListView(
@@ -155,30 +157,30 @@ class _HomePageState extends State<HomePage> {
             ),
             ListTile(
               leading: const Icon(Icons.person, color: Color(0xFF00FF7F)),
-              title: const Text('Mi Perfil', style: TextStyle(color: Colors.white)),
+              title: Text('Mi Perfil', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
               onTap: () {
                 Navigator.of(context).pushNamed('/profile');
               },
             ),
             ListTile(
               leading: const Icon(Icons.assignment, color: Color(0xFF00FF7F)),
-              title: const Text('Inicio', style: TextStyle(color: Colors.white)),
+              title: Text('Inicio', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
               onTap: () {
                 Navigator.of(context).pop();
               },
             ),
-            
+
             ListTile(
               leading: const Icon(Icons.photo_camera, color: Color(0xFF00FF7F)),
-              title: const Text('Postureo NK', style: TextStyle(color: Colors.white)),
+              title: Text('Postureo NK', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
               onTap: () {
                 Navigator.of(context).pushNamed('/postureo');
               },
             ),
-            
+
             ListTile(
               leading: const Icon(Icons.library_books, color: Color(0xFF00FF7F)),
-              title: const Text('Biblioteca NK', style: TextStyle(color: Colors.white)),
+              title: Text('Biblioteca NK', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
               onTap: () {
                 Navigator.of(context).pushNamed('/biblioteca');
               },
@@ -186,7 +188,7 @@ class _HomePageState extends State<HomePage> {
 
             ListTile(
               leading: const Icon(Icons.smart_toy, color: Color(0xFF00FF7F)),
-              title: const Text('IA NK', style: TextStyle(color: Colors.white)),
+              title: Text('IA NK', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
               onTap: () {
                 Navigator.of(context).pushNamed('/ia_nk');
               },
@@ -194,7 +196,7 @@ class _HomePageState extends State<HomePage> {
 
             ListTile(
               leading: const Icon(Icons.shopping_bag, color: Color(0xFF00FF7F)),
-              title: const Text('Shop NK', style: TextStyle(color: Colors.white)),
+              title: Text('Shop NK', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
               onTap: () {
                 Navigator.of(context).pushNamed('/shop');
               },
@@ -202,21 +204,21 @@ class _HomePageState extends State<HomePage> {
 
             ListTile(
               leading: const Icon(Icons.map, color: Color(0xFF00FF7F)),
-              title: const Text('Mapa Kaizeneka', style: TextStyle(color: Colors.white)),
+              title: Text('Mapa Kaizeneka', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
               onTap: () {
                 Navigator.of(context).pushNamed('/map');
               },
             ),
             ListTile(
               leading: const Icon(Icons.leaderboard, color: Color(0xFF00FF7F)),
-              title: const Text('Ranking de Usuarios', style: TextStyle(color: Colors.white)),
+              title: Text('Ranking de Usuarios', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
               onTap: () {
                 Navigator.of(context).pushNamed('/ranking');
               },
             ),
             ListTile(
               leading: const Icon(Icons.settings, color: Color(0xFF00FF7F)),
-              title: const Text('Ajustes', style: TextStyle(color: Colors.white)),
+              title: Text('Ajustes', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
               onTap: () {
                 Navigator.of(context).pushNamed('/settings');
               },
@@ -233,8 +235,15 @@ class _HomePageState extends State<HomePage> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF1C1C1C),
+                color: themeProvider.isDarkMode ? const Color(0xFF1C1C1C) : Colors.white,
                 borderRadius: BorderRadius.circular(10),
+                boxShadow: themeProvider.isDarkMode ? null : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Column(
                 children: [
@@ -245,7 +254,7 @@ class _HomePageState extends State<HomePage> {
                       Text(
                         'Misión del día',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
@@ -255,8 +264,8 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 20),
                   Text(
                     mission.descripcion,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
                       fontSize: 18,
                     ),
                     textAlign: TextAlign.center,
@@ -289,8 +298,15 @@ class _HomePageState extends State<HomePage> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: const Color(0xFF1C1C1C),
+                color: themeProvider.isDarkMode ? const Color(0xFF1C1C1C) : Colors.white,
                 borderRadius: BorderRadius.circular(10),
+                boxShadow: themeProvider.isDarkMode ? null : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Row(
                 children: [
@@ -298,8 +314,8 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(width: 10),
                   Text(
                     'Tu nivel: Cinturón ${missionProvider.user.cinturonActual}',
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -312,18 +328,25 @@ class _HomePageState extends State<HomePage> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: const Color(0xFF1C1C1C),
+                color: themeProvider.isDarkMode ? const Color(0xFF1C1C1C) : Colors.white,
                 borderRadius: BorderRadius.circular(10),
+                boxShadow: themeProvider.isDarkMode ? null : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Column(
                 children: [
                   Row(
                     children: [
                       const Icon(Icons.thermostat_outlined, color: Color(0xFF00FF7F), size: 30),
-                      const Text(
+                      Text(
                         'Palmarómetro',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -333,13 +356,13 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 10),
                   LinearProgressIndicator(
                     value: missionProvider.user.puntos / 100.0,
-                    backgroundColor: Colors.grey,
+                    backgroundColor: themeProvider.isDarkMode ? Colors.grey : Colors.grey[300],
                     valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF00FF7F)),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     '${missionProvider.user.puntos} puntos',
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87),
                   ),
                 ],
               ),
@@ -391,14 +414,15 @@ class _HomePageState extends State<HomePage> {
 
   void _showFeedback(BuildContext context, Mission mission) {
     if (!mounted) return;
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.black,
-        title: const Text('¡Misión Completada!', style: TextStyle(color: Color(0xFF00FF7F))),
+        backgroundColor: themeProvider.isDarkMode ? Colors.black : Colors.white,
+        title: Text('¡Misión Completada!', style: TextStyle(color: const Color(0xFF00FF7F))),
         content: Text(
           'Has lucrado ${mission.beneficio}. Sobradísimo 💥',
-          style: const TextStyle(color: Colors.white),
+          style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87),
         ),
         actions: [
           TextButton(

@@ -14,7 +14,16 @@ class PostRepositoryImpl implements PostRepository {
 
       return response.map((json) => Post.fromJson(json)).toList();
     } catch (e) {
-      throw Exception('Error al cargar posts: $e');
+      // Verificar si es un error de conexión a internet
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('Connection refused') ||
+          e.toString().contains('Failed host lookup') ||
+          e.toString().contains('Network is unreachable') ||
+          e.toString().contains('Connection timeout')) {
+        throw Exception('¡Upsss!! Algo va Mal!! Revise su conexión a Internet!!');
+      } else {
+        throw Exception('Error al cargar posts: $e');
+      }
     }
   }
 
@@ -24,7 +33,16 @@ class PostRepositoryImpl implements PostRepository {
       // Incrementar likes en la base de datos usando rpc o update directo
       await SupabaseService.client.rpc('increment_likes', params: {'post_id': postId});
     } catch (e) {
-      throw Exception('Error al dar like al post: $e');
+      // Verificar si es un error de conexión a internet
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('Connection refused') ||
+          e.toString().contains('Failed host lookup') ||
+          e.toString().contains('Network is unreachable') ||
+          e.toString().contains('Connection timeout')) {
+        throw Exception('¡Upsss!! Algo va Mal!! Revise su conexión a Internet!!');
+      } else {
+        throw Exception('Error al dar like al post: $e');
+      }
     }
   }
 
@@ -41,7 +59,16 @@ class PostRepositoryImpl implements PostRepository {
           .from('posts')
           .insert(postData);
     } catch (e) {
-      throw Exception('Error al crear post: $e');
+      // Verificar si es un error de conexión a internet
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('Connection refused') ||
+          e.toString().contains('Failed host lookup') ||
+          e.toString().contains('Network is unreachable') ||
+          e.toString().contains('Connection timeout')) {
+        throw Exception('¡Upsss!! Algo va Mal!! Revise su conexión a Internet!!');
+      } else {
+        throw Exception('Error al crear post: $e');
+      }
     }
   }
 }

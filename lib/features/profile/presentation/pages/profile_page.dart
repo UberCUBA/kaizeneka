@@ -5,6 +5,7 @@ import 'dart:io';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../missions/presentation/providers/mission_provider.dart';
 import '../../../../core/services/supabase_service.dart';
+import '../../../../core/theme/theme_provider.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -94,17 +95,18 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _showImageSourceDialog() {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1C1C1C),
-        title: const Text('Seleccionar imagen', style: TextStyle(color: Colors.white)),
+        backgroundColor: themeProvider.isDarkMode ? const Color(0xFF1C1C1C) : Colors.white,
+        title: Text('Seleccionar imagen', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
               leading: const Icon(Icons.photo_library, color: Color(0xFF00FF7F)),
-              title: const Text('Galería', style: TextStyle(color: Colors.white)),
+              title: Text('Galería', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
               onTap: () {
                 Navigator.of(context).pop();
                 _pickImage();
@@ -112,7 +114,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             ListTile(
               leading: const Icon(Icons.camera_alt, color: Color(0xFF00FF7F)),
-              title: const Text('Cámara', style: TextStyle(color: Colors.white)),
+              title: Text('Cámara', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
               onTap: () {
                 Navigator.of(context).pop();
                 _takePhoto();
@@ -128,6 +130,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
     final missionProvider = Provider.of<MissionProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context);
     final userProfile = authProvider.userProfile;
 
     Color getBeltColor(String belt) {
@@ -152,11 +155,11 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: themeProvider.isDarkMode ? Colors.black : const Color(0xFFF8F9FA),
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const Text('Mi Perfil', style: TextStyle(color: Colors.white)),
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: themeProvider.isDarkMode ? Colors.black : Colors.white,
+        title: Text('Mi Perfil', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
+        iconTheme: IconThemeData(color: themeProvider.isDarkMode ? Colors.white : Colors.black54),
         actions: [
           if (!_isEditing)
             IconButton(
@@ -191,9 +194,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   const CircularProgressIndicator(),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     'Cargando perfil...',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87),
                   ),
                   const SizedBox(height: 20),
                   // ElevatedButton(
@@ -278,14 +281,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   if (_isEditing)
                     TextField(
                       controller: _nameController,
-                      style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-                      decoration: const InputDecoration(
+                      style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87, fontSize: 24, fontWeight: FontWeight.bold),
+                      decoration: InputDecoration(
                         labelText: 'Nombre',
-                        labelStyle: TextStyle(color: Color(0xFF00FF7F)),
-                        enabledBorder: UnderlineInputBorder(
+                        labelStyle: const TextStyle(color: Color(0xFF00FF7F)),
+                        enabledBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(color: Color(0xFF00FF7F)),
                         ),
-                        focusedBorder: UnderlineInputBorder(
+                        focusedBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(color: Color(0xFF00FF7F)),
                         ),
                       ),
@@ -294,8 +297,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   else
                     Text(
                       userProfile.name,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -308,17 +311,24 @@ class _ProfilePageState extends State<ProfilePage> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1C1C1C),
+                      color: themeProvider.isDarkMode ? const Color(0xFF1C1C1C) : Colors.white,
                       borderRadius: BorderRadius.circular(10),
+                      boxShadow: themeProvider.isDarkMode ? null : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Column(
                       children: [
                         _buildProfileInfo('Email', userProfile.email),
-                        const Divider(color: Colors.grey),
+                        Divider(color: themeProvider.isDarkMode ? Colors.grey : Colors.black12),
                         _buildProfileInfo('Cinturón', userProfile.belt),
-                        const Divider(color: Colors.grey),
+                        Divider(color: themeProvider.isDarkMode ? Colors.grey : Colors.black12),
                         _buildProfileInfo('Puntos', userProfile.points.toString()),
-                        const Divider(color: Colors.grey),
+                        Divider(color: themeProvider.isDarkMode ? Colors.grey : Colors.black12),
                         _buildProfileInfo('Miembro desde',
                             '${userProfile.createdAt.day}/${userProfile.createdAt.month}/${userProfile.createdAt.year}'),
                       ],
@@ -331,8 +341,15 @@ class _ProfilePageState extends State<ProfilePage> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1C1C1C),
+                      color: themeProvider.isDarkMode ? const Color(0xFF1C1C1C) : Colors.white,
                       borderRadius: BorderRadius.circular(10),
+                      boxShadow: themeProvider.isDarkMode ? null : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Column(
                       children: [
@@ -363,12 +380,19 @@ class _ProfilePageState extends State<ProfilePage> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1C1C1C),
+                      color: themeProvider.isDarkMode ? const Color(0xFF1C1C1C) : Colors.white,
                       borderRadius: BorderRadius.circular(10),
+                      boxShadow: themeProvider.isDarkMode ? null : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
-                    child: const Column(
+                    child: Column(
                       children: [
-                        Text(
+                        const Text(
                           'Racha Actual',
                           style: TextStyle(
                             color: Color(0xFF00FF7F),
@@ -376,11 +400,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           '7 días', // TODO: Conectar con lógica real
                           style: TextStyle(
-                            color: Colors.white,
+                            color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
@@ -388,7 +412,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         Text(
                           '¡Sigue así!',
                           style: TextStyle(
-                            color: Colors.grey,
+                            color: themeProvider.isDarkMode ? Colors.grey : Colors.black54,
                             fontSize: 14,
                           ),
                         ),
@@ -402,8 +426,15 @@ class _ProfilePageState extends State<ProfilePage> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1C1C1C),
+                      color: themeProvider.isDarkMode ? const Color(0xFF1C1C1C) : Colors.white,
                       borderRadius: BorderRadius.circular(10),
+                      boxShadow: themeProvider.isDarkMode ? null : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Column(
                       children: [
@@ -418,17 +449,17 @@ class _ProfilePageState extends State<ProfilePage> {
                         const SizedBox(height: 10),
                         Text(
                           missionProvider.getCurrentDailyMission().descripcion, // TODO: Mostrar la próxima
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
                             fontSize: 16,
                           ),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 10),
-                        const Text(
+                        Text(
                           'Disponible mañana',
                           style: TextStyle(
-                            color: Colors.grey,
+                            color: themeProvider.isDarkMode ? Colors.grey : Colors.black54,
                             fontSize: 14,
                           ),
                         ),
@@ -442,8 +473,15 @@ class _ProfilePageState extends State<ProfilePage> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1C1C1C),
+                      color: themeProvider.isDarkMode ? const Color(0xFF1C1C1C) : Colors.white,
                       borderRadius: BorderRadius.circular(10),
+                      boxShadow: themeProvider.isDarkMode ? null : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Column(
                       children: [
@@ -456,10 +494,10 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                         const SizedBox(height: 10),
-                        const Text(
+                        Text(
                           'Administra tus cursos y progreso',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
                             fontSize: 16,
                           ),
                           textAlign: TextAlign.center,
@@ -488,6 +526,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildProfileInfo(String label, String value) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -495,12 +534,12 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           Text(
             label,
-            style: const TextStyle(color: Colors.grey, fontSize: 16),
+            style: TextStyle(color: themeProvider.isDarkMode ? Colors.grey : Colors.black54, fontSize: 16),
           ),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(color: Colors.white, fontSize: 16),
+              style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87, fontSize: 16),
               textAlign: TextAlign.right,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
@@ -512,6 +551,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildStat(String label, String value) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     return Column(
       children: [
         Text(
@@ -524,7 +564,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         Text(
           label,
-          style: const TextStyle(color: Colors.white, fontSize: 14),
+          style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87, fontSize: 14),
         ),
       ],
     );

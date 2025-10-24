@@ -24,10 +24,26 @@ class _LoginPageState extends State<LoginPage> {
       }
     } catch (e) {
       if (mounted) {
+        // Mostrar mensaje personalizado para errores de conexión
+        String errorMessage = 'Error al iniciar sesión';
+        Color backgroundColor = Colors.red;
+
+        if (e.toString().contains('¡Upsss!! Algo va Mal!! Revise su conexión a Internet!!')) {
+          errorMessage = '¡Upsss!! Algo va Mal!! Revise su conexión a Internet!!';
+          backgroundColor = const Color(0xFF00FF7F); // Verde NK+
+        } else {
+          errorMessage = 'Error al iniciar sesión: ${e.toString()}';
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error al iniciar sesión: ${e.toString()}'),
-            backgroundColor: Colors.red,
+            content: Text(errorMessage),
+            backgroundColor: backgroundColor,
+            duration: const Duration(seconds: 4),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
         );
       }

@@ -39,7 +39,16 @@ class PostureoProvider with ChangeNotifier {
       _posts = await getPosts(limit: 10, offset: 0);
       _hasMore = _posts.length == 10;
     } catch (e) {
-      _error = e.toString();
+      // Verificar si es un error de conexión a internet
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('Connection refused') ||
+          e.toString().contains('Failed host lookup') ||
+          e.toString().contains('Network is unreachable') ||
+          e.toString().contains('Connection timeout')) {
+        _error = '¡Upsss!! Algo va Mal!! Revise su conexión a Internet!!';
+      } else {
+        _error = e.toString();
+      }
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -57,7 +66,16 @@ class PostureoProvider with ChangeNotifier {
       _posts.addAll(newPosts);
       _hasMore = newPosts.length == 10;
     } catch (e) {
-      _error = e.toString();
+      // Verificar si es un error de conexión a internet
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('Connection refused') ||
+          e.toString().contains('Failed host lookup') ||
+          e.toString().contains('Network is unreachable') ||
+          e.toString().contains('Connection timeout')) {
+        _error = '¡Upsss!! Algo va Mal!! Revise su conexión a Internet!!';
+      } else {
+        _error = e.toString();
+      }
     } finally {
       _isLoadingMore = false;
       notifyListeners();
@@ -77,7 +95,16 @@ class PostureoProvider with ChangeNotifier {
 
       notifyListeners();
     } catch (e) {
-      _error = e.toString();
+      // Verificar si es un error de conexión a internet
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('Connection refused') ||
+          e.toString().contains('Failed host lookup') ||
+          e.toString().contains('Network is unreachable') ||
+          e.toString().contains('Connection timeout')) {
+        _error = '¡Upsss!! Algo va Mal!! Revise su conexión a Internet!!';
+      } else {
+        _error = e.toString();
+      }
       notifyListeners();
     }
   }
@@ -88,7 +115,16 @@ class PostureoProvider with ChangeNotifier {
       _posts.insert(0, post);
       notifyListeners();
     } catch (e) {
-      _error = e.toString();
+      // Verificar si es un error de conexión a internet
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('Connection refused') ||
+          e.toString().contains('Failed host lookup') ||
+          e.toString().contains('Network is unreachable') ||
+          e.toString().contains('Connection timeout')) {
+        _error = '¡Upsss!! Algo va Mal!! Revise su conexión a Internet!!';
+      } else {
+        _error = e.toString();
+      }
       notifyListeners();
     }
   }

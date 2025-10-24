@@ -19,7 +19,17 @@ class SupabaseRankingRepository implements RankingRepository {
 
       return response.map((json) => KaizenekaUser.fromJson(json)).toList();
     } catch (e) {
-      return [];
+      // Verificar si es un error de conexión a internet
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('Connection refused') ||
+          e.toString().contains('Failed host lookup') ||
+          e.toString().contains('Network is unreachable') ||
+          e.toString().contains('Connection timeout')) {
+        // Para ranking, devolver lista vacía silenciosamente en caso de error de conexión
+        return [];
+      } else {
+        return [];
+      }
     }
   }
 }

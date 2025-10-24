@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../../core/theme/theme_provider.dart' as custom_theme;
 import 'donation_page.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -32,17 +33,18 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> _showLogoutDialog() async {
+    final themeProvider = Provider.of<custom_theme.ThemeProvider>(context, listen: false);
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1C1C1C),
-        title: const Text(
+        backgroundColor: themeProvider.isDarkMode ? const Color(0xFF1C1C1C) : Colors.white,
+        title: Text(
           'Cerrar Sesión',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87),
         ),
-        content: const Text(
+        content: Text(
           '¿Estás seguro de que quieres cerrar sesión?',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87),
         ),
         actions: [
           TextButton(
@@ -83,13 +85,14 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
+    final themeProvider = Provider.of<custom_theme.ThemeProvider>(context);
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: themeProvider.isDarkMode ? Colors.black : const Color(0xFFF8F9FA),
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const Text('Configuración', style: TextStyle(color: Colors.white)),
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: themeProvider.isDarkMode ? Colors.black : Colors.white,
+        title: Text('Configuración', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
+        iconTheme: IconThemeData(color: themeProvider.isDarkMode ? Colors.white : Colors.black54),
       ),
       body: ListView(
         children: [
@@ -97,25 +100,25 @@ class _SettingsPageState extends State<SettingsPage> {
           _buildSectionHeader('Cuenta'),
           ListTile(
             leading: const Icon(Icons.person, color: Color(0xFF00FF7F)),
-            title: const Text('Mi Perfil', style: TextStyle(color: Colors.white)),
+            title: Text('Mi Perfil', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
             subtitle: Text(
               authProvider.userProfile?.name ?? 'Usuario',
-              style: const TextStyle(color: Colors.grey),
+              style: TextStyle(color: themeProvider.isDarkMode ? Colors.grey : Colors.black54),
             ),
-            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
+            trailing: Icon(Icons.arrow_forward_ios, color: themeProvider.isDarkMode ? Colors.grey : Colors.black38, size: 16),
             onTap: () {
               Navigator.of(context).pushNamed('/profile');
             },
           ),
-          const Divider(color: Colors.grey),
+          Divider(color: themeProvider.isDarkMode ? Colors.grey : Colors.black12),
 
           // Sección de Preferencias
           _buildSectionHeader('Preferencias'),
           ListTile(
             leading: const Icon(Icons.notifications, color: Color(0xFF00FF7F)),
-            title: const Text('Notificaciones', style: TextStyle(color: Colors.white)),
-            subtitle: const Text('Gestionar notificaciones diarias', style: TextStyle(color: Colors.grey)),
-            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
+            title: Text('Notificaciones', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
+            subtitle: Text('Gestionar notificaciones diarias', style: TextStyle(color: themeProvider.isDarkMode ? Colors.grey : Colors.black54)),
+            trailing: Icon(Icons.arrow_forward_ios, color: themeProvider.isDarkMode ? Colors.grey : Colors.black38, size: 16),
             onTap: () {
               // TODO: Implementar pantalla de notificaciones
               ScaffoldMessenger.of(context).showSnackBar(
@@ -123,15 +126,68 @@ class _SettingsPageState extends State<SettingsPage> {
               );
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.palette, color: Color(0xFF00FF7F)),
-            title: const Text('Tema', style: TextStyle(color: Colors.white)),
-            subtitle: const Text('Cambiar apariencia de la app', style: TextStyle(color: Colors.grey)),
-            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
-            onTap: () {
-              // TODO: Implementar selector de tema
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Función próximamente')),
+          Consumer<custom_theme.ThemeProvider>(
+            builder: (context, themeProvider, child) {
+              String getThemeSubtitle() {
+                switch (themeProvider!.themeMode) {
+                  case custom_theme.ThemeMode.light:
+                    return 'Modo claro';
+                  case custom_theme.ThemeMode.dark:
+                    return 'Modo oscuro';
+                  case custom_theme.ThemeMode.system:
+                    return 'Tema del sistema';
+                  default:
+                    return 'Modo oscuro';
+                }
+              }
+
+              void _showThemeMenu() {
+                final RenderBox button = context.findRenderObject() as RenderBox;
+                final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+                final RelativeRect position = RelativeRect.fromRect(
+                  Rect.fromPoints(
+                    button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
+                    button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
+                  ),
+                  Offset.zero & overlay.size,
+                );
+
+                showMenu<custom_theme.ThemeMode>(
+                  context: context,
+                  position: position,
+                  items: <PopupMenuEntry<custom_theme.ThemeMode>>[
+                    const PopupMenuItem<custom_theme.ThemeMode>(
+                      value: custom_theme.ThemeMode.light,
+                      child: Text('Tema claro'),
+                    ),
+                    const PopupMenuItem<custom_theme.ThemeMode>(
+                      value: custom_theme.ThemeMode.dark,
+                      child: Text('Tema oscuro'),
+                    ),
+                    const PopupMenuItem<custom_theme.ThemeMode>(
+                      value: custom_theme.ThemeMode.system,
+                      child: Text('Tema del sistema'),
+                    ),
+                  ],
+                ).then((custom_theme.ThemeMode? mode) {
+                  if (mode != null) {
+                    themeProvider!.setThemeMode(mode);
+                  }
+                });
+              }
+
+              return ListTile(
+                leading: const Icon(Icons.palette, color: Color(0xFF00FF7F)),
+                title: Text('Tema', style: TextStyle(color: themeProvider!.isDarkMode ? Colors.white : Colors.black87)),
+                subtitle: Text(
+                  getThemeSubtitle(),
+                  style: TextStyle(color: themeProvider!.isDarkMode ? Colors.grey : Colors.black54),
+                ),
+                trailing: Icon(
+                  Icons.arrow_drop_down,
+                  color: themeProvider!.isDarkMode ? Colors.grey : Colors.black38,
+                ),
+                onTap: _showThemeMenu,
               );
             },
           ),
@@ -141,9 +197,9 @@ class _SettingsPageState extends State<SettingsPage> {
           _buildSectionHeader('Ayuda'),
           ListTile(
             leading: const Icon(Icons.help, color: Color(0xFF00FF7F)),
-            title: const Text('Centro de Ayuda', style: TextStyle(color: Colors.white)),
-            subtitle: const Text('Preguntas frecuentes', style: TextStyle(color: Colors.grey)),
-            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
+            title: Text('Centro de Ayuda', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
+            subtitle: Text('Preguntas frecuentes', style: TextStyle(color: themeProvider.isDarkMode ? Colors.grey : Colors.black54)),
+            trailing: Icon(Icons.arrow_forward_ios, color: themeProvider.isDarkMode ? Colors.grey : Colors.black38, size: 16),
             onTap: () {
               // TODO: Implementar centro de ayuda
               ScaffoldMessenger.of(context).showSnackBar(
@@ -153,9 +209,9 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           ListTile(
             leading: const Icon(Icons.feedback, color: Color(0xFF00FF7F)),
-            title: const Text('Enviar Comentarios', style: TextStyle(color: Colors.white)),
-            subtitle: const Text('Ayúdanos a mejorar', style: TextStyle(color: Colors.grey)),
-            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
+            title: Text('Enviar Comentarios', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
+            subtitle: Text('Ayúdanos a mejorar', style: TextStyle(color: themeProvider.isDarkMode ? Colors.grey : Colors.black54)),
+            trailing: Icon(Icons.arrow_forward_ios, color: themeProvider.isDarkMode ? Colors.grey : Colors.black38, size: 16),
             onTap: () {
               // TODO: Implementar envío de feedback
               ScaffoldMessenger.of(context).showSnackBar(
@@ -165,9 +221,9 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           ListTile(
             leading: const Icon(Icons.favorite, color: Colors.red),
-            title: const Text('Donar a Desarrolladores', style: TextStyle(color: Colors.white)),
-            subtitle: const Text('Apoya el desarrollo de NK+', style: TextStyle(color: Colors.grey)),
-            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
+            title: Text('Donar a Desarrolladores', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
+            subtitle: Text('Apoya el desarrollo de NK+', style: TextStyle(color: themeProvider.isDarkMode ? Colors.grey : Colors.black54)),
+            trailing: Icon(Icons.arrow_forward_ios, color: themeProvider.isDarkMode ? Colors.grey : Colors.black38, size: 16),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -182,8 +238,8 @@ class _SettingsPageState extends State<SettingsPage> {
           _buildSectionHeader('Legal'),
           ListTile(
             leading: const Icon(Icons.privacy_tip, color: Color(0xFF00FF7F)),
-            title: const Text('Política de Privacidad', style: TextStyle(color: Colors.white)),
-            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
+            title: Text('Política de Privacidad', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
+            trailing: Icon(Icons.arrow_forward_ios, color: themeProvider.isDarkMode ? Colors.grey : Colors.black38, size: 16),
             onTap: () {
               // TODO: Implementar política de privacidad
               ScaffoldMessenger.of(context).showSnackBar(
@@ -193,8 +249,8 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           ListTile(
             leading: const Icon(Icons.description, color: Color(0xFF00FF7F)),
-            title: const Text('Términos de Servicio', style: TextStyle(color: Colors.white)),
-            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
+            title: Text('Términos de Servicio', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
+            trailing: Icon(Icons.arrow_forward_ios, color: themeProvider.isDarkMode ? Colors.grey : Colors.black38, size: 16),
             onTap: () {
               // TODO: Implementar términos de servicio
               ScaffoldMessenger.of(context).showSnackBar(
@@ -216,8 +272,8 @@ class _SettingsPageState extends State<SettingsPage> {
           Center(
             child: Text(
               'Versión $_appVersion',
-              style: const TextStyle(
-                color: Colors.grey,
+              style: TextStyle(
+                color: themeProvider.isDarkMode ? Colors.grey : Colors.black54,
                 fontSize: 12,
               ),
             ),
@@ -233,8 +289,8 @@ class _SettingsPageState extends State<SettingsPage> {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Text(
         title,
-        style: const TextStyle(
-          color: Color(0xFF00FF7F),
+        style: TextStyle(
+          color: const Color(0xFF00FF7F),
           fontSize: 14,
           fontWeight: FontWeight.bold,
           letterSpacing: 1.2,

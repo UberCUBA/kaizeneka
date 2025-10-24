@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../domain/repositories/chat_repository.dart';
 import '../../domain/entities/message.dart' as domain_message;
 import '../../domain/entities/ai_model.dart' as domain_model;
@@ -7,12 +8,44 @@ import '../models/chat_request_model.dart';
 import '../models/chat_response_model.dart' as response_model;
 import '../models/models_response_model.dart' as models_response;
 
+// Custom exception for initialization errors
+class NotInitializedError extends Error {
+  final String message;
+  NotInitializedError(this.message);
+
+  @override
+  String toString() => 'NotInitializedError: $message';
+}
+
 class ChatRepositoryImpl implements ChatRepository {
   static const String _baseUrl = 'https://openrouter.ai/api/v1';
-  // API Key moved to environment variables for security
-  static const String _apiKey = String.fromEnvironment('OPENROUTER_API_KEY',
-      defaultValue: 'your-api-key-here');
   static const String _defaultModel = 'x-ai/grok-code-fast-1';
+
+  // API Key - será inicializada después de cargar dotenv
+  static String? _apiKey;
+
+  // Método para inicializar la API key
+  static Future<void> initialize() async {
+    try {
+      // dotenv ya está cargado en main.dart, solo necesitamos acceder a la variable
+      _apiKey = dotenv.env['OPENROUTER_API_KEY'];
+      if (_apiKey == null || _apiKey!.isEmpty) {
+        throw NotInitializedError('OPENROUTER_API_KEY not found in environment variables');
+      }
+      print('ChatRepository initialized successfully with API key: ${_apiKey!.substring(0, 10)}...');
+    } catch (e) {
+      print('Error initializing ChatRepository: $e');
+      rethrow;
+    }
+  }
+
+  // Getter para obtener la API key
+  static String get apiKey {
+    if (_apiKey == null) {
+      throw Exception('ChatRepository not initialized. Call initialize() first.');
+    }
+    return _apiKey!;
+  }
 
   @override
   Future<domain_message.Message> sendMessage(String userMessage, String model, {FileAttachment? file}) async {
@@ -48,7 +81,7 @@ class ChatRepositoryImpl implements ChatRepository {
       final response = await http.post(
         Uri.parse('$_baseUrl/chat/completions'),
         headers: {
-          'Authorization': 'Bearer $_apiKey',
+          'Authorization': 'Bearer $apiKey',
           'Content-Type': 'application/json',
         },
         body: jsonEncode(request.toJson()),
@@ -71,10 +104,27 @@ class ChatRepositoryImpl implements ChatRepository {
           throw Exception('No response from AI');
         }
       } else {
+        // Verificar si es un error de pago para modelos pagos
+        if (response.statusCode == 402 || response.statusCode == 429) {
+          // Determinar si el modelo es pago basado en el ID
+          final isPaidModel = model.contains('gpt') || model.contains('claude') || model.contains('paid');
+          if (isPaidModel) {
+            throw Exception('¡Upsss!! Modelo IA de Pago!! Pruebe con uno Gratis...');
+          }
+        }
         throw Exception('Failed to get response: ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception('Error sending message: $e');
+      // Verificar si es un error de conexión a internet
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('Connection refused') ||
+          e.toString().contains('Failed host lookup') ||
+          e.toString().contains('Network is unreachable') ||
+          e.toString().contains('Connection timeout')) {
+        throw Exception('¡Upsss!! Algo va Mal!! Revise su conexión a Internet!!');
+      } else {
+        throw Exception('Error sending message: $e');
+      }
     }
   }
 
@@ -84,7 +134,7 @@ class ChatRepositoryImpl implements ChatRepository {
       final response = await http.get(
         Uri.parse('$_baseUrl/models'),
         headers: {
-          'Authorization': 'Bearer $_apiKey',
+          'Authorization': 'Bearer $apiKey',
         },
       );
 
@@ -111,7 +161,16 @@ class ChatRepositoryImpl implements ChatRepository {
       }
     } catch (e) {
       print('Error getting models: $e');
-      throw Exception('Error getting models: $e');
+      // Verificar si es un error de conexión a internet
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('Connection refused') ||
+          e.toString().contains('Failed host lookup') ||
+          e.toString().contains('Network is unreachable') ||
+          e.toString().contains('Connection timeout')) {
+        throw Exception('¡Upsss!! Algo va Mal!! Revise su conexión a Internet!!');
+      } else {
+        throw Exception('Error getting models: $e');
+      }
     }
   }
 }

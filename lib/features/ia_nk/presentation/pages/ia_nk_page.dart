@@ -14,12 +14,15 @@ class IaNkPage extends StatefulWidget {
 class _IaNkPageState extends State<IaNkPage> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _modelSearchController = TextEditingController();
+  String _modelSearchText = '';
+  bool _isModelDropdownOpen = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ChatProvider>().loadAvailableModels();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await context.read<ChatProvider>().loadAvailableModels();
       context.read<ChatProvider>().loadChatSessions();
     });
   }
@@ -28,6 +31,7 @@ class _IaNkPageState extends State<IaNkPage> {
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
+    _modelSearchController.dispose();
     super.dispose();
   }
 
@@ -237,37 +241,137 @@ class _IaNkPageState extends State<IaNkPage> {
       ),
       child: Column(
         children: [
-          // Dropdown de modelos en la parte inferior (30% más pequeño)
+          // Combobox de modelos con búsqueda integrada
           Consumer<ChatProvider>(
             builder: (context, provider, child) {
               return Container(
-                height: 40, // 30% más pequeño que el original
+                height: 40,
                 margin: const EdgeInsets.only(bottom: 8),
-                child: DropdownButton<String>(
-                  value: provider.selectedModel,
-                  dropdownColor: Colors.black,
-                  style: const TextStyle(color: Color(0xFF00FF7F), fontSize: 14),
-                  icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF00FF7F), size: 20),
-                  underline: Container(),
-                  isExpanded: true,
-                  items: provider.availableModels.map((model) {
-                    return DropdownMenuItem<String>(
-                      value: model.id,
-                      child: Text(
-                        '${model.name} ${model.isFree ? '(Gratis)' : '(Pago)'}',
-                        style: const TextStyle(color: Colors.white, fontSize: 14),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      provider.setSelectedModel(value);
-                    }
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _isModelDropdownOpen = !_isModelDropdownOpen;
+                      if (_isModelDropdownOpen) {
+                        _modelSearchController.clear();
+                        _modelSearchText = '';
+                      }
+                    });
                   },
+                  child: Container(
+                    height: 40,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.3),
+                      border: Border.all(color: const Color(0xFF00FF7F)),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: _isModelDropdownOpen
+                              ? TextField(
+                                  controller: _modelSearchController,
+                                  autofocus: true,
+                                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                                  decoration: const InputDecoration(
+                                    hintText: 'Buscar modelo...',
+                                    hintStyle: TextStyle(color: Colors.white70, fontSize: 14),
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.symmetric(vertical: 8),
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _modelSearchText = value.toLowerCase();
+                                    });
+                                  },
+                                )
+                              : Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    provider.availableModels.isNotEmpty
+                                        ? (() {
+                                            final selectedModel = provider.availableModels.firstWhere(
+                                              (model) => model.id == provider.selectedModel,
+                                              orElse: () => provider.availableModels.first,
+                                            );
+                                            return '${selectedModel.name} ${selectedModel.isFree ? '(Gratis)' : '(Pago)'}';
+                                          })()
+                                        : 'Seleccionar modelo',
+                                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                                  ),
+                                ),
+                        ),
+                        Icon(
+                          _isModelDropdownOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                          color: const Color(0xFF00FF7F),
+                          size: 20,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               );
             },
           ),
+          // Lista desplegable de modelos filtrados
+          if (_isModelDropdownOpen)
+            Consumer<ChatProvider>(
+              builder: (context, provider, child) {
+                final filteredModels = provider.availableModels.where((model) {
+                  return model.name.toLowerCase().contains(_modelSearchText) ||
+                         model.id.toLowerCase().contains(_modelSearchText);
+                }).toList();
+
+                return Container(
+                  constraints: const BoxConstraints(maxHeight: 200),
+                  margin: const EdgeInsets.only(bottom: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.8),
+                    border: Border.all(color: const Color(0xFF00FF7F)),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: filteredModels.length,
+                    itemBuilder: (context, index) {
+                      final model = filteredModels[index];
+                      final isSelected = model.id == provider.selectedModel;
+                      return InkWell(
+                        onTap: () {
+                          provider.setSelectedModel(model.id);
+                          setState(() {
+                            _isModelDropdownOpen = false;
+                            _modelSearchController.clear();
+                            _modelSearchText = '';
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: isSelected ? const Color(0xFF00FF7F).withOpacity(0.2) : Colors.transparent,
+                            border: Border(
+                              bottom: BorderSide(
+                                color: index < filteredModels.length - 1
+                                    ? Colors.white24
+                                    : Colors.transparent,
+                              ),
+                            ),
+                          ),
+                          child: Text(
+                            '${model.name} ${model.isFree ? '(Gratis)' : '(Pago)'}',
+                            style: TextStyle(
+                              color: isSelected ? const Color(0xFF00FF7F) : Colors.white,
+                              fontSize: 14,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
           // Área de entrada de mensaje
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,

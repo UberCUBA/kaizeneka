@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'dart:convert';
 import '../../../../core/services/supabase_service.dart';
 import '../../../../core/services/auth_service.dart';
@@ -67,6 +68,14 @@ class AuthProvider with ChangeNotifier {
       }
     } catch (e) {
       debugPrint('Error in API login: $e');
+      // Verificar si es un error de conexión a internet
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('Connection refused') ||
+          e.toString().contains('Failed host lookup') ||
+          e.toString().contains('Network is unreachable') ||
+          e.toString().contains('Connection timeout')) {
+        debugPrint('¡Upsss!! Algo va Mal!! Revise su conexión a Internet!!');
+      }
     }
   }
 
@@ -144,6 +153,12 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
 
     try {
+      // Verificar conexión a internet antes de intentar login
+      final connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult.contains(ConnectivityResult.none)) {
+        throw Exception('¡Upsss!! Algo va Mal!! Revise su conexión a Internet!!');
+      }
+
       await SupabaseService.signInWithGoogle();
     } finally {
       _isLoading = false;

@@ -41,6 +41,7 @@ class ChatProvider with ChangeNotifier {
     notifyListeners();
 
     try {
+      // Asegurarse de que dotenv esté inicializado
       _availableModels = await getAvailableModels.call();
 
       // Si no hay modelos, agregar algunos por defecto
@@ -64,7 +65,16 @@ class ChatProvider with ChangeNotifier {
       }
     } catch (e) {
       print('Error loading models: $e');
-      _error = 'Error al cargar modelos: $e';
+      // Verificar si es un error de conexión a internet
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('Connection refused') ||
+          e.toString().contains('Failed host lookup') ||
+          e.toString().contains('Network is unreachable') ||
+          e.toString().contains('Connection timeout')) {
+        _error = '¡Upsss!! Algo va Mal!! Revise su conexión a Internet!!';
+      } else {
+        _error = 'Error al cargar modelos: $e';
+      }
 
       // Fallback a modelos por defecto
       _availableModels = [
@@ -108,7 +118,27 @@ class ChatProvider with ChangeNotifier {
       // Limpiar el archivo adjunto después de enviarlo
       _attachedFile = null;
     } catch (e) {
-      _error = e.toString();
+      // Verificar si es un error de conexión a internet
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('Connection refused') ||
+          e.toString().contains('Failed host lookup') ||
+          e.toString().contains('Network is unreachable') ||
+          e.toString().contains('Connection timeout')) {
+        _error = '¡Upsss!! Algo va Mal!! Revise su conexión a Internet!!';
+      } else if (e.toString().contains('payment') || e.toString().contains('billing') || e.toString().contains('quota') || e.toString().contains('insufficient')) {
+        // Verificar si es un modelo pago y hay error de pago
+        final selectedModel = _availableModels.firstWhere(
+          (model) => model.id == _selectedModel,
+          orElse: () => AIModel(id: '', name: '', description: '', isFree: true, isPaid: false),
+        );
+        if (selectedModel.isPaid) {
+          _error = '¡Upsss!! Modelo IA de Pago!! Pruebe con uno Gratis...';
+        } else {
+          _error = e.toString();
+        }
+      } else {
+        _error = e.toString();
+      }
     } finally {
       _isLoading = false;
       _saveCurrentSession();

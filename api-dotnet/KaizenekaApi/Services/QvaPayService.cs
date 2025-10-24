@@ -89,9 +89,6 @@ public class QvaPayService : IQvaPayService
     public async Task<string> CreatePaymentUrlAsync(decimal amount, string description, string orderId)
     {
         Console.WriteLine($"[QVAPAY] Creating invoice for amount: {amount}, description: {description}, orderId: {orderId}");
-
-        System.Diagnostics.Debugger.Break(); // Punto de interrupción al inicio del método
-
         try
         {
             var request = new
@@ -107,7 +104,6 @@ public class QvaPayService : IQvaPayService
             });
 
             Console.WriteLine($"[QVAPAY] Invoice request JSON: {jsonRequest}");
-
             // Crear nueva instancia de HttpClient para este request específico
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Add("app-id", _appUuid);
@@ -125,8 +121,7 @@ public class QvaPayService : IQvaPayService
 
                 var invoiceResponse = JsonSerializer.Deserialize<QvaPayInvoiceResponse>(responseContent);
 
-                Console.WriteLine($"[QVAPAY] Deserialized invoice response - Url: '{invoiceResponse?.Url}', AppId: '{invoiceResponse?.AppId}'");
-
+               Console.WriteLine($"[QVAPAY] Deserialized invoice response - Url: '{invoiceResponse?.Url}', AppId: '{invoiceResponse?.AppId}'");
                 if (invoiceResponse?.Url != null && !string.IsNullOrEmpty(invoiceResponse.Url))
                 {
                     var finalUrl = invoiceResponse.Url;

@@ -22,7 +22,16 @@ class BibliotecaProvider with ChangeNotifier {
     try {
       _recursos = await getRecursos();
     } catch (e) {
-      _error = e.toString();
+      // Verificar si es un error de conexión a internet
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('Connection refused') ||
+          e.toString().contains('Failed host lookup') ||
+          e.toString().contains('Network is unreachable') ||
+          e.toString().contains('Connection timeout')) {
+        _error = '¡Upsss!! Algo va Mal!! Revise su conexión a Internet!!';
+      } else {
+        _error = e.toString();
+      }
     } finally {
       _isLoading = false;
       notifyListeners();

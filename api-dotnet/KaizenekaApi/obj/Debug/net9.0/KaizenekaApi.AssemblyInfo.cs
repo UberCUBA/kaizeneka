@@ -10,10 +10,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("a71db756-b985-424a-b759-e77050d94ffe")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("KaizenekaApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+748452cfa3d5bb2f2b74960937cb9c36bd87e5d5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9d9e8b7b736e54fa00825186e2cc235e40b60274")]
 [assembly: System.Reflection.AssemblyProductAttribute("KaizenekaApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("KaizenekaApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

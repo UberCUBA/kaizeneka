@@ -11,6 +11,46 @@ Este proyecto incluye:
 
 ## Despliegue de la API en Render.com
 
+### Planes y Limitaciones de Render.com
+Render.com ofrece un **plan gratuito** con las siguientes características:
+- **750 horas/mes** de uptime (aprox. 31 días)
+- **750 GB-horas/mes** de ancho de banda
+- **Servicio web gratuito** con límites de recursos
+- **No soporta servicios web gratuitos ilimitados** - requieren pago mínimo
+
+### Alternativas Gratuitas para Despliegue
+Si Render.com no permite despliegue gratuito, considera estas opciones:
+
+#### 1. Railway.app (Recomendado)
+- **Plan gratuito**: 512MB RAM, 1GB storage
+- **URL personalizada** gratuita
+- **Soporte Docker** nativo
+- **Base de datos PostgreSQL** gratuita incluida
+- **Configuración**: Railway detecta automáticamente `railway.json` y `Dockerfile`
+
+#### 2. Fly.io
+- **Plan gratuito**: 256MB RAM, 1GB storage
+- **Regiones globales** disponibles
+- **Soporte Docker** excelente
+
+#### 3. Vercel (para APIs)
+- **Plan gratuito**: 100GB bandwidth/mes
+- **Soporte para APIs** con Serverless Functions
+- **Integración Git** automática
+
+#### 4. Heroku (con límites)
+- **Plan gratuito**: 550 horas/mes dyno
+- **Base de datos PostgreSQL** gratuita pequeña
+
+#### 5. DigitalOcean App Platform
+- **Plan gratuito**: Primeros $200 en créditos
+- **Soporte Docker** completo
+- **Base de datos PostgreSQL** gratuita pequeña
+
+#### 6. AWS Elastic Beanstalk (con Free Tier)
+- **Free Tier**: 750 horas EC2 t2.micro/mes
+- **Más complejo** de configurar inicialmente
+
 ### Preparación
 1. Asegúrate de que el código esté en un repositorio Git (GitHub, GitLab, etc.)
 2. La API está configurada para usar Docker y Render.com detectará automáticamente el archivo `render.yaml`
@@ -40,14 +80,27 @@ Configura las siguientes variables de entorno en el dashboard de Render.com:
 - `ASPNETCORE_ENVIRONMENT`: Production (ya configurado en render.yaml)
 - `PORT`: Puerto asignado automáticamente por Render.com
 
-### Pasos para el Despliegue
+### Despliegue Alternativo en Railway.app (Recomendado)
+
+#### Pasos para Railway:
+1. **Crear cuenta**: Ve a [Railway.app](https://railway.app) y regístrate
+2. **Conectar repositorio**: Importa tu proyecto desde GitHub
+3. **Configurar variables de entorno**:
+   - JWT_SECRET: Tu clave JWT generada
+   - QVAPAY_BEARER_TOKEN: `146631|$2b$10$MCYH7AOUif/E2CEo4Y3jOOzA.0NLO3w6XZ8hVQExSTuuhWqOOJSSq`
+   - QVAPAY_APP_UUID: `9d17b1cf-e57f-4a09-91e7-756e20b92142`
+   - QVAPAY_APP_SECRET: `EQeoVvshL7wGXMpm3F61ffDwEJL1ghAi6ZdOPOE5OdSDREUXIQ`
+4. **Desplegar**: Railway detectará automáticamente el `Dockerfile` y `railway.json`
+5. **Base de datos**: Railway incluye PostgreSQL gratuito automáticamente
+
+### Pasos para el Despliegue en Render.com (si decides continuar)
 1. **Subir código**: Push el código actualizado a tu repositorio
 2. **Crear servicio**: En Render.com, selecciona "Web Service" y conecta tu repo
 3. **Configurar variables**: Agrega las variables de entorno sensibles en la sección "Environment"
    - JWT_SECRET: Tu clave JWT generada
-   - QVAPAY_BEARER_TOKEN: Token de QvaPay
-   - QVAPAY_APP_UUID: UUID de la app QvaPay
-   - QVAPAY_APP_SECRET: Secreto de la app QvaPay
+   - QVAPAY_BEARER_TOKEN: `146631|$2b$10$MCYH7AOUif/E2CEo4Y3jOOzA.0NLO3w6XZ8hVQExSTuuhWqOOJSSq`
+   - QVAPAY_APP_UUID: `9d17b1cf-e57f-4a09-91e7-756e20b92142`
+   - QVAPAY_APP_SECRET: `EQeoVvshL7wGXMpm3F61ffDwEJL1ghAi6ZdOPOE5OdSDREUXIQ`
 4. **Desplegar**: Render.com construirá y desplegará automáticamente usando Docker
 5. **Verificar**: Una vez desplegado, prueba los endpoints de la API
 

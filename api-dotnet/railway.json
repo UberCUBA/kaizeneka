@@ -1,0 +1,13 @@
+{
+  "build": {
+    "builder": "dockerfile",
+    "dockerfilePath": "KaizenekaApi/Dockerfile"
+  },
+  "deploy": {
+    "startCommand": "dotnet KaizenekaApi.dll",
+    "healthcheckPath": "/",
+    "healthcheckTimeout": 300,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  }
+}

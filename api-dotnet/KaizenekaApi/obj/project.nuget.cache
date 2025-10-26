@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "rYBCyRyjrKk=",
+  "dgSpecHash": "zZf94WrP/NY=",
   "success": true,
-  "projectFilePath": "C:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\KaizenekaApi.csproj",
+  "projectFilePath": "c:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\KaizenekaApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\UBER\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\UBER\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",

@@ -169,7 +169,7 @@ class _PostureoNkPageState extends State<PostureoNkPage> {
           final post = Post(
             id: DateTime.now().millisecondsSinceEpoch,
             usuarioNombre: authProvider.userProfile?.name ?? 'Usuario',
-            usuarioCinturon: missionProvider.user.cinturonActual,
+            usuarioCinturon: missionProvider.user?.cinturonActual ?? 'Blanco',
             usuarioAvatar: authProvider.userProfile?.avatarUrl,
             imagenUrl: imageUrl,
             timestamp: DateTime.now(),
@@ -219,7 +219,7 @@ class _PostureoNkPageState extends State<PostureoNkPage> {
                 final post = Post(
                   id: DateTime.now().millisecondsSinceEpoch,
                   usuarioNombre: authProvider.userProfile?.name ?? 'Usuario',
-                  usuarioCinturon: missionProvider.user.cinturonActual,
+                  usuarioCinturon: missionProvider.user?.cinturonActual ?? 'Blanco',
                   usuarioAvatar: authProvider.userProfile?.avatarUrl,
                   texto: textController.text,
                   timestamp: DateTime.now(),

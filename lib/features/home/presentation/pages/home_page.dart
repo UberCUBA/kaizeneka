@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   Icon(
                                     Icons.star,
-                                    color: getBeltColor(missionProvider.user.cinturonActual),
+                                    color: getBeltColor(missionProvider.user?.cinturonActual ?? 'Blanco'),
                                     size: 14,
                                   ),
                                 ],
@@ -167,6 +167,14 @@ class _HomePageState extends State<HomePage> {
               title: Text('Inicio', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
               onTap: () {
                 Navigator.of(context).pop();
+              },
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.task, color: Color(0xFF00FF7F)),
+              title: Text('Tareas, Misiones y Hábitos', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
+              onTap: () {
+                Navigator.of(context).pushNamed('/tasks');
               },
             ),
 
@@ -278,8 +286,8 @@ class _HomePageState extends State<HomePage> {
                       // Sincronizar con Supabase
                       final authProvider = Provider.of<AuthProvider>(context, listen: false);
                       if (authProvider.isAuthenticated) {
-                        await authProvider.updateUserPoints(missionProvider.user.puntos);
-                        await authProvider.updateUserDiasCompletados(missionProvider.user.diasCompletados);
+                        await authProvider.updateUserPoints(missionProvider.user?.puntos ?? 0);
+                        await authProvider.updateUserDiasCompletados(missionProvider.user?.diasCompletados ?? 0);
                       }
                       _showFeedback(context, mission);
                     },
@@ -313,7 +321,7 @@ class _HomePageState extends State<HomePage> {
                   const Icon(Icons.emoji_events, color: Color(0xFF00FF7F), size: 40),
                   const SizedBox(width: 10),
                   Text(
-                    'Tu nivel: Cinturón ${missionProvider.user.cinturonActual}',
+                    'Tu nivel: Cinturón ${missionProvider.user?.cinturonActual ?? 'Blanco'}',
                     style: TextStyle(
                       color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
                       fontSize: 18,
@@ -355,13 +363,13 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 10),
                   LinearProgressIndicator(
-                    value: missionProvider.user.puntos / 100.0,
+                    value: (missionProvider.user?.puntos ?? 0) / 100.0,
                     backgroundColor: themeProvider.isDarkMode ? Colors.grey : Colors.grey[300],
                     valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF00FF7F)),
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    '${missionProvider.user.puntos} puntos',
+                    '${missionProvider.user?.puntos ?? 0} puntos',
                     style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87),
                   ),
                 ],

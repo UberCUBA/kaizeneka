@@ -23,8 +23,8 @@ WORKDIR /app
 # Copy the published app
 COPY --from=publish /app/publish .
 
-# Expose the port the app runs on
-EXPOSE 80
+# Expose the port the app runs on (Render.com will assign a dynamic port)
+EXPOSE 10000
 
 # Set the entry point
 ENTRYPOINT ["dotnet", "KaizenekaApi.dll"]

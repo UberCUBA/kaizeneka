@@ -253,7 +253,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                               Icon(
                                 Icons.star,
-                                color: getBeltColor(missionProvider.user.cinturonActual),
+                                color: getBeltColor(userProfile.belt),
                                 size: 25,
                               ),
                             ],
@@ -448,7 +448,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          missionProvider.getCurrentDailyMission().descripcion, // TODO: Mostrar la próxima
+                          missionProvider.getCurrentDailyMission().descripcion,
                           style: TextStyle(
                             color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
                             fontSize: 16,

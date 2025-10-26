@@ -1,77 +1,190 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../domain/entities/mission.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import '../../../../models/task_models.dart';
+import '../../domain/entities/mission.dart' as domain;
+import '../../data/repositories/mission_repository.dart';
 import '../../domain/usecases/get_daily_mission.dart';
-import '../../../auth/presentation/providers/auth_provider.dart';
 
 class MissionProvider with ChangeNotifier {
-  final GetUser getUser;
-  final SaveUser saveUser;
-  final GetDailyMission getDailyMission;
-  final CompleteMission completeMission;
-  final GetAllMissions getAllMissions;
-  final AuthProvider authProvider;
+  List<Mission> _missions = [];
+  bool _isLoading = false;
+  late MissionRepository _repository;
+  domain.User? _user;
 
-  User _user = User();
-  bool _isLoading = true;
+  List<Mission> get missions => _missions;
+  bool get isLoading => _isLoading;
+  domain.User? get user => _user;
 
-  MissionProvider({
-    required this.getUser,
-    required this.saveUser,
-    required this.getDailyMission,
-    required this.completeMission,
-    required this.getAllMissions,
-    required this.authProvider,
-  }) {
-    _loadUser();
-    authProvider.addListener(_onAuthChanged);
+  List<Mission> get pendingMissions =>
+      _missions.where((mission) => !mission.isCompleted).toList();
+
+  List<Mission> get completedMissions =>
+      _missions.where((mission) => mission.isCompleted).toList();
+
+  int get totalPoints => _missions
+      .where((mission) => mission.isCompleted)
+      .fold(0, (sum, mission) => sum + mission.points);
+
+  domain.Mission getCurrentDailyMission() {
+    final now = DateTime.now();
+    final day = now.day;
+    final mission = _repository.getDailyMission(day);
+    return mission;
   }
 
-  User get user => _user;
-  bool get isLoading => _isLoading;
+  Future<void> completeCurrentMission() async {
+    if (_user != null) {
+      final completeMission = CompleteMission(_repository);
+      await completeMission.call(_user!);
+      await _loadUser(); // Reload user after completion
+    }
+  }
+
+  Future<void> addPoints(BuildContext context, int points) async {
+    if (_user != null) {
+      _user!.puntos += points;
+      await _repository.saveUser(_user!);
+      notifyListeners();
+    }
+  }
+
+  MissionProvider() {
+    _init();
+  }
+
+  Future<void> _init() async {
+    final prefs = await SharedPreferences.getInstance();
+    _repository = MissionRepositoryImpl(prefs);
+    await _loadUser();
+    _loadMissions();
+  }
 
   Future<void> _loadUser() async {
-    _user = await getUser();
-    _isLoading = false;
+    _user = await _repository.getUser();
     notifyListeners();
   }
 
-  void _onAuthChanged() {
-    if (authProvider.isAuthenticated) {
-      _loadUser();
-    } else {
-      _user = User();
+  Future<void> _loadMissions() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final missionsJson = prefs.getStringList('missions') ?? [];
+
+      _missions = missionsJson
+          .map((missionJson) => Mission.fromJson(json.decode(missionJson)))
+          .toList();
+    } catch (e) {
+      debugPrint('Error loading missions: $e');
+    } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  Mission getCurrentDailyMission() {
-    return getDailyMission(_user.diasCompletados + 1);
+  Future<void> _saveMissions() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final missionsJson = _missions.map((mission) => json.encode(mission.toJson())).toList();
+      await prefs.setStringList('missions', missionsJson);
+    } catch (e) {
+      debugPrint('Error saving missions: $e');
+    }
   }
 
-  Future<void> completeCurrentMission() async {
-    await completeMission(_user);
+  Future<void> addMission(Mission mission) async {
+    _missions.add(mission);
+    await _saveMissions();
     notifyListeners();
   }
 
-  List<Mission> getMissionsList() {
-    return getAllMissions();
+  Future<void> updateMission(String missionId, Mission updatedMission) async {
+    final index = _missions.indexWhere((mission) => mission.id == missionId);
+    if (index != -1) {
+      _missions[index] = updatedMission;
+      await _saveMissions();
+      notifyListeners();
+    }
   }
 
-  Future<void> saveCurrentUser() async {
-    await saveUser(_user);
-  }
-
-  void addPoints(BuildContext context, int points) {
-    _user.puntos += points;
+  Future<void> deleteMission(String missionId) async {
+    _missions.removeWhere((mission) => mission.id == missionId);
+    await _saveMissions();
     notifyListeners();
-    saveCurrentUser();
+  }
 
-    // Sincronizar con Supabase si está autenticado
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    if (authProvider.isAuthenticated) {
-      authProvider.updateUserPoints(_user.puntos);
+  Future<void> toggleMissionCompletion(String missionId) async {
+    final index = _missions.indexWhere((mission) => mission.id == missionId);
+    if (index != -1) {
+      final mission = _missions[index];
+      final updatedMission = mission.copyWith(
+        isCompleted: !mission.isCompleted,
+        completedAt: !mission.isCompleted ? DateTime.now() : null,
+      );
+      _missions[index] = updatedMission;
+      await _saveMissions();
+      notifyListeners();
+    }
+  }
+
+  Future<void> addSubMission(String missionId, SubMission subMission) async {
+    final index = _missions.indexWhere((mission) => mission.id == missionId);
+    if (index != -1) {
+      final mission = _missions[index];
+      final updatedSubMissions = [...mission.subMissions, subMission];
+      final updatedMission = mission.copyWith(subMissions: updatedSubMissions);
+      _missions[index] = updatedMission;
+      await _saveMissions();
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateSubMission(String missionId, String subMissionId, SubMission updatedSubMission) async {
+    final missionIndex = _missions.indexWhere((mission) => mission.id == missionId);
+    if (missionIndex != -1) {
+      final mission = _missions[missionIndex];
+      final subMissionIndex = mission.subMissions.indexWhere((sub) => sub.id == subMissionId);
+      if (subMissionIndex != -1) {
+        final updatedSubMissions = [...mission.subMissions];
+        updatedSubMissions[subMissionIndex] = updatedSubMission;
+        final updatedMission = mission.copyWith(subMissions: updatedSubMissions);
+        _missions[missionIndex] = updatedMission;
+        await _saveMissions();
+        notifyListeners();
+      }
+    }
+  }
+
+  Future<void> deleteSubMission(String missionId, String subMissionId) async {
+    final missionIndex = _missions.indexWhere((mission) => mission.id == missionId);
+    if (missionIndex != -1) {
+      final mission = _missions[missionIndex];
+      final updatedSubMissions = mission.subMissions.where((sub) => sub.id != subMissionId).toList();
+      final updatedMission = mission.copyWith(subMissions: updatedSubMissions);
+      _missions[missionIndex] = updatedMission;
+      await _saveMissions();
+      notifyListeners();
+    }
+  }
+
+  Future<void> toggleSubMissionCompletion(String missionId, String subMissionId) async {
+    final missionIndex = _missions.indexWhere((mission) => mission.id == missionId);
+    if (missionIndex != -1) {
+      final mission = _missions[missionIndex];
+      final subMissionIndex = mission.subMissions.indexWhere((sub) => sub.id == subMissionId);
+      if (subMissionIndex != -1) {
+        final subMission = mission.subMissions[subMissionIndex];
+        final updatedSubMission = subMission.copyWith(isCompleted: !subMission.isCompleted);
+        final updatedSubMissions = [...mission.subMissions];
+        updatedSubMissions[subMissionIndex] = updatedSubMission;
+        final updatedMission = mission.copyWith(subMissions: updatedSubMissions);
+        _missions[missionIndex] = updatedMission;
+        await _saveMissions();
+        notifyListeners();
+      }
     }
   }
 }

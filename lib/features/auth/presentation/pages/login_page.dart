@@ -20,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
       await authProvider.signInWithGoogle();
 
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/home');
+        Navigator.of(context).pushReplacementNamed('/tasks');
       }
     } catch (e) {
       if (mounted) {
@@ -30,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
 
         if (e.toString().contains('¡Upsss!! Algo va Mal!! Revise su conexión a Internet!!')) {
           errorMessage = '¡Upsss!! Algo va Mal!! Revise su conexión a Internet!!';
-          backgroundColor = const Color(0xFF00FF7F); // Verde NK+
+          backgroundColor = Colors.red; // Mantener rojo para errores de conexión
         } else {
           errorMessage = 'Error al iniciar sesión: ${e.toString()}';
         }

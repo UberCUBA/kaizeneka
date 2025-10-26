@@ -14,7 +14,6 @@ import 'features/ranking/domain/usecases/get_top_users.dart';
 import 'features/ranking/presentation/providers/ranking_provider.dart';
 import 'features/map/presentation/pages/map_page.dart';
 import 'features/missions/data/repositories/mission_repository.dart';
-import 'features/missions/domain/usecases/get_daily_mission.dart';
 import 'features/missions/presentation/providers/mission_provider.dart';
 import 'features/map/data/repositories/map_repository.dart';
 import 'features/map/domain/usecases/get_nearby_users.dart';
@@ -43,6 +42,9 @@ import 'features/ia_nk/domain/usecases/get_available_models.dart';
 import 'features/ia_nk/presentation/providers/chat_provider.dart';
 import 'features/ia_nk/presentation/pages/ia_nk_page.dart';
 import 'features/ia_nk/presentation/pages/chat_history_page.dart';
+import 'features/tasks/presentation/pages/main_tasks_page.dart';
+import 'features/tasks/presentation/providers/task_provider.dart';
+import 'features/habits/presentation/providers/habit_provider.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -70,7 +72,6 @@ void main() async {
   // PushNotificationService eliminado - Supabase no tiene push notifications nativas
 
   final prefs = await SharedPreferences.getInstance();
-  final repository = MissionRepositoryImpl(prefs);
 
   final mapRepository = SupabaseMapRepository();
   final getNearbyUsers = GetNearbyUsers(mapRepository);
@@ -106,14 +107,7 @@ void main() async {
           create: (_) => AuthProvider(),
         ),
         ChangeNotifierProvider(
-          create: (context) => MissionProvider(
-            getUser: GetUser(repository),
-            saveUser: SaveUser(repository),
-            getDailyMission: GetDailyMission(repository),
-            completeMission: CompleteMission(repository),
-            getAllMissions: GetAllMissions(repository),
-            authProvider: Provider.of<AuthProvider>(context, listen: false),
-          ),
+          create: (context) => MissionProvider(),
         ),
         ChangeNotifierProvider(
           create: (context) => MapProvider(getNearbyUsers, Provider.of<AuthProvider>(context, listen: false)),
@@ -133,6 +127,15 @@ void main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => ChatProvider(sendMessage, getAvailableModels),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => TaskProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => MissionProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => HabitProvider(),
         ),
       ],
       child: const KaizenekaApp(),
@@ -172,6 +175,7 @@ class KaizenekaApp extends StatelessWidget {
             '/shop': (context) => const ShopNkPage(),
             '/ia_nk': (context) => const IaNkPage(),
             '/ia_nk_history': (context) => const ChatHistoryPage(),
+            '/tasks': (context) => const MainTasksPage(),
           },
         );
       },

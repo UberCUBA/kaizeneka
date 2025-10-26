@@ -6,6 +6,10 @@ using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure port for Render.com
+var port = Environment.GetEnvironmentVariable("PORT") ?? "80";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
@@ -26,7 +30,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 
 // Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var key = Encoding.ASCII.GetBytes(jwtSettings["Secret"] ?? "default-secret-key-for-development");
+var key = Encoding.ASCII.GetBytes(jwtSettings["Secret"] ?? Environment.GetEnvironmentVariable("JWT_SECRET") ?? "default-secret-key-for-development");
 
 builder.Services.AddAuthentication(options =>
 {
@@ -41,8 +45,8 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSettings["Issuer"] ?? "KaizenekaApi",
-        ValidAudience = jwtSettings["Audience"] ?? "KaizenekaApi",
+        ValidIssuer = jwtSettings["Issuer"] ?? Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "KaizenekaApi",
+        ValidAudience = jwtSettings["Audience"] ?? Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "KaizenekaApi",
         IssuerSigningKey = new SymmetricSecurityKey(key)
     };
 });

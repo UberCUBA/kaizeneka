@@ -52,7 +52,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
 
     if (mounted) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final route = authProvider.isAuthenticated ? '/home' : '/login';
+      final route = authProvider.isAuthenticated ? '/tasks' : '/login';
       Navigator.of(context).pushReplacementNamed(route);
     }
   }

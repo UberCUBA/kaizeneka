@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: kaizeneka-api
+    runtime: docker
+    buildCommand: docker build -t kaizeneka-api .
+    startCommand: docker run -p $PORT:10000 kaizeneka-api
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_ISSUER
+        value: KaizenekaApi
+      - key: JWT_AUDIENCE
+        value: KaizenekaApi
+      - key: QVAPAY_BASE_URL
+        value: https://api.qvapay.com
+      - key: QVAPAY_BEARER_TOKEN
+        sync: false
+      - key: QVAPAY_APP_UUID
+        sync: false
+      - key: QVAPAY_APP_SECRET
+        sync: false
+      - key: QVAPAY_USERNAME
+        value: ubervelazquezramirez
+      - key: QVAPAY_SUCCESS_URL
+        value: kaizeneka://payment/success
+      - key: QVAPAY_CANCEL_URL
+        value: kaizeneka://payment/cancel

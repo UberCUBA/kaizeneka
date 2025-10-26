@@ -1,16 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/mission_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../data/repositories/mission_repository.dart';
+import '../../domain/entities/mission.dart';
 import '../widgets/mission_card.dart';
 
-class AllMissionsPage extends StatelessWidget {
+class AllMissionsPage extends StatefulWidget {
   const AllMissionsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final missionProvider = Provider.of<MissionProvider>(context);
-    final missions = missionProvider.getMissionsList();
+  State<AllMissionsPage> createState() => _AllMissionsPageState();
+}
 
+class _AllMissionsPageState extends State<AllMissionsPage> {
+  List<Mission> missions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMissions();
+  }
+
+  Future<void> _loadMissions() async {
+    final prefs = await SharedPreferences.getInstance();
+    final repository = MissionRepositoryImpl(prefs);
+    setState(() {
+      missions = repository.getAllMissions();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(

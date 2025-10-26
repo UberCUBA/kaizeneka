@@ -80,18 +80,32 @@ Configura las siguientes variables de entorno en el dashboard de Render.com:
 - `ASPNETCORE_ENVIRONMENT`: Production (ya configurado en render.yaml)
 - `PORT`: Puerto asignado automáticamente por Render.com
 
-### Despliegue Alternativo en Railway.app (Recomendado)
+### 🚀 Despliegue en Railway.app (Opción Recomendada)
 
 #### Pasos para Railway:
-1. **Crear cuenta**: Ve a [Railway.app](https://railway.app) y regístrate
-2. **Conectar repositorio**: Importa tu proyecto desde GitHub
-3. **Configurar variables de entorno**:
-   - JWT_SECRET: Tu clave JWT generada
-   - QVAPAY_BEARER_TOKEN: `146631|$2b$10$MCYH7AOUif/E2CEo4Y3jOOzA.0NLO3w6XZ8hVQExSTuuhWqOOJSSq`
-   - QVAPAY_APP_UUID: `9d17b1cf-e57f-4a09-91e7-756e20b92142`
-   - QVAPAY_APP_SECRET: `EQeoVvshL7wGXMpm3F61ffDwEJL1ghAi6ZdOPOE5OdSDREUXIQ`
-4. **Desplegar**: Railway detectará automáticamente el `Dockerfile` y `railway.json`
-5. **Base de datos**: Railway incluye PostgreSQL gratuito automáticamente
+1. **Crear cuenta gratuita**: Ve a [Railway.app](https://railway.app) y regístrate con GitHub
+2. **Conectar repositorio**: Haz clic en "New Project" → "Deploy from GitHub repo"
+3. **Seleccionar repositorio**: Elige tu repositorio `kaizeneka`
+4. **Configurar variables de entorno** (Environment Variables):
+   ```
+   JWT_SECRET=tu-clave-jwt-generada-aqui
+   QVAPAY_BEARER_TOKEN=146631|$2b$10$MCYH7AOUif/E2CEo4Y3jOOzA.0NLO3w6XZ8hVQExSTuuhWqOOJSSq
+   QVAPAY_APP_UUID=9d17b1cf-e57f-4a09-91e7-756e20b92142
+   QVAPAY_APP_SECRET=EQeoVvshL7wGXMpm3F61ffDwEJL1ghAi6ZdOPOE5OdSDREUXIQ
+   ```
+5. **Desplegar automáticamente**: Railway detectará el `Dockerfile` y `railway.json` y comenzará el build
+6. **Base de datos**: Railway incluye PostgreSQL gratuito automáticamente (opcional para tu API actual)
+
+#### Verificación del Despliegue:
+- Una vez desplegado, obtendrás una URL como: `https://kaizeneka-production.up.railway.app`
+- Prueba la API: `https://tu-url-railway.app/swagger` para ver la documentación
+- Verifica logs en el dashboard de Railway para cualquier error
+
+#### Recursos Gratuitos en Railway:
+- **512MB RAM**
+- **1GB Storage**
+- **URL personalizada** gratuita
+- **Despliegues automáticos** desde Git
 
 ### Pasos para el Despliegue en Render.com (si decides continuar)
 1. **Subir código**: Push el código actualizado a tu repositorio

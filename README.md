@@ -17,8 +17,9 @@ Este proyecto incluye:
 
 ### Configuración en Render.com
 1. Ve a [Render.com](https://render.com) y crea una nueva cuenta o inicia sesión
-2. Conecta tu repositorio Git
-3. Render.com detectará el archivo `render.yaml` y configurará el servicio automáticamente
+2. Selecciona **"Web Service"** como tipo de servicio (no Static Site, ya que es una API dinámica)
+3. Conecta tu repositorio Git
+4. Render.com detectará el archivo `render.yaml` y configurará el servicio automáticamente
 
 ### Variables de Entorno Sensibles
 Configura las siguientes variables de entorno en el dashboard de Render.com:

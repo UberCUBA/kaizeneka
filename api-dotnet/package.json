@@ -1,0 +1,13 @@
+{
+  "name": "kaizeneka-api",
+  "version": "1.0.0",
+  "description": "Kaizeneka .NET API",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo 'Building .NET API with Docker'",
+    "start": "echo 'Starting .NET API'"
+  },
+  "keywords": ["api", "dotnet", "kaizeneka"],
+  "author": "Kaizeneka Team",
+  "license": "MIT"
+}

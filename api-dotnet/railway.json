@@ -1,10 +1,11 @@
 {
   "build": {
     "builder": "dockerfile",
-    "dockerfilePath": "KaizenekaApi/Dockerfile"
+    "dockerfilePath": "KaizenekaApi/Dockerfile",
+    "buildCommand": "docker build -t kaizeneka-api ."
   },
   "deploy": {
-    "startCommand": "dotnet KaizenekaApi.dll",
+    "startCommand": "docker run -p $PORT:10000 kaizeneka-api",
     "healthcheckPath": "/",
     "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE",

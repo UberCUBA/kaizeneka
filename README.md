@@ -26,6 +26,8 @@ Configura las siguientes variables de entorno en el dashboard de Render.com:
 
 #### JWT Configuration
 - `JWT_SECRET`: Clave secreta para JWT (genera una nueva segura para producción)
+  - **Cómo generar**: Ejecuta `openssl rand -base64 32` en terminal Linux/Mac, o usa un generador online de claves seguras
+  - **Ejemplo**: `tu-clave-secreta-jwt-super-segura-generada-aleatoriamente-aqui`
 - `JWT_ISSUER`: Emisor del token (por defecto: KaizenekaApi)
 - `JWT_AUDIENCE`: Audiencia del token (por defecto: KaizenekaApi)
 

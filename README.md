@@ -44,7 +44,12 @@ Configura las siguientes variables de entorno en el dashboard de Render.com:
 1. **Subir código**: Push el código actualizado a tu repositorio
 2. **Crear servicio**: En Render.com, selecciona "Web Service" y conecta tu repo
 3. **Configurar variables**: Agrega las variables de entorno sensibles en la sección "Environment"
+   - JWT_SECRET: Tu clave JWT generada
+   - QVAPAY_BEARER_TOKEN: Token de QvaPay
+   - QVAPAY_APP_UUID: UUID de la app QvaPay
+   - QVAPAY_APP_SECRET: Secreto de la app QvaPay
 4. **Desplegar**: Render.com construirá y desplegará automáticamente usando Docker
+5. **Verificar**: Una vez desplegado, prueba los endpoints de la API
 
 ### Verificación
 Una vez desplegado, la API estará disponible en la URL proporcionada por Render.com (ej: https://kaizeneka-api.onrender.com)

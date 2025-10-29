@@ -1,8 +1,31 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import '../utils/constants.dart';
 
 class PaymentService {
-  static const String baseUrl = 'http://10.14.5.15:5102/api'; // URL del backend C#
+  static const String baseUrl = 'https://nk-api.fly.dev/api'; // URL del backend C#
+
+  Future<String?> _getAccessToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(accessTokenKey);
+  }
+
+  Future<Map<String, String>> _getHeaders({bool includeAuth = false}) async {
+    final headers = <String, String>{
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    if (includeAuth) {
+      final token = await _getAccessToken();
+      if (token != null) {
+        headers['Authorization'] = 'Bearer $token';
+      }
+    }
+
+    return headers;
+  }
 
   Future<Map<String, dynamic>> createPayment({
     required String itemId,
@@ -10,9 +33,10 @@ class PaymentService {
     required double amount,
     required String userId,
   }) async {
+    final headers = await _getHeaders(includeAuth: true);
     final response = await http.post(
-      Uri.parse('$baseUrl/payments/create'),
-      headers: {'Content-Type': 'application/json'},
+      Uri.parse('$baseUrl/Payments/create'),
+      headers: headers,
       body: jsonEncode({
         'itemId': itemId,
         'itemName': itemName,
@@ -25,12 +49,14 @@ class PaymentService {
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
+      print('Payment API Error - Status: ${response.statusCode}, Body: ${response.body}');
       throw Exception('Failed to create payment: ${response.body}');
     }
   }
 
   Future<Map<String, dynamic>> getAppInfo() async {
-    final response = await http.get(Uri.parse('$baseUrl/payments/app-info'));
+    final headers = await _getHeaders(includeAuth: true);
+    final response = await http.get(Uri.parse('$baseUrl/Payments/app-info'), headers: headers);
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -40,7 +66,8 @@ class PaymentService {
   }
 
   Future<Map<String, dynamic>> getAppBalance() async {
-    final response = await http.get(Uri.parse('$baseUrl/payments/app-balance'));
+    final headers = await _getHeaders(includeAuth: true);
+    final response = await http.get(Uri.parse('$baseUrl/Payments/app-balance'), headers: headers);
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -50,7 +77,8 @@ class PaymentService {
   }
 
   Future<Map<String, dynamic>> getCoins() async {
-    final response = await http.get(Uri.parse('$baseUrl/payments/coins'));
+    final headers = await _getHeaders(includeAuth: true);
+    final response = await http.get(Uri.parse('$baseUrl/Payments/coins'), headers: headers);
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -64,8 +92,9 @@ class PaymentService {
     if (coin != null) queryParams['coin'] = coin;
     if (type != null) queryParams['type'] = type;
 
-    final uri = Uri.parse('$baseUrl/payments/p2p-offers').replace(queryParameters: queryParams);
-    final response = await http.get(uri);
+    final headers = await _getHeaders(includeAuth: true);
+    final uri = Uri.parse('$baseUrl/Payments/p2p-offers').replace(queryParameters: queryParams);
+    final response = await http.get(uri, headers: headers);
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -75,7 +104,8 @@ class PaymentService {
   }
 
   Future<Map<String, dynamic>> getAveragePrice(String coin) async {
-    final response = await http.get(Uri.parse('$baseUrl/payments/average-price/$coin'));
+    final headers = await _getHeaders(includeAuth: true);
+    final response = await http.get(Uri.parse('$baseUrl/Payments/average-price/$coin'), headers: headers);
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);

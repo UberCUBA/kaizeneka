@@ -13,7 +13,7 @@ class AuthService {
 
   Future<Map<String, dynamic>?> login(String username, String password) async {
     try {
-      final response = await _apiService.post('/auth/login', body: {
+      final response = await _apiService.post('/Auth/login', body: {
         'username': username,
         'password': password,
       }, includeAuth: false);

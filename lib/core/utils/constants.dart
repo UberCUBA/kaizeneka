@@ -6,7 +6,7 @@ const Color surfaceColor = Color(0xFF1C1C1C);
 const Color textColor = Colors.white;
 
 // API Configuration
-const String apiBaseUrl = 'http://10.14.5.15:5102'; // Cambia a tu URL de producción
+const String apiBaseUrl = 'https://nk-api.fly.dev'; // Cambia a tu URL de producción
 const String apiVersion = 'api';
 
 // JWT Token Keys

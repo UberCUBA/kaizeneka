@@ -5,7 +5,18 @@ import '../providers/mission_provider.dart';
 import '../../../../models/task_models.dart';
 
 class MissionsPage extends StatefulWidget {
-  const MissionsPage({super.key});
+  final String? searchQuery;
+  final Difficulty? selectedDifficulty;
+  final bool? showCompleted;
+  final bool? showSystemMissions;
+
+  const MissionsPage({
+    super.key,
+    this.searchQuery,
+    this.selectedDifficulty,
+    this.showCompleted,
+    this.showSystemMissions,
+  });
 
   @override
   State<MissionsPage> createState() => _MissionsPageState();
@@ -16,6 +27,9 @@ class _MissionsPageState extends State<MissionsPage> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<custom_theme.ThemeProvider>(context);
     final missionProvider = Provider.of<MissionProvider>(context);
+
+    // Aplicar filtros a las misiones
+    final filteredMissions = _filterMissions(missionProvider.missions);
 
     return Scaffold(
       backgroundColor: themeProvider.isDarkMode ? Colors.black : const Color(0xFFF8F9FA),
@@ -45,7 +59,7 @@ class _MissionsPageState extends State<MissionsPage> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Text(
-                          '${missionProvider.pendingMissions.length} pendientes',
+                          '${_getPendingMissions(filteredMissions).length} pendientes',
                           style: const TextStyle(
                             color: Color(0xFF00FF7F),
                             fontWeight: FontWeight.w500,
@@ -64,7 +78,7 @@ class _MissionsPageState extends State<MissionsPage> {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '${missionProvider.totalPoints} puntos totales',
+                        '${_getTotalPoints(filteredMissions)} puntos totales',
                         style: TextStyle(
                           fontSize: 14,
                           color: themeProvider.isDarkMode ? Colors.grey : Colors.black54,
@@ -80,13 +94,13 @@ class _MissionsPageState extends State<MissionsPage> {
             Expanded(
               child: missionProvider.isLoading
                   ? const Center(child: CircularProgressIndicator())
-                  : missionProvider.missions.isEmpty
+                  : filteredMissions.isEmpty
                       ? _buildEmptyState(themeProvider)
                       : ListView.builder(
                           padding: const EdgeInsets.all(16),
-                          itemCount: missionProvider.missions.length,
+                          itemCount: filteredMissions.length,
                           itemBuilder: (context, index) {
-                            final mission = missionProvider.missions[index];
+                            final mission = filteredMissions[index];
                             return _buildMissionCard(mission, themeProvider, missionProvider);
                           },
                         ),
@@ -95,6 +109,54 @@ class _MissionsPageState extends State<MissionsPage> {
         ),
       ),
     );
+  }
+
+  List<Mission> _filterMissions(List<Mission> missions) {
+    return missions.where((mission) {
+      // Filtro de búsqueda
+      if (widget.searchQuery != null && widget.searchQuery!.isNotEmpty) {
+        final query = widget.searchQuery!.toLowerCase();
+        if (!mission.title.toLowerCase().contains(query) &&
+            (mission.notes == null || !mission.notes!.toLowerCase().contains(query))) {
+          return false;
+        }
+      }
+
+      // Filtro de dificultad
+      if (widget.selectedDifficulty != null && mission.difficulty != widget.selectedDifficulty) {
+        return false;
+      }
+
+      // Filtro de estado completado
+      if (widget.showCompleted != null) {
+        if (widget.showCompleted! && !mission.isCompleted) {
+          return false;
+        }
+        if (!widget.showCompleted! && mission.isCompleted) {
+          return false;
+        }
+      }
+
+      // Filtro de tipo de misión
+      if (widget.showSystemMissions != null) {
+        if (widget.showSystemMissions! && !mission.isSystemMission) {
+          return false;
+        }
+        if (!widget.showSystemMissions! && mission.isSystemMission) {
+          return false;
+        }
+      }
+
+      return true;
+    }).toList();
+  }
+
+  List<Mission> _getPendingMissions(List<Mission> missions) {
+    return missions.where((mission) => !mission.isCompleted).toList();
+  }
+
+  int _getTotalPoints(List<Mission> missions) {
+    return missions.where((mission) => mission.isCompleted).fold(0, (sum, mission) => sum + mission.points);
   }
 
   Widget _buildEmptyState(custom_theme.ThemeProvider themeProvider) {
@@ -140,6 +202,33 @@ class _MissionsPageState extends State<MissionsPage> {
           children: [
             Row(
               children: [
+                // Badge para tipo de misión
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: mission.isSystemMission
+                        ? const Color(0xFF00FF7F).withOpacity(0.1) // NK - Verde
+                        : Colors.blue.withOpacity(0.1), // Personal - Azul
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: mission.isSystemMission
+                          ? const Color(0xFF00FF7F)
+                          : Colors.blue,
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    mission.isSystemMission ? 'NK' : 'P',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: mission.isSystemMission
+                          ? const Color(0xFF00FF7F)
+                          : Colors.blue,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     mission.title,
@@ -200,6 +289,25 @@ class _MissionsPageState extends State<MissionsPage> {
               children: [
                 _buildDifficultyChip(mission.difficulty),
                 const SizedBox(width: 8),
+                // Badge adicional para tipo de misión (más descriptivo)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: mission.isSystemMission
+                        ? Colors.purple.withOpacity(0.1)
+                        : Colors.teal.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    mission.isSystemMission ? 'Sistema NK' : 'Personal',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: mission.isSystemMission ? Colors.purple : Colors.teal,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                const Spacer(),
                 Text(
                   _formatDate(mission.startDate),
                   style: TextStyle(

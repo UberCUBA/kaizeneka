@@ -81,6 +81,15 @@ class SupabaseService {
     }
   }
 
+  // Actualizar usuario con campos dinámicos
+  static Future<void> updateUser(String userId, Map<String, dynamic> updates) async {
+    updates['updated_at'] = DateTime.now().toIso8601String();
+    await client
+        .from('users')
+        .update(updates)
+        .eq('id', userId);
+  }
+
   // Crear o actualizar perfil de usuario
   static Future<UserModel> createOrUpdateUserProfile({
     required String id,
@@ -104,8 +113,8 @@ class SupabaseService {
       'dias_completados': diasCompletados,
       'misiones_completadas': misionesCompletadas,
       'logros_desbloqueados': logrosDesbloqueados,
-      'lat': lat,
-      'lng': lng,
+      'location_lat': lat,
+      'location_lng': lng,
       'avatar_url': avatarUrl,
       'updated_at': DateTime.now().toIso8601String(),
     };
@@ -146,8 +155,8 @@ class SupabaseService {
     await client
         .from('users')
         .update({
-          'lat': lat,
-          'lng': lng,
+          'location_lat': lat,
+          'location_lng': lng,
           'updated_at': DateTime.now().toIso8601String(),
         })
         .eq('id', userId);

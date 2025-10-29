@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/task_models.dart';
 import 'supabase_service.dart';
+import 'progress_service.dart';
 
 class HabitsService {
   final SupabaseClient _supabase = SupabaseService.client;
@@ -101,6 +102,9 @@ class HabitsService {
           'habit_id': habitId,
           'completion_date': date.toIso8601String(),
         });
+
+        // Otorgar recompensas por completar hábito
+        await _grantHabitRewards(habitId);
       }
     } catch (e) {
       throw Exception('Error al completar hábito: $e');
@@ -285,6 +289,40 @@ class HabitsService {
       };
     } catch (e) {
       throw Exception('Error al obtener estadísticas de hábitos: $e');
+    }
+  }
+
+  // Método para otorgar recompensas por completar hábitos
+  Future<void> _grantHabitRewards(String habitId) async {
+    try {
+      // Obtener el user_id del hábito
+      final habitData = await _supabase
+          .from('user_habits')
+          .select('user_id, difficulty')
+          .eq('id', habitId)
+          .single();
+
+      final userId = habitData['user_id'] as String;
+      final difficulty = Difficulty.values.firstWhere(
+        (d) => d.name == habitData['difficulty'],
+        orElse: () => Difficulty.medium,
+      );
+
+      // Calcular XP basado en dificultad (hábitos diarios dan más recompensa)
+      final xpReward = ProgressService.calculateXpReward(difficulty) + 2; // +2 extra por consistencia
+      final coinsReward = ProgressService.calculateCoinsReward(difficulty) + 1; // +1 extra
+
+      // Otorgar XP y monedas
+      final progressService = ProgressService();
+      await progressService.addPoints(userId, xpReward);
+      await progressService.addCoins(userId, coinsReward);
+
+      // Actualizar racha
+      await progressService.updateStreak(userId, true);
+
+    } catch (e) {
+      // Log error but don't throw - rewards are nice to have but not critical
+      print('Error granting habit rewards: $e');
     }
   }
 }

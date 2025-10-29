@@ -5,7 +5,16 @@ import '../providers/task_provider.dart';
 import '../../../../models/task_models.dart';
 
 class TasksPage extends StatefulWidget {
-  const TasksPage({super.key});
+  final String? searchQuery;
+  final Difficulty? selectedDifficulty;
+  final bool? showCompleted;
+
+  const TasksPage({
+    super.key,
+    this.searchQuery,
+    this.selectedDifficulty,
+    this.showCompleted,
+  });
 
   @override
   State<TasksPage> createState() => _TasksPageState();
@@ -16,6 +25,9 @@ class _TasksPageState extends State<TasksPage> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<custom_theme.ThemeProvider>(context);
     final taskProvider = Provider.of<TaskProvider>(context);
+
+    // Aplicar filtros a las tareas
+    final filteredTasks = _filterTasks(taskProvider.tasks);
 
     return Scaffold(
       backgroundColor: themeProvider.isDarkMode ? Colors.black : const Color(0xFFF8F9FA),
@@ -43,7 +55,7 @@ class _TasksPageState extends State<TasksPage> {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Text(
-                      '${taskProvider.pendingTasks.length} pendientes',
+                      '${_getPendingTasks(filteredTasks).length} pendientes',
                       style: const TextStyle(
                         color: Color(0xFF00FF7F),
                         fontWeight: FontWeight.w500,
@@ -58,13 +70,13 @@ class _TasksPageState extends State<TasksPage> {
             Expanded(
               child: taskProvider.isLoading
                   ? const Center(child: CircularProgressIndicator())
-                  : taskProvider.tasks.isEmpty
+                  : filteredTasks.isEmpty
                       ? _buildEmptyState(themeProvider)
                       : ListView.builder(
                           padding: const EdgeInsets.all(16),
-                          itemCount: taskProvider.tasks.length,
+                          itemCount: filteredTasks.length,
                           itemBuilder: (context, index) {
-                            final task = taskProvider.tasks[index];
+                            final task = filteredTasks[index];
                             return _buildTaskCard(task, themeProvider, taskProvider);
                           },
                         ),
@@ -73,6 +85,40 @@ class _TasksPageState extends State<TasksPage> {
         ),
       ),
     );
+  }
+
+  List<Task> _filterTasks(List<Task> tasks) {
+    return tasks.where((task) {
+      // Filtro de búsqueda
+      if (widget.searchQuery != null && widget.searchQuery!.isNotEmpty) {
+        final query = widget.searchQuery!.toLowerCase();
+        if (!task.title.toLowerCase().contains(query) &&
+            (task.notes == null || !task.notes!.toLowerCase().contains(query))) {
+          return false;
+        }
+      }
+
+      // Filtro de dificultad
+      if (widget.selectedDifficulty != null && task.difficulty != widget.selectedDifficulty) {
+        return false;
+      }
+
+      // Filtro de estado completado
+      if (widget.showCompleted != null) {
+        if (widget.showCompleted! && !task.isCompleted) {
+          return false;
+        }
+        if (!widget.showCompleted! && task.isCompleted) {
+          return false;
+        }
+      }
+
+      return true;
+    }).toList();
+  }
+
+  List<Task> _getPendingTasks(List<Task> tasks) {
+    return tasks.where((task) => !task.isCompleted).toList();
   }
 
   Widget _buildEmptyState(custom_theme.ThemeProvider themeProvider) {

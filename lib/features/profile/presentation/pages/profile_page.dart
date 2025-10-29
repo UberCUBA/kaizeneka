@@ -329,6 +329,16 @@ class _ProfilePageState extends State<ProfilePage> {
                         Divider(color: themeProvider.isDarkMode ? Colors.grey : Colors.black12),
                         _buildProfileInfo('Puntos', userProfile.points.toString()),
                         Divider(color: themeProvider.isDarkMode ? Colors.grey : Colors.black12),
+                        _buildProfileInfo('XP', userProfile.xp.toString()),
+                        Divider(color: themeProvider.isDarkMode ? Colors.grey : Colors.black12),
+                        _buildProfileInfo('Nivel', userProfile.level.toString()),
+                        Divider(color: themeProvider.isDarkMode ? Colors.grey : Colors.black12),
+                        _buildProfileInfo('Monedas', userProfile.coins.toString()),
+                        Divider(color: themeProvider.isDarkMode ? Colors.grey : Colors.black12),
+                        _buildProfileInfo('Racha', userProfile.streak.toString()),
+                        Divider(color: themeProvider.isDarkMode ? Colors.grey : Colors.black12),
+                        _buildProfileInfo('Energía', '${userProfile.energy}/100'),
+                        Divider(color: themeProvider.isDarkMode ? Colors.grey : Colors.black12),
                         _buildProfileInfo('Miembro desde',
                             '${userProfile.createdAt.day}/${userProfile.createdAt.month}/${userProfile.createdAt.year}'),
                       ],
@@ -365,9 +375,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            _buildStat('Misiones', '12'), // TODO: Conectar con datos reales
-                            _buildStat('Posts', '8'),
-                            _buildStat('Likes', '45'),
+                            _buildStat('Misiones', userProfile.misionesCompletadas.length.toString()),
+                            _buildStat('Posts', '8'), // TODO: Conectar con posts reales
+                            _buildStat('Likes', '45'), // TODO: Conectar con likes reales
                           ],
                         ),
                       ],
@@ -402,7 +412,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          '7 días', // TODO: Conectar con lógica real
+                          '${userProfile.streak} días',
                           style: TextStyle(
                             color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
                             fontSize: 24,

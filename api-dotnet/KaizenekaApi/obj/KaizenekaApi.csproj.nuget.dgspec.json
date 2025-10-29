@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\KaizenekaApi.csproj": {}
+    "C:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\KaizenekaApi.csproj": {}
   },
   "projects": {
-    "c:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\KaizenekaApi.csproj": {
+    "C:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\KaizenekaApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\KaizenekaApi.csproj",
+        "projectUniqueName": "C:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\KaizenekaApi.csproj",
         "projectName": "KaizenekaApi",
-        "projectPath": "c:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\KaizenekaApi.csproj",
+        "projectPath": "C:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\KaizenekaApi.csproj",
         "packagesPath": "C:\\Users\\UBER\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\obj\\",
+        "outputPath": "C:\\Users\\UBER\\source\\repos_flutter\\kaizeneka\\api-dotnet\\KaizenekaApi\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

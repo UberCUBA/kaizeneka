@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/task_models.dart';
 import 'supabase_service.dart';
+import 'progress_service.dart';
 
 class TasksService {
   final SupabaseClient _supabase = SupabaseService.client;
@@ -55,6 +56,8 @@ class TasksService {
 
   Future<Task> updateTask(String taskId, Task task) async {
     try {
+      final wasCompleted = task.isCompleted; // Guardar estado anterior
+
       final taskData = {
         'title': task.title,
         'notes': task.notes,
@@ -72,7 +75,14 @@ class TasksService {
           .select('*, task_subtasks(*)')
           .single();
 
-      return Task.fromJson(response);
+      final updatedTask = Task.fromJson(response);
+
+      // Otorgar XP y monedas si la tarea se completó por primera vez
+      if (!wasCompleted && updatedTask.isCompleted) {
+        await _grantTaskRewards(taskId, updatedTask);
+      }
+
+      return updatedTask;
     } catch (e) {
       throw Exception('Error al actualizar tarea: $e');
     }
@@ -262,6 +272,38 @@ class TasksService {
       return createdTask;
     } catch (e) {
       throw Exception('Error al importar tarea compartida: $e');
+    }
+  }
+
+  // Método para otorgar recompensas por completar tareas
+  Future<void> _grantTaskRewards(String taskId, Task task) async {
+    try {
+      // Obtener el user_id de la tarea
+      final taskData = await _supabase
+          .from('user_tasks')
+          .select('user_id')
+          .eq('id', taskId)
+          .single();
+
+      final userId = taskData['user_id'] as String;
+
+      // Calcular XP basado en dificultad
+      final xpReward = ProgressService.calculateXpReward(task.difficulty);
+      final coinsReward = ProgressService.calculateCoinsReward(task.difficulty);
+
+      // Otorgar XP y monedas
+      final progressService = ProgressService();
+      await progressService.addPoints(userId, xpReward);
+      await progressService.addCoins(userId, coinsReward);
+
+      // Actualizar racha si es tarea diaria
+      if (task.repeatType == RepeatType.daily) {
+        await progressService.updateStreak(userId, true);
+      }
+
+    } catch (e) {
+      // Log error but don't throw - rewards are nice to have but not critical
+      print('Error granting task rewards: $e');
     }
   }
 }

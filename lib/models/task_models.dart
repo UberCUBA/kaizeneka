@@ -209,6 +209,7 @@ class Mission {
   final int points;
   final DateTime createdAt;
   DateTime? completedAt;
+  final bool isSystemMission; // true = NK (sistema), false = Personal (usuario)
 
   Mission({
     required this.id,
@@ -222,6 +223,7 @@ class Mission {
     required this.points,
     DateTime? createdAt,
     this.completedAt,
+    this.isSystemMission = false, // Por defecto son misiones personales
   }) : createdAt = createdAt ?? DateTime.now();
 
   Mission copyWith({
@@ -236,6 +238,7 @@ class Mission {
     int? points,
     DateTime? createdAt,
     DateTime? completedAt,
+    bool? isSystemMission,
   }) {
     return Mission(
       id: id ?? this.id,
@@ -249,6 +252,7 @@ class Mission {
       points: points ?? this.points,
       createdAt: createdAt ?? this.createdAt,
       completedAt: completedAt ?? this.completedAt,
+      isSystemMission: isSystemMission ?? this.isSystemMission,
     );
   }
 
@@ -265,6 +269,7 @@ class Mission {
       'points': points,
       'createdAt': createdAt.toIso8601String(),
       'completedAt': completedAt?.toIso8601String(),
+      'isSystemMission': isSystemMission,
     };
   }
 
@@ -296,6 +301,7 @@ class Mission {
       completedAt: json['completedAt'] != null
           ? DateTime.parse(json['completedAt'])
           : null,
+      isSystemMission: json['isSystemMission'] ?? false,
     );
   }
 }

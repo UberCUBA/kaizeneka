@@ -290,13 +290,20 @@ class _IaNkPageState extends State<IaNkPage> {
                                   child: Text(
                                     provider.availableModels.isNotEmpty
                                         ? (() {
-                                            final selectedModel = provider.availableModels.firstWhere(
-                                              (model) => model.id == provider.selectedModel,
-                                              orElse: () => provider.availableModels.first,
-                                            );
-                                            return '${selectedModel.name} ${selectedModel.isFree ? '(Gratis)' : '(Pago)'}';
+                                            try {
+                                              final selectedModel = provider.availableModels.firstWhere(
+                                                (model) => model.id == provider.selectedModel,
+                                              );
+                                              return '${selectedModel.name} ${selectedModel.isFree ? '(Gratis)' : '(Pago)'}';
+                                            } catch (e) {
+                                              // Si no encuentra el modelo seleccionado, mostrar el primero disponible
+                                              if (provider.availableModels.isNotEmpty) {
+                                                return '${provider.availableModels.first.name} ${provider.availableModels.first.isFree ? '(Gratis)' : '(Pago)'}';
+                                              }
+                                              return 'GLM-4.5 Air (Gratis)';
+                                            }
                                           })()
-                                        : 'Seleccionar modelo',
+                                        : 'GLM-4.5 Air (Gratis)',
                                     style: const TextStyle(color: Colors.white, fontSize: 14),
                                   ),
                                 ),

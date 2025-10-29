@@ -19,7 +19,7 @@ class NotInitializedError extends Error {
 
 class ChatRepositoryImpl implements ChatRepository {
   static const String _baseUrl = 'https://openrouter.ai/api/v1';
-  static const String _defaultModel = 'x-ai/grok-code-fast-1';
+  static const String _defaultModel = 'glm-4-9b-chat';
 
   // API Key - será inicializada después de cargar dotenv
   static String? _apiKey;

@@ -19,7 +19,7 @@ class ChatProvider with ChangeNotifier {
   String? _error;
   List<AIModel> _availableModels = [];
   bool _isLoadingModels = false;
-  String _selectedModel = 'x-ai/grok-code-fast-1';
+  String _selectedModel = 'glm-4-9b-chat';
   List<ChatSession> _chatSessions = [];
   String? _currentSessionId;
   FileAttachment? _attachedFile;
@@ -47,6 +47,13 @@ class ChatProvider with ChangeNotifier {
       // Si no hay modelos, agregar algunos por defecto
       if (_availableModels.isEmpty) {
         _availableModels = [
+          AIModel(
+            id: 'glm-4-9b-chat',
+            name: 'GLM-4.5 Air',
+            description: 'Modelo avanzado de GLM por defecto',
+            isFree: true,
+            isPaid: false,
+          ),
           AIModel(
             id: 'x-ai/grok-code-fast-1',
             name: 'Grok Code Fast 1',
@@ -78,6 +85,13 @@ class ChatProvider with ChangeNotifier {
 
       // Fallback a modelos por defecto
       _availableModels = [
+        AIModel(
+          id: 'glm-4-9b-chat',
+          name: 'GLM-4.5 Air',
+          description: 'Modelo avanzado de GLM por defecto',
+          isFree: true,
+          isPaid: false,
+        ),
         AIModel(
           id: 'x-ai/grok-code-fast-1',
           name: 'Grok Code Fast 1',

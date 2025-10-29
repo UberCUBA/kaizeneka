@@ -5,7 +5,18 @@ import '../providers/habit_provider.dart';
 import '../../../../models/task_models.dart';
 
 class HabitsPage extends StatefulWidget {
-  const HabitsPage({super.key});
+  final String? searchQuery;
+  final Difficulty? selectedDifficulty;
+  final bool? showCompleted;
+  final bool? showCompletedToday;
+
+  const HabitsPage({
+    super.key,
+    this.searchQuery,
+    this.selectedDifficulty,
+    this.showCompleted,
+    this.showCompletedToday,
+  });
 
   @override
   State<HabitsPage> createState() => _HabitsPageState();
@@ -16,6 +27,9 @@ class _HabitsPageState extends State<HabitsPage> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final habitProvider = Provider.of<HabitProvider>(context);
+
+    // Aplicar filtros a los hábitos
+    final filteredHabits = _filterHabits(habitProvider.habits);
 
     return Scaffold(
       backgroundColor: themeProvider.isDarkMode ? Colors.black : const Color(0xFFF8F9FA),
@@ -29,14 +43,14 @@ class _HabitsPageState extends State<HabitsPage> {
                 children: [
                   Row(
                     children: [
-                      Text(
-                        'Hábitos++',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
-                        ),
-                      ),
+                      // Text(
+                      //   'Hábitos++',
+                      //   style: TextStyle(
+                      //     fontSize: 24,
+                      //     fontWeight: FontWeight.bold,
+                      //     color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
+                      //   ),
+                      // ),
                       const Spacer(),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -45,7 +59,7 @@ class _HabitsPageState extends State<HabitsPage> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Text(
-                          '${habitProvider.todaysHabits.length} para hoy',
+                          '${_getTodaysHabits(filteredHabits).length} para hoy',
                           style: const TextStyle(
                             color: Color(0xFF00FF7F),
                             fontWeight: FontWeight.w500,
@@ -64,7 +78,7 @@ class _HabitsPageState extends State<HabitsPage> {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '${habitProvider.currentStreaks} rachas activas',
+                        '${_getActiveStreaks(filteredHabits)} rachas activas',
                         style: TextStyle(
                           fontSize: 14,
                           color: themeProvider.isDarkMode ? Colors.grey : Colors.black54,
@@ -78,7 +92,7 @@ class _HabitsPageState extends State<HabitsPage> {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        'Mejor racha: ${habitProvider.bestStreaks}',
+                        'Mejor racha: ${_getBestStreaks(filteredHabits)}',
                         style: TextStyle(
                           fontSize: 14,
                           color: themeProvider.isDarkMode ? Colors.grey : Colors.black54,
@@ -94,13 +108,13 @@ class _HabitsPageState extends State<HabitsPage> {
             Expanded(
               child: habitProvider.isLoading
                   ? const Center(child: CircularProgressIndicator())
-                  : habitProvider.habits.isEmpty
+                  : filteredHabits.isEmpty
                       ? _buildEmptyState(themeProvider)
                       : ListView.builder(
                           padding: const EdgeInsets.all(16),
-                          itemCount: habitProvider.habits.length,
+                          itemCount: filteredHabits.length,
                           itemBuilder: (context, index) {
-                            final habit = habitProvider.habits[index];
+                            final habit = filteredHabits[index];
                             return _buildHabitCard(habit, themeProvider, habitProvider);
                           },
                         ),
@@ -109,6 +123,59 @@ class _HabitsPageState extends State<HabitsPage> {
         ),
       ),
     );
+  }
+
+  List<Habit> _filterHabits(List<Habit> habits) {
+    return habits.where((habit) {
+      // Filtro de búsqueda
+      if (widget.searchQuery != null && widget.searchQuery!.isNotEmpty) {
+        final query = widget.searchQuery!.toLowerCase();
+        if (!habit.title.toLowerCase().contains(query) &&
+            (habit.notes == null || !habit.notes!.toLowerCase().contains(query))) {
+          return false;
+        }
+      }
+
+      // Filtro de dificultad
+      if (widget.selectedDifficulty != null && habit.difficulty != widget.selectedDifficulty) {
+        return false;
+      }
+
+      // Filtro de estado completado
+      if (widget.showCompleted != null) {
+        if (widget.showCompleted! && !habit.isCompletedToday) {
+          return false;
+        }
+        if (!widget.showCompleted! && habit.isCompletedToday) {
+          return false;
+        }
+      }
+
+      // Filtro de completado hoy
+      if (widget.showCompletedToday != null) {
+        if (widget.showCompletedToday! && !habit.isCompletedToday) {
+          return false;
+        }
+        if (!widget.showCompletedToday! && habit.isCompletedToday) {
+          return false;
+        }
+      }
+
+      return true;
+    }).toList();
+  }
+
+  List<Habit> _getTodaysHabits(List<Habit> habits) {
+    return habits.where((habit) => !habit.isCompletedToday).toList();
+  }
+
+  int _getActiveStreaks(List<Habit> habits) {
+    return habits.where((habit) => habit.streak > 0).length;
+  }
+
+  int _getBestStreaks(List<Habit> habits) {
+    if (habits.isEmpty) return 0;
+    return habits.map((habit) => habit.bestStreak).reduce((a, b) => a > b ? a : b);
   }
 
   Widget _buildEmptyState(ThemeProvider themeProvider) {

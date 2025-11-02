@@ -2,6 +2,7 @@ import '../../models/progress_models.dart';
 import '../../models/user_model.dart';
 import '../../models/task_models.dart';
 import 'supabase_service.dart';
+import 'icon_service.dart';
 
 class ProgressService {
   ProgressService();
@@ -18,6 +19,11 @@ class ProgressService {
       'points': newPoints,
       'belt': newBelt,
     });
+
+    // Cambiar icono de la app si el cinturón cambió
+    if (newBelt != user.belt) {
+      await IconService.changeAppIcon(newBelt);
+    }
 
     // Verificar desbloqueos por cinturón
     await _checkBeltUnlocks(userId, newBelt);

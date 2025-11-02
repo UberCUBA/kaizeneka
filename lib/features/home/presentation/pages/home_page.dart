@@ -4,6 +4,8 @@ import '../../../missions/presentation/providers/mission_provider.dart';
 import '../../../missions/domain/entities/mission.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../../core/theme/theme_provider.dart';
+import '../../../../core/services/home_widget_service.dart';
+import '../widgets/active_missions_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,6 +15,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    // Actualizar widget del home screen cuando se carga la página
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        HomeWidgetService.updateWidgetData(context);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final missionProvider = Provider.of<MissionProvider>(context);
@@ -172,9 +185,9 @@ class _HomePageState extends State<HomePage> {
 
             ListTile(
               leading: const Icon(Icons.task, color: Color(0xFF00FF7F)),
-              title: Text('Tareas, Misiones y Hábitos', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
+              title: Text('Tareas y Misiones', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
               onTap: () {
-                Navigator.of(context).pushNamed('/tasks');
+                Navigator.of(context).pushNamedAndRemoveUntil('/tasks', (route) => false);
               },
             ),
 
@@ -235,209 +248,302 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // Bloque superior: Misión del día
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: themeProvider.isDarkMode ? const Color(0xFF1C1C1C) : Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: themeProvider.isDarkMode ? null : [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header con saludo personalizado
+              Text(
+                '¡Hola, ${authProvider.userProfile?.name?.split(' ').first ?? 'Kaizeneka'}! 👋',
+                style: TextStyle(
+                  color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '¿Qué vamos a lograr hoy?',
+                style: TextStyle(
+                  color: themeProvider.isDarkMode ? Colors.white70 : Colors.black54,
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 32),
+
+              // Estadísticas rápidas - 1 fila de 3 elementos
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildStatCard(
+                      context,
+                      'XP Total',
+                      '${authProvider.userProfile?.points ?? 0}',
+                      Icons.star,
+                      const Color(0xFFFFD700),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildStatCard(
+                      context,
+                      'Racha',
+                      '${authProvider.userProfile?.streak ?? 0} días',
+                      Icons.local_fire_department,
+                      const Color(0xFFFF5722),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildStatCard(
+                      context,
+                      'Energía',
+                      '${authProvider.userProfile?.energy ?? 100}',
+                      Icons.battery_full,
+                      const Color(0xFFFFC107),
+                    ),
                   ),
                 ],
               ),
-              child: Column(
+
+              const SizedBox(height: 32),
+
+              // Sección de acciones rápidas
+              Text(
+                'Acciones Rápidas',
+                style: TextStyle(
+                  color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Grid de acciones rápidas - 2 filas de 3 elementos
+              GridView.count(
+                crossAxisCount: 3,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
                 children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.diamond, color: Color(0xFF00FF7F), size: 40),
-                      const SizedBox(width: 10),
-                      Text(
-                        'Misión del día',
-                        style: TextStyle(
-                          color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                  _buildQuickActionCard(
+                    context,
+                    'Nuevo Hábito',
+                    Icons.track_changes,
+                    const Color(0xFF4CAF50),
+                    () => Navigator.of(context).pushNamed('/tasks', arguments: 0),
+                  ),
+                  _buildQuickActionCard(
+                    context,
+                    'Nueva Tarea',
+                    Icons.add_task,
+                    const Color(0xFF2196F3),
+                    () => Navigator.of(context).pushNamed('/tasks', arguments: 1),
+                  ),
+                  _buildQuickActionCard(
+                    context,
+                    'Nueva Misión',
+                    Icons.assignment,
+                    const Color(0xFF9C27B0),
+                    () => Navigator.of(context).pushNamed('/tasks', arguments: 2),
+                  ),
+                  _buildQuickActionCard(
+                    context,
+                    'Tienda',
+                    Icons.shopping_bag,
+                    const Color(0xFFFF9800),
+                    () => Navigator.of(context).pushNamed('/shop'),
+                  ),
+                  _buildQuickActionCard(
+                    context,
+                    'Biblioteca',
+                    Icons.library_books,
+                    const Color(0xFF795548),
+                    () => Navigator.of(context).pushNamed('/biblioteca'),
+                  ),
+                  _buildQuickActionCard(
+                    context,
+                    'Postureo',
+                    Icons.photo_camera,
+                    const Color(0xFFE91E63),
+                    () => Navigator.of(context).pushNamed('/postureo'),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 32),
+
+              // Sección de actividad reciente
+              Text(
+                'Actividad Reciente',
+                style: TextStyle(
+                  color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Lista de actividad reciente (placeholder por ahora)
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: themeProvider.isDarkMode ? const Color(0xFF1C1C1C) : Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: themeProvider.isDarkMode ? null : [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.check_circle, color: Color(0xFF00FF7F), size: 24),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Completaste una tarea: "Hacer ejercicio"',
+                            style: TextStyle(
+                              color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
+                              fontSize: 14,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    mission.descripcion,
-                    style: TextStyle(
-                      color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
-                      fontSize: 18,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () async {
-                      await missionProvider.completeCurrentMission();
-                      setState(() {}); // Forzar reconstrucción para mostrar la nueva misión
-                      // Sincronizar con Supabase
-                      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-                      if (authProvider.isAuthenticated) {
-                        await authProvider.updateUserPoints(missionProvider.user?.puntos ?? 0);
-                        await authProvider.updateUserDiasCompletados(missionProvider.user?.diasCompletados ?? 0);
-                      }
-                      _showFeedback(context, mission);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF00FF7F),
-                      foregroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                    ),
-                    child: const Text('COMPLETADO', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            // Bloque nivel
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: themeProvider.isDarkMode ? const Color(0xFF1C1C1C) : Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: themeProvider.isDarkMode ? null : [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.emoji_events, color: Color(0xFF00FF7F), size: 40),
-                  const SizedBox(width: 10),
-                  Text(
-                    'Tu nivel: Cinturón ${missionProvider.user?.cinturonActual ?? 'Blanco'}',
-                    style: TextStyle(
-                      color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            // Palmarómetro
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: themeProvider.isDarkMode ? const Color(0xFF1C1C1C) : Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: themeProvider.isDarkMode ? null : [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.thermostat_outlined, color: Color(0xFF00FF7F), size: 30),
-                      Text(
-                        'Palmarómetro',
-                        style: TextStyle(
-                          color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                        Text(
+                          '2h',
+                          style: TextStyle(
+                            color: themeProvider.isDarkMode ? Colors.white70 : Colors.black54,
+                            fontSize: 12,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  LinearProgressIndicator(
-                    value: (missionProvider.user?.puntos ?? 0) / 100.0,
-                    backgroundColor: themeProvider.isDarkMode ? Colors.grey : Colors.grey[300],
-                    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF00FF7F)),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    '${missionProvider.user?.puntos ?? 0} puntos',
-                    style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87),
-                  ),
-                ],
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        const Icon(Icons.star, color: Color(0xFFFFD700), size: 24),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Ganaste 10 XP por completar tu racha diaria',
+                            style: TextStyle(
+                              color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          '5h',
+                          style: TextStyle(
+                            color: themeProvider.isDarkMode ? Colors.white70 : Colors.black54,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            // // Ranking Nacional
-            // Container(
-            //   padding: const EdgeInsets.all(20),
-            //   decoration: BoxDecoration(
-            //     color: const Color(0xFF1C1C1C),
-            //     borderRadius: BorderRadius.circular(10),
-            //   ),
-            //   child: const Column(
-            //     children: [
-            //       Text(
-            //         'Ranking Nacional',
-            //         style: TextStyle(
-            //           color: Colors.white,
-            //           fontSize: 18,
-            //           fontWeight: FontWeight.bold,
-            //         ),
-            //       ),
-            //       SizedBox(height: 10),
-            //       Text('🥇 Paola — 867', style: TextStyle(color: Colors.white)),
-            //       Text('🥈 Julia — 818', style: TextStyle(color: Colors.white)),
-            //       Text('🥉 Tiago — 750', style: TextStyle(color: Colors.white)),
-            //     ],
-            //   ),
-            // ),
-            const Spacer(),
-            // Botón inferior
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed('/all-missions');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF00FF7F),
-                foregroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              child: const Text('VER MISIONES', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            ),
-          ],
+
+              const SizedBox(height: 32),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  void _showFeedback(BuildContext context, Mission mission) {
-    if (!mounted) return;
-    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: themeProvider.isDarkMode ? Colors.black : Colors.white,
-        title: Text('¡Misión Completada!', style: TextStyle(color: const Color(0xFF00FF7F))),
-        content: Text(
-          'Has lucrado ${mission.beneficio}. Sobradísimo 💥',
-          style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK', style: TextStyle(color: Color(0xFF00FF7F))),
+  Widget _buildStatCard(BuildContext context, String title, String value, IconData icon, Color color) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: themeProvider.isDarkMode ? const Color(0xFF1C1C1C) : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: themeProvider.isDarkMode ? null : [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
         ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 24),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: TextStyle(
+              color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 2),
+          Text(
+            title,
+            style: TextStyle(
+              color: themeProvider.isDarkMode ? Colors.white70 : Colors.black54,
+              fontSize: 10,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickActionCard(BuildContext context, String title, IconData icon, Color color, VoidCallback onTap) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: themeProvider.isDarkMode ? const Color(0xFF1C1C1C) : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: themeProvider.isDarkMode ? null : [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: color, size: 24),
+            const SizedBox(height: 4),
+            Text(
+              title,
+              style: TextStyle(
+                color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
       ),
     );
   }

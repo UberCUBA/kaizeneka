@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/theme/theme_provider.dart' as custom_theme;
 import '../providers/mission_provider.dart';
+import '../pages/all_missions_page.dart';
 import '../../../../models/task_models.dart';
 
 class MissionsPage extends StatefulWidget {
@@ -14,7 +16,7 @@ class MissionsPage extends StatefulWidget {
     super.key,
     this.searchQuery,
     this.selectedDifficulty,
-    this.showCompleted,
+    this.showCompleted = false, // Por defecto mostrar solo pendientes
     this.showSystemMissions,
   });
 
@@ -23,13 +25,80 @@ class MissionsPage extends StatefulWidget {
 }
 
 class _MissionsPageState extends State<MissionsPage> {
+  late Timer _refreshTimer;
+  DateTime _lastRefreshTime = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    _startRefreshTimer();
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer.cancel();
+    super.dispose();
+  }
+
+  void _startRefreshTimer() {
+    _refreshTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      final now = DateTime.now();
+      final timeSinceLastRefresh = now.difference(_lastRefreshTime);
+
+      // Verificar si es tiempo de refrescar basado en dificultad
+      final missionProvider = Provider.of<MissionProvider>(context, listen: false);
+      final shouldRefresh = _shouldRefreshMissions(timeSinceLastRefresh, missionProvider);
+
+      // Verificar si hay un desbloqueo pendiente disponible
+      missionProvider.checkUnlockAvailable();
+
+      // Actualizar contador en tiempo real SOLO si hay misiones completadas
+      final missionProviderForCounter = Provider.of<MissionProvider>(context, listen: false);
+      if (missionProviderForCounter.missions.any((m) => m.isCompleted)) {
+        // Forzar actualización del contador
+        if (mounted) setState(() {});
+      }
+    });
+  }
+
+  bool _shouldRefreshMissions(Duration timeSinceLastRefresh, MissionProvider missionProvider) {
+    // Lógica de refresco basada en dificultad
+    // Fácil: 4 min, Intermedia: 8 min, Difícil: 12 min, Sobrada: 24 min (para pruebas)
+
+    final unlockedMissions = missionProvider.unlockedSystemMissions;
+    if (unlockedMissions.isEmpty) return false;
+
+    // Tomar la última misión desbloqueada para determinar el tiempo de refresco
+    final lastUnlockedMission = unlockedMissions.last;
+
+    Duration requiredTime;
+    switch (lastUnlockedMission.difficulty) {
+      case Difficulty.easy:
+        requiredTime = const Duration(minutes: 4);
+        break;
+      case Difficulty.medium:
+        requiredTime = const Duration(minutes: 8);
+        break;
+      case Difficulty.hard:
+        requiredTime = const Duration(minutes: 12);
+        break;
+      default:
+        requiredTime = const Duration(minutes: 24); // Para misiones sobrad@s
+    }
+
+    return timeSinceLastRefresh >= requiredTime;
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<custom_theme.ThemeProvider>(context);
     final missionProvider = Provider.of<MissionProvider>(context);
 
-    // Aplicar filtros a las misiones
-    final filteredMissions = _filterMissions(missionProvider.missions);
+    // Mostrar misiones personales + TODAS las misiones del sistema desbloqueadas
+    final userMissions = missionProvider.missions.where((m) => !m.isSystemMission).toList();
+    final unlockedSystemMissions = missionProvider.unlockedSystemMissions; // Todas las desbloqueadas, no solo primeras 3
+    final allMissions = [...userMissions, ...unlockedSystemMissions];
+    final filteredMissions = _filterMissions(allMissions);
 
     return Scaffold(
       backgroundColor: themeProvider.isDarkMode ? Colors.black : const Color(0xFFF8F9FA),
@@ -63,6 +132,22 @@ class _MissionsPageState extends State<MissionsPage> {
                           style: const TextStyle(
                             color: Color(0xFF00FF7F),
                             fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.purple.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Text(
+                          'Nueva Misión: ${_getNextRefreshTime(missionProvider)}',
+                          style: const TextStyle(
+                            color: Colors.purple,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
                           ),
                         ),
                       ),
@@ -104,6 +189,32 @@ class _MissionsPageState extends State<MissionsPage> {
                             return _buildMissionCard(mission, themeProvider, missionProvider);
                           },
                         ),
+            ),
+
+            // Botón para ver próximas misiones
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: Center(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const AllMissionsPage(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.lock_open, size: 18),
+                  label: const Text('Próximas Misiones NK'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF00FF7F),
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -453,5 +564,96 @@ class _MissionsPageState extends State<MissionsPage> {
     } else {
       return '${date.day}/${date.month}/${date.year}';
     }
+  }
+
+  String _getNextRefreshTime(MissionProvider missionProvider) {
+    // Mostrar contador de cooldown si hay un desbloqueo pendiente
+    if (missionProvider.pendingUnlock && missionProvider.nextUnlockTime != null) {
+      final now = DateTime.now();
+      final timeLeft = missionProvider.nextUnlockTime!.difference(now);
+
+      if (timeLeft.isNegative) {
+        return '¡Listo para desbloquear!';
+      }
+
+      final minutes = timeLeft.inMinutes;
+      final seconds = timeLeft.inSeconds.remainder(60);
+
+      if (minutes > 0) {
+        return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+      } else {
+        return '00:${seconds.toString().padLeft(2, '0')}';
+      }
+    }
+
+    // Si no hay cooldown activo, mostrar estado normal
+    final unlockedMissions = missionProvider.unlockedSystemMissions;
+    if (unlockedMissions.isEmpty) return 'N/A';
+
+    // Solo mostrar contador si hay misiones completadas
+    final hasCompletedMissions = missionProvider.missions.any((m) => m.isCompleted);
+    if (!hasCompletedMissions) return 'Completa una misión';
+
+    return 'Esperando...';
+  }
+
+  Widget _buildLockedMissionCard(Mission mission, int requiredPoints, custom_theme.ThemeProvider themeProvider) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      color: themeProvider.isDarkMode ? const Color(0xFF2C2C2C) : Colors.grey[200],
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            Icon(
+              Icons.lock,
+              color: themeProvider.isDarkMode ? Colors.grey : Colors.black38,
+              size: 20,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    mission.title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: themeProvider.isDarkMode ? Colors.grey : Colors.black54,
+                      decoration: TextDecoration.lineThrough,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Necesitas $requiredPoints puntos para desbloquear',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: themeProvider.isDarkMode ? Colors.grey[400] : Colors.black38,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.grey.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '${mission.points}',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

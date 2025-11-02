@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../../../../models/task_models.dart';
+import '../../../missions/presentation/providers/mission_provider.dart';
 
 class HabitProvider with ChangeNotifier {
   List<Habit> _habits = [];
@@ -83,7 +84,7 @@ class HabitProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> completeHabitToday(String habitId) async {
+  Future<void> completeHabitToday(String habitId, [MissionProvider? missionProvider]) async {
     final index = _habits.indexWhere((habit) => habit.id == habitId);
     if (index != -1) {
       final habit = _habits[index];
@@ -101,8 +102,27 @@ class HabitProvider with ChangeNotifier {
 
         _habits[index] = updatedHabit;
         await _saveHabits();
+
+        // Si tenemos missionProvider, agregar puntos por completar hábito
+        if (missionProvider != null) {
+          final pointsToAdd = _calculateHabitPoints(habit);
+          await missionProvider.addPoints(pointsToAdd);
+        }
+
         notifyListeners();
       }
+    }
+  }
+
+  int _calculateHabitPoints(Habit habit) {
+    // Puntos basados en dificultad
+    switch (habit.difficulty) {
+      case Difficulty.easy:
+        return 1;
+      case Difficulty.medium:
+        return 2;
+      case Difficulty.hard:
+        return 3;
     }
   }
 
@@ -186,4 +206,10 @@ class HabitProvider with ChangeNotifier {
   int get currentStreaks => _habits.where((habit) => habit.streak > 0).length;
 
   int get bestStreaks => _habits.fold(0, (max, habit) => habit.bestStreak > max ? habit.bestStreak : max);
+
+  Future<void> resetAll() async {
+    _habits.clear();
+    await _saveHabits();
+    notifyListeners();
+  }
 }

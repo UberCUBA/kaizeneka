@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,8 +8,10 @@ import 'dart:convert';
 import '../../../../core/services/supabase_service.dart';
 import '../../../../core/services/auth_service.dart';
 import '../../../../core/services/api_service.dart';
+import '../../../../core/services/icon_service.dart';
 import '../../../../models/user_model.dart';
 import '../../../../models.dart';
+import '../../../../main.dart';
 
 class AuthProvider with ChangeNotifier {
   User? _user;
@@ -130,6 +133,34 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  Future<void> resetUserProfile() async {
+    if (_user == null) return;
+
+    try {
+      // Limpiar datos locales primero
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('usuario');
+
+      // Resetear perfil en Supabase
+      _userProfile = await SupabaseService.createOrUpdateUserProfile(
+        id: _user!.id,
+        name: _user!.userMetadata?['full_name'] ?? _user!.userMetadata?['name'] ?? 'Usuario',
+        email: _user!.email ?? '',
+        belt: 'Blanco',
+        points: 0,
+        diasCompletados: 0,
+        misionesCompletadas: [],
+        logrosDesbloqueados: [],
+      );
+
+      // Sincronizar el perfil reseteado a local
+      await _syncUserProfileToLocal();
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error resetting user profile: $e');
+    }
+  }
+
   Future<void> _syncUserProfileToLocal() async {
     if (_userProfile == null) return;
 
@@ -143,6 +174,9 @@ class AuthProvider with ChangeNotifier {
       );
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('usuario', json.encode(localUser.toJson()));
+
+      // Cambiar icono de la app basado en el cinturón
+      await IconService.changeAppIcon(_userProfile!.belt);
     } catch (e) {
       debugPrint('Error syncing user profile to local: $e');
     }
@@ -159,7 +193,17 @@ class AuthProvider with ChangeNotifier {
         throw Exception('¡Upsss!! Algo va Mal!! Revise su conexión a Internet!!');
       }
 
+      // Para Windows, usar autenticación alternativa ya que Google Sign-In no está disponible
+      if (defaultTargetPlatform == TargetPlatform.windows) {
+        // En Windows, mostrar mensaje explicativo y usar autenticación alternativa
+        debugPrint('Google Sign-In no disponible en Windows. Usando autenticación alternativa.');
+        throw Exception('Google Sign-In no está disponible en Windows. Por favor, usa la versión móvil o web de la aplicación.');
+      }
+
       await SupabaseService.signInWithGoogle();
+    } catch (e) {
+      debugPrint('Error al iniciar sesión con Google: $e');
+      rethrow;
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -219,6 +263,32 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       debugPrint('Error updating user location: $e');
+    }
+  }
+
+  Future<void> markTutorialCompleted() async {
+    if (_user == null || _userProfile == null) return;
+
+    try {
+      await SupabaseService.updateUserTutorialCompleted(_user!.id, true);
+      _userProfile = _userProfile!.copyWith(tutorialCompleted: true);
+      await _syncUserProfileToLocal();
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error marking tutorial as completed: $e');
+    }
+  }
+
+  Future<void> resetTutorialCompleted() async {
+    if (_user == null || _userProfile == null) return;
+
+    try {
+      await SupabaseService.updateUserTutorialCompleted(_user!.id, false);
+      _userProfile = _userProfile!.copyWith(tutorialCompleted: false);
+      await _syncUserProfileToLocal();
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error resetting tutorial completed: $e');
     }
   }
 

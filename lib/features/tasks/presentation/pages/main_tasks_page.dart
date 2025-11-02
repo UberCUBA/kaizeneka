@@ -61,7 +61,18 @@ class _MainTasksPageState extends State<MainTasksPage> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: _selectedIndex);
+    // Verificar si hay argumentos para seleccionar un tab específico
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+      if (args is int && args >= 0 && args < _pages.length) {
+        setState(() {
+          _selectedIndex = args;
+        });
+        _pageController = PageController(initialPage: _selectedIndex);
+      } else {
+        _pageController = PageController(initialPage: _selectedIndex);
+      }
+    });
     _searchController.addListener(_onSearchChanged);
   }
 
@@ -470,6 +481,15 @@ class _MainTasksPageState extends State<MainTasksPage> {
       backgroundColor: themeProvider.isDarkMode ? Colors.black : const Color(0xFFF8F9FA),
       appBar: AppBar(
         backgroundColor: themeProvider.isDarkMode ? Colors.black : Colors.white,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
+          ),
+          onPressed: () {
+            Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+          },
+        ),
         title: Text(
           _titles[_selectedIndex],
           style: TextStyle(
@@ -478,17 +498,6 @@ class _MainTasksPageState extends State<MainTasksPage> {
           ),
         ),
         elevation: 0,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: Icon(
-              Icons.menu,
-              color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
-            ),
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-          ),
-        ),
         actions: [
           // Campo de búsqueda expandible
           if (_isSearching)
@@ -569,163 +578,6 @@ class _MainTasksPageState extends State<MainTasksPage> {
             ),
           ],
         ],
-      ),
-      drawer: Drawer(
-        backgroundColor: themeProvider.isDarkMode ? Colors.black : Colors.white,
-        child: Padding(
-          padding: EdgeInsets.only(top: 28),
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-            Container(
-              height: 150,
-              decoration: const BoxDecoration(
-                color: Color(0xFF00FF7F),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Center(
-                      child: GestureDetector(
-                        onTap: () => Navigator.of(context).pushNamed('/profile'),
-                        child: Stack(
-                          children: [
-                            CircleAvatar(
-                              radius: 30,
-                              backgroundColor: Colors.black,
-                              child: Text(
-                                getInitials(authProvider.userProfile?.name),
-                                style: const TextStyle(color: Color(0xFF00FF7F), fontWeight: FontWeight.bold, fontSize: 18),
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  CircleAvatar(
-                                    radius: 12,
-                                    backgroundColor: const Color.fromARGB(255, 186, 185, 185),
-                                  ),
-                                  CircleAvatar(
-                                    radius: 9,
-                                    backgroundColor: Colors.grey[600],
-                                  ),
-                                  Icon(
-                                    Icons.star,
-                                    color: getBeltColor(missionProvider.user?.cinturonActual ?? 'Blanco'),
-                                    size: 14,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      authProvider.userProfile?.name ?? '',
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    Text(
-                      authProvider.user?.email ?? '',
-                      style: const TextStyle(
-                        color: Colors.black87,
-                        fontSize: 14,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.person, color: Color(0xFF00FF7F)),
-              title: Text('Mi Perfil', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
-              onTap: () {
-                Navigator.of(context).pushNamed('/profile');
-              },
-            ),
-            // ListTile(
-            //   leading: const Icon(Icons.assignment, color: Color(0xFF00FF7F)),
-            //   title: Text('Inicio', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
-            //   onTap: () {
-            //     Navigator.of(context).pushNamed('/home');
-            //   },
-            // ),
-
-            ListTile(
-              leading: const Icon(Icons.task, color: Color(0xFF00FF7F)),
-              title: Text('Inicio', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-            ),
-
-            ListTile(
-              leading: const Icon(Icons.photo_camera, color: Color(0xFF00FF7F)),
-              title: Text('Postureo NK', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
-              onTap: () {
-                Navigator.of(context).pushNamed('/postureo');
-              },
-            ),
-
-            ListTile(
-              leading: const Icon(Icons.library_books, color: Color(0xFF00FF7F)),
-              title: Text('Biblioteca NK', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
-              onTap: () {
-                Navigator.of(context).pushNamed('/biblioteca');
-              },
-            ),
-
-            ListTile(
-              leading: const Icon(Icons.smart_toy, color: Color(0xFF00FF7F)),
-              title: Text('IA NK', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
-              onTap: () {
-                Navigator.of(context).pushNamed('/ia_nk');
-              },
-            ),
-
-            ListTile(
-              leading: const Icon(Icons.shopping_bag, color: Color(0xFF00FF7F)),
-              title: Text('Shop NK', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
-              onTap: () {
-                Navigator.of(context).pushNamed('/shop');
-              },
-            ),
-
-            ListTile(
-              leading: const Icon(Icons.map, color: Color(0xFF00FF7F)),
-              title: Text('Mapa Kaizeneka', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
-              onTap: () {
-                Navigator.of(context).pushNamed('/map');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.leaderboard, color: Color(0xFF00FF7F)),
-              title: Text('Ranking de Usuarios', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
-              onTap: () {
-                Navigator.of(context).pushNamed('/ranking');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings, color: Color(0xFF00FF7F)),
-              title: Text('Ajustes', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
-              onTap: () {
-                Navigator.of(context).pushNamed('/settings');
-              },
-            ),
-          ],
-        ),
-        ),
       ),
       body: Stack(
         children: [

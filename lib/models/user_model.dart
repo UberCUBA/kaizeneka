@@ -24,6 +24,7 @@ class UserModel {
   final List<String> unlockedMissions;
   final List<String> unlockedAchievements;
   final Map<String, dynamic> stats; // fuerza, constancia, foco, etc.
+  final bool tutorialCompleted; // Indica si el usuario completó el tutorial de progreso
 
   // Propiedades calculadas para compatibilidad
   int get xp => points; // points ahora representa XP
@@ -65,6 +66,7 @@ class UserModel {
     this.unlockedMissions = const [],
     this.unlockedAchievements = const [],
     this.stats = const {'fuerza': 0, 'constancia': 0, 'foco': 0},
+    this.tutorialCompleted = false,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -92,6 +94,7 @@ class UserModel {
       unlockedMissions: List<String>.from(json['unlocked_missions'] ?? []),
       unlockedAchievements: List<String>.from(json['unlocked_achievements'] ?? []),
       stats: Map<String, dynamic>.from(json['stats'] ?? {'fuerza': 0, 'constancia': 0, 'foco': 0}),
+      tutorialCompleted: json['tutorial_completed'] ?? false,
     );
   }
 
@@ -119,6 +122,7 @@ class UserModel {
       'unlocked_missions': unlockedMissions,
       'unlocked_achievements': unlockedAchievements,
       'stats': stats,
+      'tutorial_completed': tutorialCompleted,
     };
   }
 
@@ -144,6 +148,7 @@ class UserModel {
     List<String>? unlockedMissions,
     List<String>? unlockedAchievements,
     Map<String, dynamic>? stats,
+    bool? tutorialCompleted,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -167,6 +172,7 @@ class UserModel {
       unlockedMissions: unlockedMissions ?? this.unlockedMissions,
       unlockedAchievements: unlockedAchievements ?? this.unlockedAchievements,
       stats: stats ?? this.stats,
+      tutorialCompleted: tutorialCompleted ?? this.tutorialCompleted,
     );
   }
 }

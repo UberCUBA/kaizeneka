@@ -7,7 +7,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:kaizeneka/main.dart';
+import 'package:nk/main.dart';
 
 void main() {
   testWidgets('App builds smoke test', (WidgetTester tester) async {
@@ -15,6 +15,6 @@ void main() {
     await tester.pumpWidget(const KaizenekaApp());
 
     // Verify that the app title is present.
-    expect(find.text('Misiones Kaizenekas'), findsOneWidget);
+    expect(find.text('Misiones NK'), findsOneWidget);
   });
 }

@@ -162,6 +162,17 @@ class SupabaseService {
         .eq('id', userId);
   }
 
+  // Actualizar estado del tutorial completado
+  static Future<void> updateUserTutorialCompleted(String userId, bool completed) async {
+    await client
+        .from('users')
+        .update({
+          'tutorial_completed': completed,
+          'updated_at': DateTime.now().toIso8601String(),
+        })
+        .eq('id', userId);
+  }
+
   // Subir imagen a Storage
   static Future<String?> uploadImage(File imageFile, String bucket, String path) async {
     try {

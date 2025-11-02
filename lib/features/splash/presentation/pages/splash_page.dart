@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../../core/services/local_notification_service.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -52,8 +53,34 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
 
     if (mounted) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final route = authProvider.isAuthenticated ? '/tasks' : '/login';
-      Navigator.of(context).pushReplacementNamed(route);
+      if (authProvider.isAuthenticated) {
+        // Esperar a que el perfil de usuario esté cargado
+        await authProvider.reloadUserProfile();
+        final userProfile = authProvider.userProfile;
+
+        // Debug: verificar estado del tutorial
+        debugPrint('User profile loaded: ${userProfile != null}');
+        debugPrint('Tutorial completed: ${userProfile?.tutorialCompleted}');
+
+        // Probar notificación inmediatamente para verificar funcionalidad
+        debugPrint('Probando notificación inmediata...');
+        await LocalNotificationService().testNotification();
+
+        // Programar notificaciones cada 15 minutos
+        debugPrint('Programando notificaciones cada 15 minutos...');
+        await LocalNotificationService().scheduleDailyMissionNotification();
+
+        if (userProfile != null && !userProfile.tutorialCompleted) {
+          debugPrint('Navigating to tutorial');
+          Navigator.of(context).pushReplacementNamed('/tutorial');
+        } else {
+          debugPrint('Navigating to home');
+          Navigator.of(context).pushReplacementNamed('/home');
+        }
+      } else {
+        debugPrint('User not authenticated, navigating to login');
+        Navigator.of(context).pushReplacementNamed('/login');
+      }
     }
   }
 

@@ -20,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
       await authProvider.signInWithGoogle();
 
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/tasks');
+        Navigator.of(context).pushReplacementNamed('/home');
       }
     } catch (e) {
       if (mounted) {

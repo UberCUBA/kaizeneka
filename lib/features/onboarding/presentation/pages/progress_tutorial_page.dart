@@ -104,10 +104,20 @@ class _ProgressTutorialPageState extends State<ProgressTutorialPage> {
     }
   }
 
+  void _skipTutorial() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    // Marcar el tutorial como completado (aunque se omita)
+    await authProvider.markTutorialCompleted();
+
+    if (mounted) {
+      Navigator.of(context).pushReplacementNamed('/home');
+    }
+  }
+
   void _completeTutorial() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    // Aquí podrías guardar que el usuario completó el tutorial
-    // await authProvider.markTutorialCompleted();
+    // Marcar el tutorial como completado
+    await authProvider.markTutorialCompleted();
 
     if (mounted) {
       Navigator.of(context).pushReplacementNamed('/home');
@@ -162,37 +172,58 @@ class _ProgressTutorialPageState extends State<ProgressTutorialPage> {
             // Botones de navegación
             Padding(
               padding: const EdgeInsets.all(24.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
                 children: [
-                  if (_currentPage > 0)
-                    TextButton(
-                      onPressed: _previousPage,
-                      child: Text(
-                        'Anterior',
-                        style: TextStyle(
-                          color: themeProvider.isDarkMode ? Colors.white70 : Colors.black54,
-                          fontSize: 16,
+                  // Botón "Omitir" en la parte superior
+                  if (_currentPage < _tutorialSteps.length - 1)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: _skipTutorial,
+                        child: Text(
+                          'Omitir',
+                          style: TextStyle(
+                            color: themeProvider.isDarkMode ? Colors.white70 : Colors.black54,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
-                    )
-                  else
-                    const SizedBox(width: 80),
+                    ),
 
-                  ElevatedButton(
-                    onPressed: _nextPage,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _tutorialSteps[_currentPage].color,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
+                  // Botones de navegación inferior
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (_currentPage > 0)
+                        TextButton(
+                          onPressed: _previousPage,
+                          child: Text(
+                            'Anterior',
+                            style: TextStyle(
+                              color: themeProvider.isDarkMode ? Colors.white70 : Colors.black54,
+                              fontSize: 16,
+                            ),
+                          ),
+                        )
+                      else
+                        const SizedBox(width: 80),
+
+                      ElevatedButton(
+                        onPressed: _nextPage,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: _tutorialSteps[_currentPage].color,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                        ),
+                        child: Text(
+                          _currentPage == _tutorialSteps.length - 1 ? '¡Comenzar!' : 'Siguiente',
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      _currentPage == _tutorialSteps.length - 1 ? '¡Comenzar!' : 'Siguiente',
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
+                    ],
                   ),
                 ],
               ),

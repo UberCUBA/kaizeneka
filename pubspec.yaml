@@ -51,6 +51,7 @@ dependencies:
   file_picker: ^8.0.0+1
   share_plus: ^9.0.0
   flutter_local_notifications: ^17.2.2
+  timezone: ^0.9.0
   supabase_flutter: ^2.5.8
   google_sign_in: ^6.2.1
   package_info_plus: ^8.0.0
@@ -58,6 +59,8 @@ dependencies:
   flutter_dotenv: ^5.1.0
   connectivity_plus: ^6.0.3
   curved_labeled_navigation_bar: ^2.0.2
+  home_widget: ^0.8.1
+  workmanager: ^0.9.0+3
 
 dev_dependencies:
   flutter_test:
@@ -120,3 +123,20 @@ flutter_icons:
   image_path: "assets/images/icon.png"
   adaptive_icon_background: "#000000"
   adaptive_icon_foreground: "assets/images/icon.png"
+  # Iconos alternativos para cinturones
+  android_adaptive_icon_backgrounds:
+    white_belt: "#FFFFFF"
+    yellow_belt: "#FFFF00"
+    orange_belt: "#FFA500"
+    green_belt: "#008000"
+    brown_belt: "#8B4513"
+    black_belt: "#000000"
+    red_belt: "#FF0000"
+  android_adaptive_icon_foregrounds:
+    white_belt: "assets/images/icon.png"
+    yellow_belt: "assets/images/icon.png"
+    orange_belt: "assets/images/icon.png"
+    green_belt: "assets/images/icon.png"
+    brown_belt: "assets/images/icon.png"
+    black_belt: "assets/images/icon.png"
+    red_belt: "assets/images/icon.png"

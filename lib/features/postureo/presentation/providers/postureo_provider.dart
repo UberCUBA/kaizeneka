@@ -91,7 +91,7 @@ class PostureoProvider with ChangeNotifier {
 
       // Suma 1 punto por like usando MissionProvider
       final missionProvider = Provider.of<MissionProvider>(context, listen: false);
-      missionProvider.addPoints(context, 1);
+      missionProvider.addPoints(1);
 
       notifyListeners();
     } catch (e) {

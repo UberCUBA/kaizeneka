@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../../../../models/task_models.dart';
+import '../../../missions/presentation/providers/mission_provider.dart';
 
 class TaskProvider with ChangeNotifier {
   List<Task> _tasks = [];
@@ -70,17 +71,37 @@ class TaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> toggleTaskCompletion(String taskId) async {
+  Future<void> toggleTaskCompletion(String taskId, [MissionProvider? missionProvider]) async {
     final index = _tasks.indexWhere((task) => task.id == taskId);
     if (index != -1) {
       final task = _tasks[index];
+      final wasCompleted = task.isCompleted;
       final updatedTask = task.copyWith(
         isCompleted: !task.isCompleted,
         completedAt: !task.isCompleted ? DateTime.now() : null,
       );
       _tasks[index] = updatedTask;
       await _saveTasks();
+
+      // Si se completó la tarea y tenemos missionProvider, agregar puntos
+      if (!wasCompleted && missionProvider != null) {
+        final pointsToAdd = _calculateTaskPoints(task);
+        await missionProvider.addPoints(pointsToAdd);
+      }
+
       notifyListeners();
+    }
+  }
+
+  int _calculateTaskPoints(Task task) {
+    // Puntos basados en dificultad
+    switch (task.difficulty) {
+      case Difficulty.easy:
+        return 2;
+      case Difficulty.medium:
+        return 4;
+      case Difficulty.hard:
+        return 6;
     }
   }
 
@@ -140,5 +161,11 @@ class TaskProvider with ChangeNotifier {
         notifyListeners();
       }
     }
+  }
+
+  Future<void> resetAll() async {
+    _tasks.clear();
+    await _saveTasks();
+    notifyListeners();
   }
 }

@@ -73,7 +73,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: themeProvider.isDarkMode ? Colors.black : const Color(0xFFF8F9FA),
       appBar: AppBar(
         backgroundColor: themeProvider.isDarkMode ? Colors.black : Colors.white,
-        title: Text('NK(+)', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
+        title: Text('Inicio', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
         iconTheme: IconThemeData(color: themeProvider.isDarkMode ? Colors.white : Colors.black54),
       ),
       drawer: Drawer(
@@ -256,19 +256,11 @@ class _HomePageState extends State<HomePage> {
             children: [
               // Header con saludo personalizado
               Text(
-                '¡Hola, ${authProvider.userProfile?.name?.split(' ').first ?? 'Kaizeneka'}! 👋',
+                '¡Hola de nuevo, ${authProvider.userProfile?.name?.split(' ').first ?? 'Kaizeneka'}! 👋',
                 style: TextStyle(
                   color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                '¿Qué vamos a lograr hoy?',
-                style: TextStyle(
-                  color: themeProvider.isDarkMode ? Colors.white70 : Colors.black54,
-                  fontSize: 16,
                 ),
               ),
               const SizedBox(height: 32),
@@ -331,46 +323,48 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   _buildQuickActionCard(
                     context,
-                    'Nuevo Hábito',
+                    'Hábitos',
                     Icons.track_changes,
                     const Color(0xFF4CAF50),
                     () => Navigator.of(context).pushNamed('/tasks', arguments: 0),
                   ),
                   _buildQuickActionCard(
                     context,
-                    'Nueva Tarea',
+                    'Tareas ',
                     Icons.add_task,
                     const Color(0xFF2196F3),
                     () => Navigator.of(context).pushNamed('/tasks', arguments: 1),
                   ),
                   _buildQuickActionCard(
                     context,
-                    'Nueva Misión',
+                    'Misiones',
                     Icons.assignment,
                     const Color(0xFF9C27B0),
                     () => Navigator.of(context).pushNamed('/tasks', arguments: 2),
                   ),
+                  
                   _buildQuickActionCard(
                     context,
-                    'Tienda',
-                    Icons.shopping_bag,
-                    const Color(0xFFFF9800),
-                    () => Navigator.of(context).pushNamed('/shop'),
-                  ),
-                  _buildQuickActionCard(
-                    context,
-                    'Biblioteca',
-                    Icons.library_books,
-                    const Color(0xFF795548),
-                    () => Navigator.of(context).pushNamed('/biblioteca'),
-                  ),
-                  _buildQuickActionCard(
-                    context,
-                    'Postureo',
+                    'Postureo NK',
                     Icons.photo_camera,
                     const Color(0xFFE91E63),
                     () => Navigator.of(context).pushNamed('/postureo'),
                   ),
+                   _buildQuickActionCard(
+                    context,
+                    'Biblioteca NK',
+                    Icons.library_books,
+                    const Color(0xFF795548),
+                    () => Navigator.of(context).pushNamed('/biblioteca'),
+                  ),                  
+                  _buildQuickActionCard(
+                    context,
+                    'Tienda NK',
+                    Icons.shopping_bag,
+                    const Color(0xFFFF9800),
+                    () => Navigator.of(context).pushNamed('/shop'),
+                  ),
+                 
                 ],
               ),
 

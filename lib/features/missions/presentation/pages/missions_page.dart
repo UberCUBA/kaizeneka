@@ -153,24 +153,6 @@ class _MissionsPageState extends State<MissionsPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.stars,
-                        color: themeProvider.isDarkMode ? Colors.grey : Colors.black54,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${_getTotalPoints(filteredMissions)} puntos totales',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: themeProvider.isDarkMode ? Colors.grey : Colors.black54,
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -192,30 +174,30 @@ class _MissionsPageState extends State<MissionsPage> {
             ),
 
             // Botón para ver próximas misiones
-            Container(
-              padding: const EdgeInsets.all(16),
-              child: Center(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const AllMissionsPage(),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.lock_open, size: 18),
-                  label: const Text('Próximas Misiones NK'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00FF7F),
-                    foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // Container(
+            //   padding: const EdgeInsets.all(16),
+            //   child: Center(
+            //     child: ElevatedButton.icon(
+            //       onPressed: () {
+            //         Navigator.of(context).push(
+            //           MaterialPageRoute(
+            //             builder: (context) => const AllMissionsPage(),
+            //           ),
+            //         );
+            //       },
+            //       icon: const Icon(Icons.lock_open, size: 18),
+            //       label: const Text('Próximas Misiones NK'),
+            //       style: ElevatedButton.styleFrom(
+            //         backgroundColor: const Color(0xFF00FF7F),
+            //         foregroundColor: Colors.black,
+            //         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            //         shape: RoundedRectangleBorder(
+            //           borderRadius: BorderRadius.circular(20),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -592,7 +574,7 @@ class _MissionsPageState extends State<MissionsPage> {
 
     // Solo mostrar contador si hay misiones completadas
     final hasCompletedMissions = missionProvider.missions.any((m) => m.isCompleted);
-    if (!hasCompletedMissions) return 'Completa una misión';
+    if (!hasCompletedMissions) return 'Esperando...';
 
     return 'Esperando...';
   }

@@ -68,38 +68,6 @@ class _HabitsPageState extends State<HabitsPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.local_fire_department,
-                        color: themeProvider.isDarkMode ? Colors.grey : Colors.black54,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${_getActiveStreaks(filteredHabits)} rachas activas',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: themeProvider.isDarkMode ? Colors.grey : Colors.black54,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Icon(
-                        Icons.emoji_events,
-                        color: themeProvider.isDarkMode ? Colors.grey : Colors.black54,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Mejor racha: ${_getBestStreaks(filteredHabits)}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: themeProvider.isDarkMode ? Colors.grey : Colors.black54,
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -190,7 +158,7 @@ class _HabitsPageState extends State<HabitsPage> {
           ),
           const SizedBox(height: 16),
           Text(
-            'No tienes hábitos configurados',
+            'No tienes hábitos pendientes ',
             style: TextStyle(
               fontSize: 18,
               color: themeProvider.isDarkMode ? Colors.grey : Colors.black54,

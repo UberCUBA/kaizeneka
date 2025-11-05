@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.example.kaizeneka"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -38,6 +38,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        multiDexEnabled = true
 
         // Para Google Sign-In
         manifestPlaceholders["appAuthRedirectScheme"] = "com.googleusercontent.apps.227216564417-cgb1l2hqjnjg0qdhn6lncji31m1d8g7u"
@@ -51,7 +52,7 @@ android {
         }
     }
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.2.2")
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("androidx.glance:glance-appwidget:1.1.0")
 }

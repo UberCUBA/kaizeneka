@@ -61,6 +61,9 @@ class _MainTasksPageState extends State<MainTasksPage> {
   @override
   void initState() {
     super.initState();
+    // Inicializar el PageController inmediatamente
+    _pageController = PageController(initialPage: _selectedIndex);
+
     // Verificar si hay argumentos para seleccionar un tab específico
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final args = ModalRoute.of(context)?.settings.arguments;
@@ -68,9 +71,14 @@ class _MainTasksPageState extends State<MainTasksPage> {
         setState(() {
           _selectedIndex = args;
         });
-        _pageController = PageController(initialPage: _selectedIndex);
-      } else {
-        _pageController = PageController(initialPage: _selectedIndex);
+        // Solo animar si es diferente del inicial
+        if (args != 0) {
+          _pageController.animateToPage(
+            args,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
       }
     });
     _searchController.addListener(_onSearchChanged);
@@ -575,6 +583,16 @@ class _MainTasksPageState extends State<MainTasksPage> {
                     ),
                   ),
               ],
+            ),
+            // Botón de próximas misiones
+            IconButton(
+              icon: Icon(
+                Icons.lock_open,
+                color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
+              ),
+              onPressed: () {
+                Navigator.of(context).pushNamed('/all-missions');
+              },
             ),
           ],
         ],

@@ -102,6 +102,9 @@ class LocalNotificationService {
 
     // Verificar permisos después de inicialización
     await checkNotificationPermissions();
+
+    // Programar notificaciones después de inicialización
+    await scheduleDailyMissionNotification();
   }
 
   Future<void> checkNotificationPermissions() async {
@@ -159,22 +162,30 @@ class LocalNotificationService {
   Future<void> scheduleDailyMissionNotification() async {
     debugPrint('Iniciando programación de notificaciones...');
 
-    // Verificar permisos antes de programar
+    // Verificar y solicitar permisos antes de programar
     final androidPlugin = flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
     if (androidPlugin != null) {
+      // Verificar permisos de notificaciones
       final notificationsEnabled = await androidPlugin.areNotificationsEnabled();
-      final exactAlarmsGranted = await androidPlugin.requestExactAlarmsPermission();
-
       debugPrint('Permisos de notificaciones: $notificationsEnabled');
-      debugPrint('Permisos de alarmas exactas: $exactAlarmsGranted');
 
       if (notificationsEnabled == false) {
-        debugPrint('❌ Las notificaciones no están habilitadas. No se pueden programar.');
-        return;
+        debugPrint('Solicitando permisos de notificaciones...');
+        final granted = await androidPlugin.requestNotificationsPermission();
+        if (granted == false) {
+          debugPrint('❌ Los permisos de notificaciones fueron denegados. No se pueden programar.');
+          return;
+        }
       }
+
+      // Verificar y solicitar permisos de alarmas exactas
+      debugPrint('Verificando permisos de alarmas exactas...');
+      final exactAlarmsGranted = await androidPlugin.requestExactAlarmsPermission();
+      debugPrint('Permisos de alarmas exactas: $exactAlarmsGranted');
 
       if (exactAlarmsGranted == false) {
         debugPrint('⚠️ Permisos de alarmas exactas no concedidos. Las notificaciones pueden no funcionar correctamente.');
+        debugPrint('Nota: En Android 14+, las alarmas exactas requieren configuración manual del usuario.');
       }
     }
 
@@ -209,203 +220,121 @@ class LocalNotificationService {
 
     // Usar zona horaria local del dispositivo para programar notificaciones
     final deviceTime = DateTime.now();
-    String timeZoneName = deviceTime.timeZoneName;
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    int notificationId = 1;
 
-    // Manejar zonas horarias no estándar que no existen en la base de datos de timezone
-    if (timeZoneName == 'CST' || timeZoneName == 'CDT') {
-      // CST/CDT generalmente corresponde a America/Chicago o America/Mexico_City
-      // Usar una zona horaria estándar que funcione
-      timeZoneName = 'America/New_York'; // Usar zona horaria del este de EE.UU. como fallback
+    debugPrint('Hora actual del dispositivo: $deviceTime');
+    debugPrint('Zona horaria local: ${tz.local}');
+    debugPrint('Usando TZDateTime en zona local: $now');
+
+    // Crear lista de mensajes motivacionales variados
+    final List<String> titles = [
+      '¡Hora de Kaizeneka! ⚡',
+      'Tu momento de crecimiento 🥷',
+      '¡Es hora de lucrar! 💰',
+      'Misión diaria lista 👊',
+      '¡Despierta tu potencial! 🌟',
+      'Momento de acción 🔥',
+      '¡Kaizeneka te llama! 📞',
+      'Tu transformación continúa 🚀',
+      '¡No pares ahora! 💪',
+      'Momento de excelencia 💎',
+      '¡Sigue adelante! 🎯',
+      'Tu éxito te espera 🏆',
+    ];
+
+    final List<String> messages = [
+      'Completa tu misión diaria y gana XP',
+      'Cada acción cuenta para tu crecimiento',
+      '¡Es momento de hacer que suceda!',
+      'Tu consistencia te llevará al éxito',
+      '¡Un paso más hacia la grandeza!',
+      'El éxito es la suma de pequeños esfuerzos',
+      '¡Mantén el momentum vivo!',
+      'Cada día es una oportunidad de oro',
+      '¡Tu futuro yo te lo agradecerá!',
+      'La excelencia es un hábito, no un acto',
+      '¡Sigue construyendo tu legado!',
+      '¡El cambio comienza ahora!',
+    ];
+
+    // Determinar límites según plataforma
+    final int maxNotifications;
+    final bool isAndroid = defaultTargetPlatform == TargetPlatform.android;
+
+    if (isAndroid) {
+      maxNotifications = 500; // Límite de Android AlarmManager
+    } else {
+      maxNotifications = 64; // Límite de iOS
     }
 
-    try {
-      final localLocation = tz.getLocation(timeZoneName);
-      final tz.TZDateTime now = tz.TZDateTime.from(deviceTime, localLocation);
-      int notificationId = 1;
+    // Programar notificaciones cada 15 minutos durante todo el día
+    int notificationsScheduled = 0;
+    for (int hour = 8; hour <= 22; hour++) { // De 8 AM a 10 PM
+      for (int minute = 0; minute < 60; minute += 15) { // Cada 15 minutos
+        final tz.TZDateTime scheduledTime = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
 
-      debugPrint('Hora actual del dispositivo: $deviceTime');
-      debugPrint('Zona horaria del dispositivo: $timeZoneName');
-      debugPrint('Offset zona horaria: ${deviceTime.timeZoneOffset}');
-      debugPrint('Usando TZDateTime en zona local: $now');
+        // Si la hora ya pasó hoy, programar para mañana
+        final scheduledTimeAdjusted = scheduledTime.isBefore(now)
+            ? scheduledTime.add(const Duration(days: 1))
+            : scheduledTime;
 
-      // Crear lista de mensajes motivacionales variados
-      final List<String> titles = [
-        '¡Hora de Kaizeneka! ⚡',
-        'Tu momento de crecimiento 🥷',
-        '¡Es hora de lucrar! 💰',
-        'Misión diaria lista 👊',
-        '¡Despierta tu potencial! 🌟',
-        'Momento de acción 🔥',
-        '¡Kaizeneka te llama! 📞',
-        'Tu transformación continúa 🚀',
-        '¡No pares ahora! 💪',
-        'Momento de excelencia 💎',
-        '¡Sigue adelante! 🎯',
-        'Tu éxito te espera 🏆',
-      ];
+        // Seleccionar mensaje aleatorio
+        final randomIndex = notificationsScheduled % titles.length;
 
-      final List<String> messages = [
-        'Completa tu misión diaria y gana XP',
-        'Cada acción cuenta para tu crecimiento',
-        '¡Es momento de hacer que suceda!',
-        'Tu consistencia te llevará al éxito',
-        '¡Un paso más hacia la grandeza!',
-        'El éxito es la suma de pequeños esfuerzos',
-        '¡Mantén el momentum vivo!',
-        'Cada día es una oportunidad de oro',
-        '¡Tu futuro yo te lo agradecerá!',
-        'La excelencia es un hábito, no un acto',
-        '¡Sigue construyendo tu legado!',
-        '¡El cambio comienza ahora!',
-      ];
+        debugPrint('Programando notificación $notificationId para: $scheduledTimeAdjusted');
+        debugPrint('  Fecha y hora programada: ${scheduledTimeAdjusted.toString()}');
+        debugPrint('  Offset zona horaria: ${scheduledTimeAdjusted.timeZoneOffset}');
 
-      // Programar notificaciones cada 15 minutos durante todo el día
-      int notificationsScheduled = 0;
-      for (int hour = 8; hour <= 22; hour++) { // De 8 AM a 10 PM
-        for (int minute = 0; minute < 60; minute += 15) { // Cada 15 minutos
-          final tz.TZDateTime scheduledTime = tz.TZDateTime(localLocation, now.year, now.month, now.day, hour, minute);
-
-          // Si la hora ya pasó hoy, programar para mañana
-          if (scheduledTime.isBefore(now)) {
-            scheduledTime.add(const Duration(days: 1));
-          }
-
-          // Seleccionar mensaje aleatorio
-          final randomIndex = notificationsScheduled % titles.length;
-
-          debugPrint('Programando notificación $notificationId para: $scheduledTime');
-          debugPrint('  Fecha y hora programada: ${scheduledTime.toString()}');
-          debugPrint('  Offset zona horaria: ${scheduledTime.timeZoneOffset}');
-
-          try {
-            await flutterLocalNotificationsPlugin.zonedSchedule(
-              notificationId,
-              titles[randomIndex],
-              messages[randomIndex],
-              scheduledTime,
-              NotificationDetails(
-                android: androidDetails,
-                iOS: const DarwinNotificationDetails(
-                  presentAlert: true,
-                  presentBadge: true,
-                  presentSound: true,
-                ),
+        try {
+          await flutterLocalNotificationsPlugin.zonedSchedule(
+            notificationId,
+            titles[randomIndex],
+            messages[randomIndex],
+            scheduledTimeAdjusted,
+            NotificationDetails(
+              android: androidDetails,
+              iOS: const DarwinNotificationDetails(
+                presentAlert: true,
+                presentBadge: true,
+                presentSound: true,
               ),
-              androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-              uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.wallClockTime,
-              matchDateTimeComponents: null,
-              payload: 'open_missions',
-            );
-            debugPrint('✅ Notificación $notificationId programada exitosamente');
-            notificationsScheduled++;
-          } catch (e) {
-            debugPrint('❌ Error programando notificación $notificationId: $e');
-          }
-
-          notificationId++;
-          if (notificationId > 96) break; // Límite de notificaciones
+            ),
+            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+            uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.wallClockTime,
+            matchDateTimeComponents: DateTimeComponents.time, // Programar diariamente a la misma hora
+            payload: 'open_missions',
+          );
+          debugPrint('✅ Notificación $notificationId programada exitosamente');
+          notificationsScheduled++;
+        } catch (e) {
+          debugPrint('❌ Error programando notificación $notificationId: $e');
+          debugPrint('   Detalles del error: ${e.toString()}');
+          debugPrint('   Hora programada: $scheduledTimeAdjusted');
+          // Continuar con la siguiente notificación en caso de error individual
         }
-        if (notificationId > 96) break;
+
+        notificationId++;
+        if (notificationId > maxNotifications) break; // Límite según plataforma
       }
-    } catch (e) {
-      debugPrint('❌ Error obteniendo zona horaria $timeZoneName: $e');
-      debugPrint('Usando UTC como fallback...');
-
-      // Fallback a UTC si hay problemas con la zona horaria
-      final tz.TZDateTime now = tz.TZDateTime.from(deviceTime, tz.UTC);
-      int notificationId = 1;
-
-      debugPrint('Hora actual del dispositivo: $deviceTime');
-      debugPrint('Usando TZDateTime en UTC (fallback): $now');
-
-      // Crear lista de mensajes motivacionales variados
-      final List<String> titles = [
-        '¡Hora de Kaizeneka! ⚡',
-        'Tu momento de crecimiento 🥷',
-        '¡Es hora de lucrar! 💰',
-        'Misión diaria lista 👊',
-        '¡Despierta tu potencial! 🌟',
-        'Momento de acción 🔥',
-        '¡Kaizeneka te llama! 📞',
-        'Tu transformación continúa 🚀',
-        '¡No pares ahora! 💪',
-        'Momento de excelencia 💎',
-        '¡Sigue adelante! 🎯',
-        'Tu éxito te espera 🏆',
-      ];
-
-      final List<String> messages = [
-        'Completa tu misión diaria y gana XP',
-        'Cada acción cuenta para tu crecimiento',
-        '¡Es momento de hacer que suceda!',
-        'Tu consistencia te llevará al éxito',
-        '¡Un paso más hacia la grandeza!',
-        'El éxito es la suma de pequeños esfuerzos',
-        '¡Mantén el momentum vivo!',
-        'Cada día es una oportunidad de oro',
-        '¡Tu futuro yo te lo agradecerá!',
-        'La excelencia es un hábito, no un acto',
-        '¡Sigue construyendo tu legado!',
-        '¡El cambio comienza ahora!',
-      ];
-
-      // Programar notificaciones cada 15 minutos durante todo el día
-      int notificationsScheduled = 0;
-      for (int hour = 8; hour <= 22; hour++) { // De 8 AM a 10 PM
-        for (int minute = 0; minute < 60; minute += 15) { // Cada 15 minutos
-          final tz.TZDateTime scheduledTime = tz.TZDateTime(tz.UTC, now.year, now.month, now.day, hour, minute);
-
-          // Si la hora ya pasó hoy, programar para mañana
-          if (scheduledTime.isBefore(now)) {
-            scheduledTime.add(const Duration(days: 1));
-          }
-
-          // Seleccionar mensaje aleatorio
-          final randomIndex = notificationsScheduled % titles.length;
-
-          debugPrint('Programando notificación $notificationId para: $scheduledTime (UTC)');
-          debugPrint('  Fecha y hora programada: ${scheduledTime.toString()}');
-
-          try {
-            await flutterLocalNotificationsPlugin.zonedSchedule(
-              notificationId,
-              titles[randomIndex],
-              messages[randomIndex],
-              scheduledTime,
-              NotificationDetails(
-                android: androidDetails,
-                iOS: const DarwinNotificationDetails(
-                  presentAlert: true,
-                  presentBadge: true,
-                  presentSound: true,
-                ),
-              ),
-              androidScheduleMode: AndroidScheduleMode.exact,
-              uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
-              matchDateTimeComponents: DateTimeComponents.time,
-              payload: 'open_missions',
-            );
-            debugPrint('✅ Notificación $notificationId programada exitosamente');
-            notificationsScheduled++;
-          } catch (e) {
-            debugPrint('❌ Error programando notificación $notificationId: $e');
-          }
-
-          notificationId++;
-          if (notificationId > 96) break; // Límite de notificaciones
-        }
-        if (notificationId > 96) break;
-      }
+      if (notificationId > maxNotifications) break;
     }
 
-    debugPrint('Total de notificaciones programadas: 0');
+    debugPrint('Total de notificaciones programadas: $notificationsScheduled');
+
+    // Verificar si se programaron notificaciones exitosamente
+    if (notificationsScheduled == 0) {
+      debugPrint('⚠️ ADVERTENCIA: No se programó ninguna notificación. Verifica permisos y configuración.');
+    } else {
+      debugPrint('✅ Éxito: $notificationsScheduled notificaciones programadas correctamente.');
+    }
 
     // Listar todas las notificaciones programadas para verificar
     await listScheduledNotifications();
 
     // Mostrar notificación inmediata para confirmar que el sistema funciona
-    debugPrint('Mostrando notificación inmediata de confirmación...');
-    await testNotification();
+    //debugPrint('Mostrando notificación inmediata de confirmación...');
+    // await testNotification();
   }
 
   // Método obsoleto - ahora todas las notificaciones se manejan en scheduleDailyMissionNotification
@@ -419,36 +348,21 @@ class LocalNotificationService {
     await flutterLocalNotificationsPlugin.cancelAll();
   }
 
+  // Método para reprogramar notificaciones al reinicio del dispositivo
+  Future<void> rescheduleNotificationsOnBoot() async {
+    debugPrint('🔄 Reprogramando notificaciones después del reinicio del dispositivo...');
+    await scheduleDailyMissionNotification();
+  }
+
   tz.TZDateTime _nextInstanceOfTime(int hour, int minute) {
-    final deviceTime = DateTime.now();
-    String timeZoneName = deviceTime.timeZoneName;
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    tz.TZDateTime scheduledDate = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
 
-    // Manejar zonas horarias no estándar
-    if (timeZoneName == 'CST' || timeZoneName == 'CDT') {
-      timeZoneName = 'America/New_York';
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
 
-    try {
-      final localLocation = tz.getLocation(timeZoneName);
-      final tz.TZDateTime now = tz.TZDateTime.from(deviceTime, localLocation);
-      tz.TZDateTime scheduledDate = tz.TZDateTime(localLocation, now.year, now.month, now.day, hour, minute);
-
-      if (scheduledDate.isBefore(now)) {
-        scheduledDate = scheduledDate.add(const Duration(days: 1));
-      }
-
-      return scheduledDate;
-    } catch (e) {
-      // Fallback a UTC
-      final tz.TZDateTime now = tz.TZDateTime.from(deviceTime, tz.UTC);
-      tz.TZDateTime scheduledDate = tz.TZDateTime(tz.UTC, now.year, now.month, now.day, hour, minute);
-
-      if (scheduledDate.isBefore(now)) {
-        scheduledDate = scheduledDate.add(const Duration(days: 1));
-      }
-
-      return scheduledDate;
-    }
+    return scheduledDate;
   }
 
   Future<void> testNotification() async {

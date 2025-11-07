@@ -12,7 +12,7 @@ class SupabaseRankingRepository implements RankingRepository {
       // Obtener top 10 usuarios con puntos > 0 ordenados por puntos
       final response = await SupabaseService.client
           .from('users')
-          .select('id, name, belt, points, lat, lng, updated_at, email, avatar_url')
+          .select('id, name, belt, points, location_lat, location_lng, updated_at, email, avatar_url')
           .gt('points', 0)
           .order('points', ascending: false)
           .limit(10);

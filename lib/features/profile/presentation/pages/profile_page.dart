@@ -458,7 +458,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          missionProvider.getCurrentDailyMission().descripcion,
+                          missionProvider.getCurrentDailyMission()?.title ?? 'No hay misión disponible',
                           style: TextStyle(
                             color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
                             fontSize: 16,

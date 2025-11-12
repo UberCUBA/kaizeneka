@@ -9,8 +9,8 @@ class MissionsService {
   Future<List<Mission>> getUserMissions(String userId) async {
     try {
       final response = await _supabase
-          .from('user_missions')
-          .select('*, mission_submissions(*)')
+          .from('missions')
+          .select('*, submissions(*)')
           .eq('user_id', userId)
           .order('created_at', ascending: false);
 
@@ -68,10 +68,10 @@ class MissionsService {
       };
 
       final response = await _supabase
-          .from('user_missions')
+          .from('missions')
           .update(missionData)
           .eq('id', missionId)
-          .select('*, mission_submissions(*)')
+          .select('*, submissions(*)')
           .single();
 
       return Mission.fromJson(response);
@@ -82,7 +82,7 @@ class MissionsService {
 
   Future<void> deleteMission(String missionId) async {
     try {
-      await _supabase.from('user_missions').delete().eq('id', missionId);
+      await _supabase.from('missions').delete().eq('id', missionId);
     } catch (e) {
       throw Exception('Error al eliminar misión: $e');
     }
@@ -115,7 +115,7 @@ class MissionsService {
       };
 
       await _supabase
-          .from('mission_submissions')
+          .from('submissions')
           .update(subMissionData)
           .eq('id', subMissionId);
     } catch (e) {
@@ -125,7 +125,7 @@ class MissionsService {
 
   Future<void> deleteSubMission(String subMissionId) async {
     try {
-      await _supabase.from('mission_submissions').delete().eq('id', subMissionId);
+      await _supabase.from('submissions').delete().eq('id', subMissionId);
     } catch (e) {
       throw Exception('Error al eliminar submisión: $e');
     }
@@ -136,7 +136,7 @@ class MissionsService {
     try {
       final response = await _supabase
           .from('predefined_missions')
-          .select('*, predefined_mission_submissions(*)')
+          .select()
           .eq('is_active', true)
           .order('created_at', ascending: false);
 
@@ -169,7 +169,7 @@ class MissionsService {
       };
 
       final response = await _supabase
-          .from('user_missions')
+          .from('missions')
           .insert(missionData)
           .select()
           .single();
@@ -186,7 +186,7 @@ class MissionsService {
           'due_date': subMission['due_date'],
         }).toList();
 
-        await _supabase.from('mission_submissions').insert(subMissionsData);
+        await _supabase.from('submissions').insert(subMissionsData);
       }
 
       return createdMission;

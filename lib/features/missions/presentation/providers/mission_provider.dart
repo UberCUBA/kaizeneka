@@ -15,6 +15,7 @@ class MissionProvider with ChangeNotifier {
   late MissionRepository _repository;
   domain.User? _user;
   BuildContext? _context;
+  Mission? _currentDailyMission;
 
   // Sistema de cooldown para desbloqueo diferido
   DateTime? nextUnlockTime;
@@ -24,6 +25,7 @@ class MissionProvider with ChangeNotifier {
   List<Mission> get missions => _missions;
   bool get isLoading => _isLoading;
   domain.User? get user => _user;
+  Mission? get currentDailyMission => _currentDailyMission;
 
   List<Mission> get pendingMissions =>
       _missions.where((mission) => !mission.isCompleted).toList();
@@ -78,11 +80,8 @@ class MissionProvider with ChangeNotifier {
     }).toList();
   }
 
-  domain.Mission getCurrentDailyMission() {
-    final now = DateTime.now();
-    final day = now.day;
-    final mission = _repository.getDailyMission(day);
-    return mission;
+  Mission? getCurrentDailyMission() {
+    return _currentDailyMission;
   }
 
   Future<void> completeCurrentMission() async {
@@ -130,8 +129,9 @@ class MissionProvider with ChangeNotifier {
           .map((missionJson) => Mission.fromJson(json.decode(missionJson)))
           .toList();
 
-      // Cargar misiones predeterminadas del sistema
-      final systemMissions = _repository.getAllMissions().map((mission) {
+      // Cargar misiones predeterminadas del sistema desde Supabase
+      final systemMissionsData = await _repository.getAllMissions();
+      final systemMissions = systemMissionsData.map((mission) {
         // Convertir Mission del repository a Mission del modelo
         return Mission(
           id: mission.id.toString(),
@@ -147,6 +147,13 @@ class MissionProvider with ChangeNotifier {
 
       // Combinar misiones personales y del sistema
       _missions = [...userMissions, ...systemMissions];
+
+      // Set current daily mission
+      final now = DateTime.now();
+      final day = now.day;
+      if (_missions.isNotEmpty) {
+        _currentDailyMission = _missions[(day - 1) % _missions.length];
+      }
     } catch (e) {
       debugPrint('Error loading missions: $e');
     } finally {

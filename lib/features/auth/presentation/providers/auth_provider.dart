@@ -10,7 +10,7 @@ import '../../../../core/services/auth_service.dart';
 import '../../../../core/services/api_service.dart';
 import '../../../../core/services/icon_service.dart';
 import '../../../../models/user_model.dart';
-import '../../../../models.dart';
+import '../../../../models.dart' hide User;
 import '../../../../main.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -33,9 +33,14 @@ class AuthProvider with ChangeNotifier {
   }
 
   void _initialize() async {
+    // Verificar sesión activa en Supabase
     _user = SupabaseService.getCurrentUser();
     _apiToken = await _authService.getAccessToken();
+
+    // Escuchar cambios de estado de autenticación
     SupabaseService.authStateChanges.listen(_onAuthStateChanged);
+
+    // Si hay usuario autenticado, cargar perfil
     if (_user != null) {
       _loadUserProfile();
     }

@@ -93,7 +93,7 @@ class _AddTaskFormState extends State<AddTaskForm> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         filled: true,
-                        fillColor: themeProvider.isDarkMode ? Colors.black : Colors.grey.withOpacity(0.1),
+                        fillColor: themeProvider.isDarkMode ? Colors.black : Colors.grey.withValues(alpha: 0.1),
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
@@ -116,7 +116,7 @@ class _AddTaskFormState extends State<AddTaskForm> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         filled: true,
-                        fillColor: themeProvider.isDarkMode ? Colors.black : Colors.grey.withOpacity(0.1),
+                        fillColor: themeProvider.isDarkMode ? Colors.black : Colors.grey.withValues(alpha: 0.1),
                       ),
                     ),
 
@@ -144,8 +144,8 @@ class _AddTaskFormState extends State<AddTaskForm> {
                                 color: _difficulty == difficulty
                                     ? _getDifficultyColor(difficulty)
                                     : themeProvider.isDarkMode
-                                        ? Colors.grey.withOpacity(0.2)
-                                        : Colors.grey.withOpacity(0.1),
+                                        ? Colors.grey.withValues(alpha: 0.2)
+                                        : Colors.grey.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                                 border: _difficulty == difficulty
                                     ? Border.all(color: _getDifficultyColor(difficulty), width: 2)
@@ -297,7 +297,7 @@ class _AddTaskFormState extends State<AddTaskForm> {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: themeProvider.isDarkMode ? Colors.black : Colors.grey.withOpacity(0.1),
+        color: themeProvider.isDarkMode ? Colors.grey.withValues(alpha: 0.2) : Colors.grey.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(

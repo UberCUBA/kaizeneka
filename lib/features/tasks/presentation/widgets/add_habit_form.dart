@@ -19,6 +19,21 @@ class _AddHabitFormState extends State<AddHabitForm> {
   Difficulty _difficulty = Difficulty.medium;
   RepeatType _repeatType = RepeatType.daily;
   DateTime _startDate = DateTime.now();
+  HabitIcon _icon = HabitIcon.check_circle;
+  HabitGoalType _goalType = HabitGoalType.deactivate;
+  final _targetDurationController = TextEditingController();
+  final _targetRepetitionsController = TextEditingController();
+  List<WeekDay> _selectedDays = [];
+
+  // Nuevos campos para ajustes avanzados
+  bool _reminderEnabled = false;
+  TimeOfDay? _reminderTime;
+  final _reminderDescriptionController = TextEditingController();
+  HabitEndType _endType = HabitEndType.deactivated;
+  DateTime? _endDate;
+  final _endDaysController = TextEditingController();
+
+  bool _isAdvancedExpanded = false;
 
   bool _isLoading = false;
 
@@ -26,6 +41,10 @@ class _AddHabitFormState extends State<AddHabitForm> {
   void dispose() {
     _titleController.dispose();
     _notesController.dispose();
+    _targetDurationController.dispose();
+    _targetRepetitionsController.dispose();
+    _reminderDescriptionController.dispose();
+    _endDaysController.dispose();
     super.dispose();
   }
 
@@ -104,6 +123,94 @@ class _AddHabitFormState extends State<AddHabitForm> {
 
                     const SizedBox(height: 16),
 
+                    
+
+                    // Icon Selection
+                    Text(
+                      'Icono',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    _buildIconSelector(themeProvider),
+
+                    const SizedBox(height: 20),
+
+                    // Goal Type Selection
+                    Text(
+                      'Tipo de Objetivo',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    
+                    _buildGoalTypeSelector(themeProvider),
+
+                    // Target Duration/Repetitions (only show if applicable)
+                    if (_goalType == HabitGoalType.duration) ...[
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _targetDurationController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'Duración objetivo (minutos)',
+                          hintText: 'Ej: 30',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          filled: true,
+                          fillColor: themeProvider.isDarkMode ? Colors.black : Colors.grey.withOpacity(0.1),
+                        ),
+                        validator: (value) {
+                          if (_goalType == HabitGoalType.duration) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'La duración es obligatoria';
+                            }
+                            final duration = int.tryParse(value);
+                            if (duration == null || duration <= 0) {
+                              return 'Ingresa una duración válida';
+                            }
+                          }
+                          return null;
+                        },
+                      ),
+                    ] else if (_goalType == HabitGoalType.repeat) ...[
+                      const SizedBox(height: 16),
+                      
+                      TextFormField(
+                        controller: _targetRepetitionsController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'Repeticiones objetivo',
+                          hintText: 'Ej: 10',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          filled: true,
+                          fillColor: themeProvider.isDarkMode ? Colors.black : Colors.grey.withOpacity(0.1),
+                        ),
+                        validator: (value) {
+                          if (_goalType == HabitGoalType.repeat) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Las repeticiones son obligatorias';
+                            }
+                            final reps = int.tryParse(value);
+                            if (reps == null || reps <= 0) {
+                              return 'Ingresa un número válido';
+                            }
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+
+                    const SizedBox(height: 20),
                     // Notes
                     TextFormField(
                       controller: _notesController,
@@ -120,208 +227,312 @@ class _AddHabitFormState extends State<AddHabitForm> {
                     ),
 
                     const SizedBox(height: 20),
-
-                    // Difficulty
-                    Text(
-                      'Dificultad',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
+                    // Advanced Settings Section
+                    ExpansionTile(
+                      title: Text(
+                        'Ajustes Avanzados',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: Difficulty.values.map((difficulty) {
-                        return Expanded(
-                          child: GestureDetector(
-                            onTap: () => setState(() => _difficulty = difficulty),
-                            child: Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 4),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              decoration: BoxDecoration(
-                                color: _difficulty == difficulty
-                                    ? _getDifficultyColor(difficulty)
-                                    : themeProvider.isDarkMode
-                                        ? Colors.grey.withOpacity(0.2)
-                                        : Colors.grey.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                                border: _difficulty == difficulty
-                                    ? Border.all(color: _getDifficultyColor(difficulty), width: 2)
-                                    : null,
-                              ),
-                              child: Text(
-                                _getDifficultyLabel(difficulty),
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: _difficulty == difficulty
-                                      ? Colors.white
-                                      : themeProvider.isDarkMode
-                                          ? Colors.white70
-                                          : Colors.black87,
-                                  fontWeight: FontWeight.w500,
+                      initiallyExpanded: _isAdvancedExpanded,
+                      onExpansionChanged: (expanded) => setState(() => _isAdvancedExpanded = expanded),
+                      children: [
+                        const SizedBox(height: 16),
+
+                        // Reminder Section
+                        Text(
+                          'Recordatorio',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        SwitchListTile(
+                          title: const Text('Habilitar recordatorio'),
+                          value: _reminderEnabled,
+                          onChanged: (value) => setState(() => _reminderEnabled = value),
+                          activeColor: const Color(0xFF00FF7F),
+                        ),
+                        if (_reminderEnabled) ...[
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  readOnly: true,
+                                  decoration: InputDecoration(
+                                    labelText: 'Hora del recordatorio',
+                                    hintText: 'Seleccionar hora',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    filled: true,
+                                    fillColor: themeProvider.isDarkMode ? Colors.black : Colors.grey.withOpacity(0.1),
+                                    suffixIcon: const Icon(Icons.access_time),
+                                  ),
+                                  controller: TextEditingController(
+                                    text: _reminderTime != null
+                                        ? '${_reminderTime!.hour.toString().padLeft(2, '0')}:${_reminderTime!.minute.toString().padLeft(2, '0')}'
+                                        : '',
+                                  ),
+                                  onTap: () async {
+                                    final time = await showTimePicker(
+                                      context: context,
+                                      initialTime: _reminderTime ?? TimeOfDay.now(),
+                                    );
+                                    if (time != null) {
+                                      setState(() => _reminderTime = time);
+                                    }
+                                  },
                                 ),
                               ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _reminderDescriptionController,
+                            decoration: InputDecoration(
+                              labelText: 'Descripción del recordatorio',
+                              hintText: 'Ej: ¡Es hora de tu hábito!',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              filled: true,
+                              fillColor: themeProvider.isDarkMode ? Colors.black : Colors.grey.withOpacity(0.1),
                             ),
                           ),
-                        );
-                      }).toList(),
-                    ),
+                        ],
 
-                    const SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
-                    // Repeat Type
-                    Text(
-                      'Frecuencia',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: RepeatType.values.map((repeatType) {
-                        return Expanded(
-                          child: GestureDetector(
-                            onTap: () => setState(() => _repeatType = repeatType),
-                            child: Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 4),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              decoration: BoxDecoration(
-                                color: _repeatType == repeatType
-                                    ? const Color(0xFF00FF7F)
-                                    : themeProvider.isDarkMode
-                                        ? Colors.grey.withOpacity(0.2)
-                                        : Colors.grey.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(4.0),
-                                border: _repeatType == repeatType
-                                    ? Border.all(color: Color(0xFF00FF7F), width: 2)
-                                    : null,
-                              ),
-                              child: Text(
-                                _getRepeatTypeLabel(repeatType),
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: _repeatType == repeatType
-                                      ? Colors.black
-                                      : themeProvider.isDarkMode
-                                          ? Colors.white70
-                                          : Colors.black87,
-                                  fontWeight: FontWeight.w500,
+                        // End Type Section
+                        Text(
+                          'Terminar',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: HabitEndType.values.map((endType) {
+                            return Expanded(
+                              child: GestureDetector(
+                                onTap: () => setState(() => _endType = endType),
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  decoration: BoxDecoration(
+                                    color: _endType == endType
+                                        ? const Color(0xFF00FF7F)
+                                        : themeProvider.isDarkMode
+                                            ? Colors.grey.withOpacity(0.2)
+                                            : Colors.grey.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: _endType == endType
+                                        ? Border.all(color: const Color(0xFF00FF7F), width: 2)
+                                        : null,
+                                  ),
+                                  child: Text(
+                                    _getEndTypeLabel(endType),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: _endType == endType
+                                          ? Colors.black
+                                          : themeProvider.isDarkMode
+                                              ? Colors.white70
+                                              : Colors.black87,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
                                 ),
                               ),
+                            );
+                          }).toList(),
+                        ),
+
+                        // End Date/Days (only show if applicable)
+                        if (_endType == HabitEndType.date) ...[
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              labelText: 'Fecha de finalización',
+                              hintText: 'Seleccionar fecha',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              filled: true,
+                              fillColor: themeProvider.isDarkMode ? Colors.black : Colors.grey.withOpacity(0.1),
+                              suffixIcon: const Icon(Icons.calendar_today),
                             ),
+                            controller: TextEditingController(
+                              text: _endDate != null
+                                  ? '${_endDate!.day}/${_endDate!.month}/${_endDate!.year}'
+                                  : '',
+                            ),
+                            onTap: () async {
+                              final date = await showDatePicker(
+                                context: context,
+                                initialDate: _endDate ?? DateTime.now().add(const Duration(days: 30)),
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+                              );
+                              if (date != null) {
+                                setState(() => _endDate = date);
+                              }
+                            },
                           ),
-                        );
-                      }).toList(),
-                    ),
+                        ] else if (_endType == HabitEndType.days) ...[
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _endDaysController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              labelText: 'Días para terminar',
+                              hintText: 'Ej: 30',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              filled: true,
+                              fillColor: themeProvider.isDarkMode ? Colors.black : Colors.grey.withOpacity(0.1),
+                            ),
+                            validator: (value) {
+                              if (_endType == HabitEndType.days) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Los días son obligatorios';
+                                }
+                                final days = int.tryParse(value);
+                                if (days == null || days <= 0) {
+                                  return 'Ingresa un número válido';
+                                }
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
 
-                    const SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
-                    // Preview
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: themeProvider.isDarkMode ? Colors.black : Colors.grey.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                        // Difficulty
+                        Text(
+                          'Dificultad',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: Difficulty.values.map((difficulty) {
+                            return Expanded(
+                              child: GestureDetector(
+                                onTap: () => setState(() => _difficulty = difficulty),
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  decoration: BoxDecoration(
+                                    color: _difficulty == difficulty
+                                        ? _getDifficultyColor(difficulty)
+                                        : themeProvider.isDarkMode
+                                            ? Colors.grey.withOpacity(0.2)
+                                            : Colors.grey.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: _difficulty == difficulty
+                                        ? Border.all(color: _getDifficultyColor(difficulty), width: 2)
+                                        : null,
+                                  ),
+                                  child: Text(
+                                    _getDifficultyLabel(difficulty),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: _difficulty == difficulty
+                                          ? Colors.white
+                                          : themeProvider.isDarkMode
+                                              ? Colors.white70
+                                              : Colors.black87,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        // Repeat Type
+                        Text(
+                          'Frecuencia',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: RepeatType.values.map((repeatType) {
+                            return Expanded(
+                              child: GestureDetector(
+                                onTap: () => setState(() => _repeatType = repeatType),
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  decoration: BoxDecoration(
+                                    color: _repeatType == repeatType
+                                        ? const Color(0xFF00FF7F)
+                                        : themeProvider.isDarkMode
+                                            ? Colors.grey.withOpacity(0.2)
+                                            : Colors.grey.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(4.0),
+                                    border: _repeatType == repeatType
+                                        ? Border.all(color: Color(0xFF00FF7F), width: 2)
+                                        : null,
+                                  ),
+                                  child: Text(
+                                    _getRepeatTypeLabel(repeatType),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: _repeatType == repeatType
+                                          ? Colors.black
+                                          : themeProvider.isDarkMode
+                                              ? Colors.white70
+                                              : Colors.black87,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+
+                        // Day Selector for Daily habits
+                        if (_repeatType == RepeatType.daily) ...[
+                          const SizedBox(height: 16),
                           Text(
-                            'Vista previa',
+                            'Días de la semana',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                               color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
                             ),
                           ),
-                          const SizedBox(height: 12),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  _titleController.text.isEmpty ? 'Nombre del hábito' : _titleController.text,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
-                                  ),
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                    decoration: BoxDecoration(
-                                      color: _getDifficultyColor(_difficulty).withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    child: Text(
-                                      _getDifficultyLabel(_difficulty),
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        color: _getDifficultyColor(_difficulty),
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFF00FF7F),
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    child: Text(
-                                      _getRepeatTypeLabel(_repeatType),
-                                      style: const TextStyle(
-                                        fontSize: 10,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          Row(
-                            children: List.generate(7, (index) {
-                              final isToday = index == 6; // Último día
-                              return Container(
-                                width: 24,
-                                height: 24,
-                                margin: const EdgeInsets.symmetric(horizontal: 2),
-                                decoration: BoxDecoration(
-                                  color: isToday
-                                      ? const Color(0xFF00FF7F)
-                                      : themeProvider.isDarkMode
-                                          ? Colors.grey.withOpacity(0.3)
-                                          : Colors.grey.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(4),
-                                  border: isToday ? Border.all(color: const Color(0xFF00FF7F), width: 2) : null,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    '${DateTime.now().subtract(Duration(days: 6 - index)).day}',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: isToday
-                                          ? Colors.black
-                                          : themeProvider.isDarkMode
-                                              ? Colors.grey
-                                              : Colors.black54,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }),
-                          ),
+                          const SizedBox(height: 8),
+                          _buildDaySelector(themeProvider),
                         ],
-                      ),
+
+                        const SizedBox(height: 16),
+                      ],
                     ),
 
                     const SizedBox(height: 32),
@@ -375,6 +586,13 @@ class _AddHabitFormState extends State<AddHabitForm> {
     try {
       final habitProvider = Provider.of<HabitProvider>(context, listen: false);
 
+      debugPrint('🔍 DEBUG: Creando hábito personalizado...');
+      debugPrint('🔍 DEBUG: Título: ${_titleController.text.trim()}');
+      debugPrint('🔍 DEBUG: Notas: ${_notesController.text.trim()}');
+      debugPrint('🔍 DEBUG: Dificultad: $_difficulty');
+      debugPrint('🔍 DEBUG: Tipo de repetición: $_repeatType');
+      debugPrint('🔍 DEBUG: Fecha de inicio: $_startDate');
+
       final habit = Habit(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         title: _titleController.text.trim(),
@@ -382,12 +600,40 @@ class _AddHabitFormState extends State<AddHabitForm> {
         difficulty: _difficulty,
         startDate: _startDate,
         repeatType: _repeatType,
+        icon: _icon,
+        goalType: _goalType,
+        targetDuration: _goalType == HabitGoalType.duration
+            ? int.tryParse(_targetDurationController.text)
+            : null,
+        targetRepetitions: _goalType == HabitGoalType.repeat
+            ? int.tryParse(_targetRepetitionsController.text)
+            : null,
+        reminderEnabled: _reminderEnabled,
+        reminderTime: _reminderTime,
+        reminderDescription: _reminderDescriptionController.text.trim().isEmpty
+            ? null
+            : _reminderDescriptionController.text.trim(),
+        endType: _endType,
+        endDate: _endType == HabitEndType.date ? _endDate : null,
+        endDays: _endType == HabitEndType.days
+            ? int.tryParse(_endDaysController.text)
+            : null,
+        selectedDays: _selectedDays,
       );
+
+      debugPrint('🔍 DEBUG: Hábito creado con ID: ${habit.id}');
+      debugPrint('🔍 DEBUG: Agregando hábito al provider...');
 
       await habitProvider.addHabit(habit);
 
+      debugPrint('🔍 DEBUG: Hábito agregado exitosamente');
+      debugPrint('🔍 DEBUG: Total de hábitos en provider: ${habitProvider.habits.length}');
+      debugPrint('🔍 DEBUG: Hábitos activos: ${habitProvider.activeHabits.length}');
+
       if (mounted) {
-        Navigator.of(context).pop();
+        debugPrint('🔍 DEBUG: Navegando a la página de hábitos...');
+        // Navigate to habits tab in main tasks page
+        Navigator.of(context).pushNamedAndRemoveUntil('/tasks', (route) => false, arguments: 0);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Hábito creado exitosamente'),
@@ -396,6 +642,7 @@ class _AddHabitFormState extends State<AddHabitForm> {
         );
       }
     } catch (e) {
+      debugPrint('🔍 DEBUG: Error al crear hábito: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -436,11 +683,221 @@ class _AddHabitFormState extends State<AddHabitForm> {
   String _getRepeatTypeLabel(RepeatType repeatType) {
     switch (repeatType) {
       case RepeatType.daily:
-        return 'Diario';
+        return 'Días';
       case RepeatType.weekly:
         return 'Semanal';
       case RepeatType.monthly:
         return 'Mensual';
+    }
+  }
+
+  String _getWeekDayLabel(WeekDay day) {
+    switch (day) {
+      case WeekDay.monday:
+        return 'L';
+      case WeekDay.tuesday:
+        return 'M';
+      case WeekDay.wednesday:
+        return 'X';
+      case WeekDay.thursday:
+        return 'J';
+      case WeekDay.friday:
+        return 'V';
+      case WeekDay.saturday:
+        return 'S';
+      case WeekDay.sunday:
+        return 'D';
+    }
+  }
+
+  Widget _buildDaySelector(custom_theme.ThemeProvider themeProvider) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: WeekDay.values.map((day) {
+        final isSelected = _selectedDays.contains(day);
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              if (isSelected) {
+                _selectedDays.remove(day);
+              } else {
+                _selectedDays.add(day);
+              }
+            });
+          },
+          child: Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? const Color(0xFF00FF7F)
+                  : themeProvider.isDarkMode
+                      ? Colors.grey.withOpacity(0.2)
+                      : Colors.grey.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(6),
+              border: isSelected
+                  ? Border.all(color: const Color(0xFF00FF7F), width: 2)
+                  : null,
+            ),
+            child: Center(
+              child: Text(
+                _getWeekDayLabel(day),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: isSelected
+                      ? Colors.black
+                      : themeProvider.isDarkMode
+                          ? Colors.white70
+                          : Colors.black87,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  String _getEndTypeLabel(HabitEndType endType) {
+    switch (endType) {
+      case HabitEndType.deactivated:
+        return 'Desactivado';
+      case HabitEndType.date:
+        return 'Fecha';
+      case HabitEndType.days:
+        return 'Días';
+    }
+  }
+
+  Widget _buildIconSelector(custom_theme.ThemeProvider themeProvider) {
+    return Container(
+      height: 60,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: HabitIcon.values.length,
+        itemBuilder: (context, index) {
+          final icon = HabitIcon.values[index];
+          final isSelected = _icon == icon;
+
+          return GestureDetector(
+            onTap: () => setState(() => _icon = icon),
+            child: Container(
+              width: 50,
+              height: 50,
+              margin: const EdgeInsets.symmetric(horizontal: 4),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? const Color(0xFF00FF7F)
+                    : themeProvider.isDarkMode
+                        ? Colors.grey.withOpacity(0.2)
+                        : Colors.grey.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: isSelected
+                    ? Border.all(color: const Color(0xFF00FF7F), width: 2)
+                    : null,
+              ),
+              child: Icon(
+                _getIconData(icon),
+                color: isSelected
+                    ? Colors.black
+                    : themeProvider.isDarkMode
+                        ? Colors.white70
+                        : Colors.black54,
+                size: 24,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildGoalTypeSelector(custom_theme.ThemeProvider themeProvider) {
+    return Row(
+      children: HabitGoalType.values.map((goalType) {
+        return Expanded(
+          child: GestureDetector(
+            onTap: () => setState(() => _goalType = goalType),
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 4),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                color: _goalType == goalType
+                    ? const Color(0xFF00FF7F)
+                    : themeProvider.isDarkMode
+                        ? Colors.grey.withOpacity(0.2)
+                        : Colors.grey.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: _goalType == goalType
+                    ? Border.all(color: const Color(0xFF00FF7F), width: 2)
+                    : null,
+              ),
+              child: Text(
+                _getGoalTypeLabel(goalType),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: _goalType == goalType
+                      ? Colors.black
+                      : themeProvider.isDarkMode
+                          ? Colors.white70
+                          : Colors.black87,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  IconData _getIconData(HabitIcon icon) {
+    switch (icon) {
+      case HabitIcon.fitness_center:
+        return Icons.fitness_center;
+      case HabitIcon.directions_run:
+        return Icons.directions_run;
+      case HabitIcon.pool:
+        return Icons.pool;
+      case HabitIcon.self_improvement:
+        return Icons.self_improvement;
+      case HabitIcon.directions_bike:
+        return Icons.directions_bike;
+      case HabitIcon.music_note:
+        return Icons.music_note;
+      case HabitIcon.palette:
+        return Icons.palette;
+      case HabitIcon.restaurant:
+        return Icons.restaurant;
+      case HabitIcon.local_florist:
+        return Icons.local_florist;
+      case HabitIcon.camera_alt:
+        return Icons.camera_alt;
+      case HabitIcon.edit:
+        return Icons.edit;
+      case HabitIcon.book:
+        return Icons.book;
+      case HabitIcon.work:
+        return Icons.work;
+      case HabitIcon.people:
+        return Icons.people;
+      case HabitIcon.health_and_safety:
+        return Icons.health_and_safety;
+      case HabitIcon.check_circle:
+      default:
+        return Icons.check_circle;
+    }
+  }
+
+  String _getGoalTypeLabel(HabitGoalType goalType) {
+    switch (goalType) {
+      case HabitGoalType.deactivate:
+        return 'Desactivar';
+      case HabitGoalType.duration:
+        return 'Duración';
+      case HabitGoalType.repeat:
+        return 'Repetir';
     }
   }
 }

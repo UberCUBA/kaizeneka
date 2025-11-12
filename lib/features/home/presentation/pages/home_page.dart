@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../missions/presentation/providers/mission_provider.dart';
-import '../../../missions/domain/entities/mission.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../../core/theme/theme_provider.dart';
 import '../../../../core/services/home_widget_service.dart';
@@ -35,8 +34,6 @@ class _HomePageState extends State<HomePage> {
     if (missionProvider.isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-
-    Mission mission = missionProvider.getCurrentDailyMission();
 
     // Get user initials for avatar
     String getInitials(String? name) {
@@ -216,6 +213,14 @@ class _HomePageState extends State<HomePage> {
             ),
 
             ListTile(
+              leading: const Icon(Icons.chat, color: Color(0xFF00FF7F)),
+              title: Text('Chat NK', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
+              onTap: () {
+                Navigator.of(context).pushNamed('/chat');
+              },
+            ),
+
+            ListTile(
               leading: const Icon(Icons.shopping_bag, color: Color(0xFF00FF7F)),
               title: Text('Shop NK', style: TextStyle(color: themeProvider.isDarkMode ? Colors.white : Colors.black87)),
               onTap: () {
@@ -313,7 +318,7 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: 16),
 
-              // Grid de acciones rápidas - 2 filas de 3 elementos
+              // Grid de acciones rápidas - 3 filas de 4 elementos
               GridView.count(
                 crossAxisCount: 3,
                 shrinkWrap: true,
@@ -342,6 +347,13 @@ class _HomePageState extends State<HomePage> {
                     const Color(0xFF9C27B0),
                     () => Navigator.of(context).pushNamed('/tasks', arguments: 2),
                   ),
+                  // _buildQuickActionCard(
+                  //   context,
+                  //   'IA NK',
+                  //   Icons.smart_toy,
+                  //   const Color(0xFF673AB7),
+                  //   () => Navigator.of(context).pushNamed('/ia_nk'),
+                  // ),
                   
                   _buildQuickActionCard(
                     context,
@@ -350,13 +362,20 @@ class _HomePageState extends State<HomePage> {
                     const Color(0xFFE91E63),
                     () => Navigator.of(context).pushNamed('/postureo'),
                   ),
+                  // _buildQuickActionCard(
+                  //   context,
+                  //   'Chat NK',
+                  //   Icons.chat,
+                  //   const Color(0xFF03A9F4),
+                  //   () => Navigator.of(context).pushNamed('/chat'),
+                  // ),
                    _buildQuickActionCard(
                     context,
                     'Biblioteca NK',
                     Icons.library_books,
                     const Color(0xFF795548),
                     () => Navigator.of(context).pushNamed('/biblioteca'),
-                  ),                  
+                  ),
                   _buildQuickActionCard(
                     context,
                     'Tienda NK',
@@ -364,7 +383,7 @@ class _HomePageState extends State<HomePage> {
                     const Color(0xFFFF9800),
                     () => Navigator.of(context).pushNamed('/shop'),
                   ),
-                 
+                  
                 ],
               ),
 

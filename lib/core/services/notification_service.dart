@@ -71,10 +71,9 @@ class NotificationService {
       1,
       '¡Hora de revisar tu progreso! 🏆',
       '¿Completaste tus tareas hoy? Revisa tu racha y nivel.',
-      _nextInstanceOfTime(20, 0), // 8:00 PM
+      _nextInstanceOfTime(20, 5), // 8:05 PM
       details,
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time,
     );
   }
@@ -318,3 +317,4 @@ class NotificationService {
     await _notificationsPlugin.cancel(id);
   }
 }
+

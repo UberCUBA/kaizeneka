@@ -18,38 +18,21 @@ class SupabaseService {
   static SupabaseClient get client => Supabase.instance.client;
 
   // Autenticación con Google
-  static Future<AuthResponse> signInWithGoogle() async {
-    const webClientId = '227216564417-7om8mcbh0q4oert6vav4b50a2noumna8.apps.googleusercontent.com'; // Client ID de aplicación web para Supabase
-    const iosClientId = '227216564417-cgb1l2hqjnjg0qdhn6lncji31m1d8g7u.apps.googleusercontent.com'; // Android
-
-    final GoogleSignIn googleSignIn = GoogleSignIn(
-      clientId: iosClientId,
-      serverClientId: webClientId,
-    );
-
-    final googleUser = await googleSignIn.signIn();
-    final googleAuth = await googleUser!.authentication;
-    final accessToken = googleAuth.accessToken;
-    final idToken = googleAuth.idToken;
-
-    if (accessToken == null) {
-      throw 'No Access Token found.';
+  static Future<bool> signInWithGoogle() async {
+    try {
+      final response = await client.auth.signInWithOAuth(
+        OAuthProvider.google,
+        redirectTo: kIsWeb ? null : 'com.example.kaizeneka://login-callback',
+      );
+      return response;
+    } catch (e) {
+      debugPrint('Error en Google Sign-In: $e');
+      return false;
     }
-    if (idToken == null) {
-      throw 'No ID Token found.';
-    }
-
-    return await client.auth.signInWithIdToken(
-      provider: OAuthProvider.google,
-      idToken: idToken,
-      accessToken: accessToken,
-    );
   }
 
   // Cerrar sesión
   static Future<void> signOut() async {
-    final GoogleSignIn googleSignIn = GoogleSignIn();
-    await googleSignIn.signOut();
     await client.auth.signOut();
   }
 

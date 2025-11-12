@@ -12,7 +12,7 @@ class HabitProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
 
   List<Habit> get activeHabits =>
-      _habits.where((habit) => habit.startDate.isBefore(DateTime.now())).toList();
+      _habits.where((habit) => !habit.startDate.isAfter(DateTime.now())).toList();
 
   List<Habit> get todaysHabits => activeHabits.where((habit) {
         final today = DateTime.now();
@@ -64,9 +64,19 @@ class HabitProvider with ChangeNotifier {
   }
 
   Future<void> addHabit(Habit habit) async {
+    debugPrint('🔍 DEBUG: HabitProvider.addHabit() llamado');
+    debugPrint('🔍 DEBUG: Hábito a agregar: ${habit.title} (ID: ${habit.id})');
+    debugPrint('🔍 DEBUG: Fecha de inicio: ${habit.startDate}');
+    debugPrint('🔍 DEBUG: Fecha actual: ${DateTime.now()}');
+
     _habits.add(habit);
+    debugPrint('🔍 DEBUG: Hábito agregado a la lista. Total hábitos: ${_habits.length}');
+
     await _saveHabits();
+    debugPrint('🔍 DEBUG: Hábitos guardados en SharedPreferences');
+
     notifyListeners();
+    debugPrint('🔍 DEBUG: Notificación enviada a listeners');
   }
 
   Future<void> updateHabit(String habitId, Habit updatedHabit) async {
@@ -110,6 +120,76 @@ class HabitProvider with ChangeNotifier {
         }
 
         notifyListeners();
+      }
+    }
+  }
+
+  // Nuevo método para completar hábitos con duración específica
+  Future<void> completeHabitWithDuration(String habitId, int actualDurationMinutes, [MissionProvider? missionProvider]) async {
+    final index = _habits.indexWhere((habit) => habit.id == habitId);
+    if (index != -1) {
+      final habit = _habits[index];
+      if (!habit.isCompletedToday && habit.goalType == HabitGoalType.duration) {
+        // Verificar si cumplió con el tiempo objetivo
+        final targetDuration = habit.targetDuration ?? 0;
+        if (actualDurationMinutes >= targetDuration) {
+          final today = DateTime.now();
+          final updatedCompletedDates = [...habit.completedDates, today];
+          final newStreak = _calculateStreak(updatedCompletedDates, habit.repeatType);
+          final newBestStreak = newStreak > habit.bestStreak ? newStreak : habit.bestStreak;
+
+          final updatedHabit = habit.copyWith(
+            completedDates: updatedCompletedDates,
+            streak: newStreak,
+            bestStreak: newBestStreak,
+          );
+
+          _habits[index] = updatedHabit;
+          await _saveHabits();
+
+          // Si tenemos missionProvider, agregar puntos por completar hábito
+          if (missionProvider != null) {
+            final pointsToAdd = _calculateHabitPoints(habit);
+            await missionProvider.addPoints(pointsToAdd);
+          }
+
+          notifyListeners();
+        }
+      }
+    }
+  }
+
+  // Nuevo método para completar hábitos con repeticiones específicas
+  Future<void> completeHabitWithRepetitions(String habitId, int actualRepetitions, [MissionProvider? missionProvider]) async {
+    final index = _habits.indexWhere((habit) => habit.id == habitId);
+    if (index != -1) {
+      final habit = _habits[index];
+      if (!habit.isCompletedToday && habit.goalType == HabitGoalType.repeat) {
+        // Verificar si cumplió con las repeticiones objetivo
+        final targetRepetitions = habit.targetRepetitions ?? 0;
+        if (actualRepetitions >= targetRepetitions) {
+          final today = DateTime.now();
+          final updatedCompletedDates = [...habit.completedDates, today];
+          final newStreak = _calculateStreak(updatedCompletedDates, habit.repeatType);
+          final newBestStreak = newStreak > habit.bestStreak ? newStreak : habit.bestStreak;
+
+          final updatedHabit = habit.copyWith(
+            completedDates: updatedCompletedDates,
+            streak: newStreak,
+            bestStreak: newBestStreak,
+          );
+
+          _habits[index] = updatedHabit;
+          await _saveHabits();
+
+          // Si tenemos missionProvider, agregar puntos por completar hábito
+          if (missionProvider != null) {
+            final pointsToAdd = _calculateHabitPoints(habit);
+            await missionProvider.addPoints(pointsToAdd);
+          }
+
+          notifyListeners();
+        }
       }
     }
   }

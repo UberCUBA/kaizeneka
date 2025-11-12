@@ -109,23 +109,27 @@ class _MainTasksPageState extends State<MainTasksPage> {
   void _showAddForm() {
     final themeProvider = Provider.of<custom_theme.ThemeProvider>(context, listen: false);
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        switch (_selectedIndex) {
-          case 0: // Hábitos
-            return const AddHabitForm();
-          case 1: // Tareas
-            return const AddTaskForm();
-          case 2: // Misiones
-            return const AddMissionForm();
-          default:
-            return const AddHabitForm();
-        }
-      },
-    );
+    switch (_selectedIndex) {
+      case 0: // Hábitos - Navegar a selección de hábitos
+        Navigator.of(context).pushNamed('/habit-selection');
+        break;
+      case 1: // Tareas
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (context) => const AddTaskForm(),
+        );
+        break;
+      case 2: // Misiones
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (context) => const AddMissionForm(),
+        );
+        break;
+    }
   }
 
   void _showSearchDialog(BuildContext context) {
@@ -507,6 +511,14 @@ class _MainTasksPageState extends State<MainTasksPage> {
         ),
         elevation: 0,
         actions: [
+          // Botón de agregar (primero)
+          IconButton(
+            icon: Icon(
+              Icons.add,
+              color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
+            ),
+            onPressed: _showAddForm,
+          ),
           // Campo de búsqueda expandible
           if (_isSearching)
             Expanded(
@@ -597,28 +609,14 @@ class _MainTasksPageState extends State<MainTasksPage> {
           ],
         ],
       ),
-      body: Stack(
-        children: [
-          PageView(
-            controller: _pageController,
-            onPageChanged: (index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-            },
-            children: _buildFilteredPages(),
-          ),
-          Positioned(
-            bottom: 90,
-            right: 20,
-            child: FloatingActionButton(
-              onPressed: _showAddForm,
-              backgroundColor: const Color(0xFF00FF7F),
-              child: const Icon(Icons.add, color: Colors.black),
-              elevation: 4,
-            ),
-          ),
-        ],
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        children: _buildFilteredPages(),
       ),
       bottomNavigationBar: CurvedNavigationBar(
         index: _selectedIndex,

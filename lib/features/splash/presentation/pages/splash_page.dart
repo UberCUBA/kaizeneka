@@ -52,12 +52,16 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
 
     if (mounted) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      if (authProvider.isAuthenticated) {
-        // Esperar a que el perfil de usuario esté cargado
+
+      // Verificar si hay una sesión activa en Supabase
+      final currentUser = authProvider.user;
+      if (currentUser != null) {
+        // Usuario autenticado, cargar perfil y continuar
         await authProvider.reloadUserProfile();
         final userProfile = authProvider.userProfile;
 
         // Debug: verificar estado del tutorial
+        debugPrint('User authenticated: ${currentUser.email}');
         debugPrint('User profile loaded: ${userProfile != null}');
         debugPrint('Tutorial completed: ${userProfile?.tutorialCompleted}');
 
@@ -65,11 +69,11 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
           debugPrint('Navigating to tutorial');
           Navigator.of(context).pushReplacementNamed('/tutorial');
         } else {
-          debugPrint('Navigating to home');
+          debugPrint('Tutorial already completed, navigating to home');
           Navigator.of(context).pushReplacementNamed('/home');
         }
       } else {
-        debugPrint('User not authenticated, navigating to login');
+        debugPrint('No active session, navigating to login');
         Navigator.of(context).pushReplacementNamed('/login');
       }
     }

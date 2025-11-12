@@ -47,9 +47,22 @@ import 'features/ia_nk/domain/usecases/get_available_models.dart';
 import 'features/ia_nk/presentation/providers/chat_provider.dart';
 import 'features/ia_nk/presentation/pages/ia_nk_page.dart';
 import 'features/ia_nk/presentation/pages/chat_history_page.dart';
+import 'features/habits/presentation/pages/habit_selection_page.dart';
 import 'features/tasks/presentation/pages/main_tasks_page.dart';
 import 'features/tasks/presentation/providers/task_provider.dart';
 import 'features/habits/presentation/providers/habit_provider.dart';
+import 'features/habits/presentation/pages/edit_habit_page.dart';
+import 'features/habits/presentation/pages/habits_page.dart';
+import 'models/task_models.dart';
+
+// Chat imports with alias to avoid conflicts
+import 'features/chat/data/repositories/chat_repository_impl.dart' as ChatRepo;
+import 'features/chat/domain/usecases/get_conversations.dart' as ChatGetConversations;
+import 'features/chat/domain/usecases/send_message.dart' as ChatSendMessage;
+import 'features/chat/domain/usecases/get_messages.dart' as ChatGetMessages;
+import 'features/chat/domain/usecases/create_conversation.dart' as ChatCreateConversation;
+import 'features/chat/presentation/providers/chat_provider.dart' as ChatProvider;
+import 'features/chat/presentation/pages/chat_page.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -106,12 +119,17 @@ void main() async {
   final itemRepository = ItemRepositoryImpl();
   final getItems = GetItems(itemRepository);
 
-  final chatRepository = ChatRepositoryImpl();
-  final sendMessage = SendMessage(chatRepository);
-  final getAvailableModels = GetAvailableModels(chatRepository);
+  final chatRepository = ChatRepo.ChatRepositoryImpl();
+  final chatSendMessage = ChatSendMessage.SendMessage(chatRepository);
+  final getConversations = ChatGetConversations.GetConversations(chatRepository);
+  final getMessages = ChatGetMessages.GetMessages(chatRepository);
+  final createConversation = ChatCreateConversation.CreateConversation(chatRepository);
+  // IA Chat repository para GetAvailableModels
+  final iaChatRepository = ChatRepositoryImpl(); // IA repository
+  final getAvailableModels = GetAvailableModels(iaChatRepository);
 
   // Inicializar ChatRepository después de crear los providers
-  await ChatRepositoryImpl.initialize();
+  await chatRepository.connect();
 
   runApp(
     MultiProvider(
@@ -142,7 +160,7 @@ void main() async {
           create: (_) => ShopProvider(getItems),
         ),
         ChangeNotifierProvider(
-          create: (_) => ChatProvider(sendMessage, getAvailableModels),
+          create: (context) => ChatProvider.ChatProvider(getConversations, chatSendMessage, getMessages, createConversation, chatRepository, Provider.of<AuthProvider>(context, listen: false)),
         ),
         ChangeNotifierProvider(
           create: (context) => TaskProvider(),
@@ -216,9 +234,26 @@ class KaizenekaApp extends StatelessWidget {
             '/settings': (context) => const SettingsPage(),
             '/notifications': (context) => const NotificationsPage(),
             '/shop': (context) => const ShopNkPage(),
+            '/chat': (context) => const ChatPage(),
             '/ia_nk': (context) => const IaNkPage(),
             '/ia_nk_history': (context) => const ChatHistoryPage(),
             '/tasks': (context) => const MainTasksPage(),
+            '/habits': (context) => const HabitsPage(),
+            '/habit-selection': (context) => const HabitSelectionPage(),
+            '/edit-habit': (context) {
+              final habit = ModalRoute.of(context)?.settings.arguments as Habit;
+              return EditHabitPage(habit: habit);
+            },
+            '/add-habit': (context) {
+              final args = ModalRoute.of(context)?.settings.arguments as Habit?;
+              return EditHabitPage(habit: args ?? Habit(
+                id: '',
+                title: '',
+                difficulty: Difficulty.medium,
+                startDate: DateTime.now(),
+                repeatType: RepeatType.daily,
+              ));
+            },
           },
         );
       },

@@ -1,8 +1,52 @@
 import '../../models/progress_models.dart';
 import '../../models/task_models.dart';
+import '../services/supabase_service.dart';
+import 'package:flutter/foundation.dart';
 
 class NarrativeService {
-  // Lista completa de misiones narrativas por arco y fase
+  // Cache for narrative missions
+  static List<NarrativeMission>? _cachedMissions;
+
+  // Get all narrative missions from database
+  static Future<List<NarrativeMission>> getAllMissions() async {
+    if (_cachedMissions != null) {
+      return _cachedMissions!;
+    }
+
+    try {
+      final response = await SupabaseService.client
+          .from('narrative_missions')
+          .select()
+          .eq('is_active', true)
+          .order('order_in_phase');
+
+      _cachedMissions = response.map<NarrativeMission>((json) {
+        return NarrativeMission(
+          id: json['id'],
+          title: json['title'],
+          description: json['description'],
+          principle: json['principle'],
+          arc: Arc.values.firstWhere((a) => a.name == json['arc']),
+          phase: json['phase'],
+          order: json['order_in_phase'],
+          difficulty: Difficulty.values.firstWhere(
+            (d) => d.name == json['difficulty'],
+            orElse: () => Difficulty.medium,
+          ),
+          xpReward: json['xp_reward'] ?? 0,
+          coinsReward: json['coins_reward'] ?? 0,
+          tags: List<String>.from(json['tags'] ?? []),
+        );
+      }).toList();
+
+      return _cachedMissions!;
+    } catch (e) {
+      debugPrint('Error fetching narrative missions: $e');
+      return [];
+    }
+  }
+
+  // Legacy static list for backward compatibility (deprecated)
   static final List<NarrativeMission> allMissions = [
     // FASE 1 – EL DESPERTAR (Arco 1)
     NarrativeMission(
@@ -930,7 +974,8 @@ class NarrativeService {
   ];
 
   // Obtener misiones disponibles para un usuario
-  static List<NarrativeMission> getAvailableMissions(String userId, int currentLevel, int currentArc, List<String> completedMissions) {
+  static Future<List<NarrativeMission>> getAvailableMissions(String userId, int currentLevel, int currentArc, List<String> completedMissions) async {
+    final allMissions = await getAllMissions();
     return allMissions.where((mission) {
       // Verificar si ya está completada
       if (completedMissions.contains(mission.id)) return false;
@@ -951,13 +996,15 @@ class NarrativeService {
   }
 
   // Obtener misiones completadas
-  static List<NarrativeMission> getCompletedMissions(List<String> completedMissionIds) {
+  static Future<List<NarrativeMission>> getCompletedMissions(List<String> completedMissionIds) async {
+    final allMissions = await getAllMissions();
     return allMissions.where((mission) => completedMissionIds.contains(mission.id)).toList();
   }
 
   // Obtener progreso de arco
-  static Map<String, dynamic> getArcProgress(int currentArc, List<String> completedMissions) {
+  static Future<Map<String, dynamic>> getArcProgress(int currentArc, List<String> completedMissions) async {
     final arc = Arc.values[currentArc];
+    final allMissions = await getAllMissions();
     final arcMissions = allMissions.where((mission) => mission.arc == arc).toList();
     final completedArcMissions = arcMissions.where((mission) => completedMissions.contains(mission.id)).length;
 
@@ -970,12 +1017,63 @@ class NarrativeService {
   }
 
   // Verificar si se puede avanzar al siguiente arco
-  static bool canAdvanceArc(int currentArc, List<String> completedMissions) {
+  static Future<bool> canAdvanceArc(int currentArc, List<String> completedMissions) async {
     final currentArcEnum = Arc.values[currentArc];
+    final allMissions = await getAllMissions();
     final arcMissions = allMissions.where((mission) => mission.arc == currentArcEnum).toList();
     final completedArcMissions = arcMissions.where((mission) => completedMissions.contains(mission.id)).length;
 
     // Se necesita completar al menos el 80% de las misiones del arco actual
     return completedArcMissions >= (arcMissions.length * 0.8);
+  }
+
+  // Get user narrative progress
+  static Future<List<String>> getUserCompletedMissions(String userId) async {
+    try {
+      final response = await SupabaseService.client
+          .from('user_narrative_progress')
+          .select('mission_id')
+          .eq('user_id', userId)
+          .eq('is_completed', true);
+
+      return response.map<String>((json) => json['mission_id'] as String).toList();
+    } catch (e) {
+      debugPrint('Error fetching user completed missions: $e');
+      return [];
+    }
+  }
+
+  // Mark mission as completed for user
+  static Future<void> completeMissionForUser(String userId, String missionId) async {
+    try {
+      await SupabaseService.client
+          .from('user_narrative_progress')
+          .upsert({
+            'user_id': userId,
+            'mission_id': missionId,
+            'is_unlocked': true,
+            'is_completed': true,
+            'completed_at': DateTime.now().toIso8601String(),
+            'updated_at': DateTime.now().toIso8601String(),
+          }, onConflict: 'user_id,mission_id');
+    } catch (e) {
+      debugPrint('Error completing mission for user: $e');
+    }
+  }
+
+  // Unlock mission for user
+  static Future<void> unlockMissionForUser(String userId, String missionId) async {
+    try {
+      await SupabaseService.client
+          .from('user_narrative_progress')
+          .upsert({
+            'user_id': userId,
+            'mission_id': missionId,
+            'is_unlocked': true,
+            'updated_at': DateTime.now().toIso8601String(),
+          }, onConflict: 'user_id,mission_id');
+    } catch (e) {
+      debugPrint('Error unlocking mission for user: $e');
+    }
   }
 }

@@ -1,6 +1,33 @@
+import 'package:flutter/material.dart';
+
 enum Difficulty { easy, medium, hard }
 
 enum RepeatType { daily, weekly, monthly }
+
+enum WeekDay { monday, tuesday, wednesday, thursday, friday, saturday, sunday }
+
+enum HabitGoalType { deactivate, duration, repeat }
+
+enum HabitEndType { deactivated, date, days }
+
+enum HabitIcon {
+  fitness_center,
+  directions_run,
+  pool,
+  self_improvement,
+  directions_bike,
+  music_note,
+  palette,
+  restaurant,
+  local_florist,
+  camera_alt,
+  edit,
+  book,
+  work,
+  people,
+  health_and_safety,
+  check_circle,
+}
 
 class SubTask {
   final String id;
@@ -317,6 +344,17 @@ class Habit {
   final int streak;
   final int bestStreak;
   final DateTime createdAt;
+  final HabitIcon icon;
+  final HabitGoalType goalType;
+  final int? targetDuration; // in minutes, for duration goals
+  final int? targetRepetitions; // for repeat goals
+  final bool reminderEnabled;
+  final TimeOfDay? reminderTime;
+  final String? reminderDescription;
+  final HabitEndType endType;
+  final DateTime? endDate;
+  final int? endDays;
+  final List<WeekDay> selectedDays; // for daily habits, which days of the week
 
   Habit({
     required this.id,
@@ -329,6 +367,17 @@ class Habit {
     this.streak = 0,
     this.bestStreak = 0,
     DateTime? createdAt,
+    this.icon = HabitIcon.check_circle,
+    this.goalType = HabitGoalType.deactivate,
+    this.targetDuration,
+    this.targetRepetitions,
+    this.reminderEnabled = false,
+    this.reminderTime,
+    this.reminderDescription,
+    this.endType = HabitEndType.deactivated,
+    this.endDate,
+    this.endDays,
+    this.selectedDays = const [],
   }) : createdAt = createdAt ?? DateTime.now();
 
   bool get isCompletedToday {
@@ -350,6 +399,17 @@ class Habit {
     int? streak,
     int? bestStreak,
     DateTime? createdAt,
+    HabitIcon? icon,
+    HabitGoalType? goalType,
+    int? targetDuration,
+    int? targetRepetitions,
+    bool? reminderEnabled,
+    TimeOfDay? reminderTime,
+    String? reminderDescription,
+    HabitEndType? endType,
+    DateTime? endDate,
+    int? endDays,
+    List<WeekDay>? selectedDays,
   }) {
     return Habit(
       id: id ?? this.id,
@@ -362,6 +422,17 @@ class Habit {
       streak: streak ?? this.streak,
       bestStreak: bestStreak ?? this.bestStreak,
       createdAt: createdAt ?? this.createdAt,
+      icon: icon ?? this.icon,
+      goalType: goalType ?? this.goalType,
+      targetDuration: targetDuration ?? this.targetDuration,
+      targetRepetitions: targetRepetitions ?? this.targetRepetitions,
+      reminderEnabled: reminderEnabled ?? this.reminderEnabled,
+      reminderTime: reminderTime ?? this.reminderTime,
+      reminderDescription: reminderDescription ?? this.reminderDescription,
+      endType: endType ?? this.endType,
+      endDate: endDate ?? this.endDate,
+      endDays: endDays ?? this.endDays,
+      selectedDays: selectedDays ?? this.selectedDays,
     );
   }
 
@@ -377,6 +448,17 @@ class Habit {
       'streak': streak,
       'bestStreak': bestStreak,
       'createdAt': createdAt.toIso8601String(),
+      'icon': icon.name,
+      'goalType': goalType.name,
+      'targetDuration': targetDuration,
+      'targetRepetitions': targetRepetitions,
+      'reminderEnabled': reminderEnabled,
+      'reminderTime': reminderTime != null ? {'hour': reminderTime!.hour, 'minute': reminderTime!.minute} : null,
+      'reminderDescription': reminderDescription,
+      'endType': endType.name,
+      'endDate': endDate?.toIso8601String(),
+      'endDays': endDays,
+      'selectedDays': selectedDays.map((day) => day.name).toList(),
     };
   }
 
@@ -403,6 +485,34 @@ class Habit {
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
           : DateTime.now(),
+      icon: HabitIcon.values.firstWhere(
+        (i) => i.name == json['icon'],
+        orElse: () => HabitIcon.check_circle,
+      ),
+      goalType: HabitGoalType.values.firstWhere(
+        (g) => g.name == json['goalType'],
+        orElse: () => HabitGoalType.deactivate,
+      ),
+      targetDuration: json['targetDuration'],
+      targetRepetitions: json['targetRepetitions'],
+      reminderEnabled: json['reminderEnabled'] ?? false,
+      reminderTime: json['reminderTime'] != null
+          ? TimeOfDay(hour: json['reminderTime']['hour'], minute: json['reminderTime']['minute'])
+          : null,
+      reminderDescription: json['reminderDescription'],
+      endType: HabitEndType.values.firstWhere(
+        (e) => e.name == json['endType'],
+        orElse: () => HabitEndType.deactivated,
+      ),
+      endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
+      endDays: json['endDays'],
+      selectedDays: (json['selectedDays'] as List<dynamic>?)
+              ?.map((day) => WeekDay.values.firstWhere(
+                    (d) => d.name == day,
+                    orElse: () => WeekDay.monday,
+                  ))
+              .toList() ??
+          [],
     );
   }
 }

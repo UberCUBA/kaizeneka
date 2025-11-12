@@ -6,8 +6,8 @@ class GetDailyMission {
 
   GetDailyMission(this.repository);
 
-  Mission call(int day) {
-    return repository.getDailyMission(day);
+  Future<Mission> call(int day) async {
+    return await repository.getDailyMission(day);
   }
 }
 
@@ -65,7 +65,7 @@ class GetAllMissions {
 
   GetAllMissions(this.repository);
 
-  List<Mission> call() {
-    return repository.getAllMissions();
+  Future<List<Mission>> call() async {
+    return await repository.getAllMissions();
   }
 }

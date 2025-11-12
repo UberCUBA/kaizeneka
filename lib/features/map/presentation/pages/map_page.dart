@@ -42,12 +42,14 @@ class _MapPageState extends State<MapPage> {
           FlutterMap(
             mapController: _mapController,
             options: MapOptions(
-              center: provider.userLocation ?? const LatLng(21.5, -79.5), // Centro en Cuba por defecto
-              zoom: provider.userLocation != null ? 18.0 : 7.0, // Zoom cercano si hay ubicación, Cuba si no
+              initialCenter: provider.userLocation ?? const LatLng(21.5, -79.5), // Centro en Cuba por defecto
+              initialZoom: provider.userLocation != null ? 18.0 : 7.0, // Zoom cercano si hay ubicación, Cuba si no
               minZoom: 2.0, // Zoom mínimo del mapa mundi
               maxZoom: 18.0,
-              rotation: 0.0, // Orientación norte por defecto
-              interactiveFlags: InteractiveFlag.drag | InteractiveFlag.flingAnimation | InteractiveFlag.pinchMove | InteractiveFlag.pinchZoom | InteractiveFlag.rotate,
+              initialRotation: 0.0, // Orientación norte por defecto
+              interactionOptions: InteractionOptions(
+                flags: InteractiveFlag.drag | InteractiveFlag.flingAnimation | InteractiveFlag.pinchMove | InteractiveFlag.pinchZoom | InteractiveFlag.rotate,
+              ),
             ),
             children: [
               TileLayer(
@@ -72,9 +74,9 @@ class _MapPageState extends State<MapPage> {
                   mini: true,
                   backgroundColor: const Color.fromARGB(255, 85, 108, 96),
                   onPressed: () {
-                    final currentZoom = _mapController.zoom;
+                    final currentZoom = _mapController.camera.zoom;
                     if (currentZoom < 18.0) {
-                      _mapController.move(_mapController.center, currentZoom + 1);
+                      _mapController.move(_mapController.camera.center, currentZoom + 1);
                     }
                   },
                   child: const Icon(Icons.add, color: Colors.black, size: 20),
@@ -85,9 +87,9 @@ class _MapPageState extends State<MapPage> {
                   mini: true,
                   backgroundColor: const Color.fromARGB(255, 85, 108, 96),
                   onPressed: () {
-                    final currentZoom = _mapController.zoom;
+                    final currentZoom = _mapController.camera.zoom;
                     if (currentZoom > 2.0) {
-                      _mapController.move(_mapController.center, currentZoom - 1);
+                      _mapController.move(_mapController.camera.center, currentZoom - 1);
                     }
                   },
                   child: const Icon(Icons.remove, color: Colors.black, size: 20),

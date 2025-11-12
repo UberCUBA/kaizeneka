@@ -174,8 +174,8 @@ class _AddMissionFormState extends State<AddMissionForm> {
                                 color: _difficulty == difficulty
                                     ? _getDifficultyColor(difficulty)
                                     : themeProvider.isDarkMode
-                                        ? Colors.grey.withOpacity(0.2)
-                                        : Colors.grey.withOpacity(0.1),
+                                        ? Colors.grey.withValues(alpha: 0.2)
+                                        : Colors.grey.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                                 border: _difficulty == difficulty
                                     ? Border.all(color: _getDifficultyColor(difficulty), width: 2)

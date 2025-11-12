@@ -52,7 +52,7 @@ android {
         }
     }
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.2.2")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("androidx.glance:glance-appwidget:1.1.0")
 }

@@ -18,6 +18,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS stats JSONB DEFAULT '{"fuerza": 0, "c
 ALTER TABLE users ADD COLUMN IF NOT EXISTS dias_completados INTEGER DEFAULT 0;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS misiones_completadas JSONB DEFAULT '[]';
 ALTER TABLE users ADD COLUMN IF NOT EXISTS logros_desbloqueados JSONB DEFAULT '[]';
+ALTER TABLE users ADD COLUMN IF NOT EXISTS tutorial_completed BOOLEAN DEFAULT FALSE;
 
 -- Crear tabla para misiones narrativas
 CREATE TABLE IF NOT EXISTS narrative_missions (
